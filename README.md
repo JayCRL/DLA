@@ -84,21 +84,25 @@ Q      *= consolidate_q_decay
 
 ```
 dla/
-  config.py     四层定义、学习规则参数、DNA 信号先验
-  model.py      DevelopmentalNet（W_slow/W_fast/P/Q、F_phi、认知状态、睡眠巩固）
-  meta.py       元训练 + 生命周期内 φ 自适应（LifetimeAdapter）
-  tasks.py      自包含任务族：Gaussian / XOR 持续学习流
-  metrics.py    终身评估：学习曲线、遗忘矩阵、steps-to-threshold、可塑性轨迹
-  baselines.py  StaticMLP（优化器在模型外）与固定 Hebbian 配置
-  dna.py        DNA-A/B/C/D 四种“学习倾向”个体
-  plotting.py   图表输出（Agg，服务器无显示器可用）
+  config.py          四层定义、学习规则参数、DNA 信号先验
+  model.py           DevelopmentalNet（W_slow/W_fast/P/Q、F_phi、认知状态、睡眠巩固）
+  transformer_dla.py Stage 4：把 W_fast/P/Q + Adam 力矩 + 睡眠巩固挂到标准 GPT
+                     （不改骨架，每个权重矩阵上做 per-parameter 可塑性）
+  meta.py            元训练 + 生命周期内 φ 自适应（LifetimeAdapter）
+  tasks.py           自包含任务族：Gaussian / XOR 持续学习流
+  metrics.py         终身评估：学习曲线、遗忘矩阵、steps-to-threshold、可塑性轨迹
+  baselines.py       StaticMLP（优化器在模型外）与固定 Hebbian 配置
+  dna.py             DNA-A/B/C/D 四种“学习倾向”个体
+  plotting.py        图表输出（Agg，服务器无显示器可用）
 experiments/
-  stage1_adaptive_plasticity.py   Stage 1：静态 MLP vs 自适应可塑性
-  stage2_learned_rule.py          Stage 2：固定 Hebbian vs 学到的规则 F_phi
-  stage3_learning_rule_development.py  Stage 3：φ 固定 vs φ 在生命周期内发育
-  dna_lifetimes.py                同一 F_phi、四种 DNA、同一段人生
-  run_all_smoke.py                全流程冒烟测试
-tests/test_core.py                核心机制 sanity check
+  stage1_adaptive_plasticity.py       Stage 1：静态 MLP vs 自适应可塑性
+  stage2_learned_rule.py              Stage 2：固定 Hebbian vs 学到的规则 F_phi
+  stage3_learning_rule_development.py Stage 3：φ 固定 vs φ 在生命周期内发育
+  dna_lifetimes.py                    DNA-A/B/C/D 同一段人生
+  stage4_transformer_pilot.py         Stage 4：真实 Transformer（nanoGPT 6.59M）
+                                      维基 -> SFT 问答 -> 维基重学，AdamW vs DLA
+  run_all_smoke.py                    全流程冒烟测试
+tests/test_core.py                    核心机制 sanity check
 ```
 
 ## 在 linghang1 上运行
@@ -138,6 +142,39 @@ cd ~/llm-lab/dla-v0.2
    比较 `Λ_t` 随任务的斜率。
 4. **DNA 实验**：同一 `F_phi`，不同 DNA 先验（A 高可塑 / B 高稳定 / C 高新奇 /
    D 保守）在同一段人生中走出不同的可塑性、知识积累与遗忘轨迹。
+
+## Stage 4：Backbone + Developmental Learning（Transformer 迁移）
+
+原则：**不改 nanoGPT 骨架**。每个 `nn.Linear` / `nn.Embedding` 仍执行原计算，
+只是有效权重变为
+
+```
+W_eff = W_slow + softplus(P) * W_fast
+```
+
+每个权重矩阵维护 `W_fast / P / Q / m / v`（Adam 力矩）。一次醒态更新：
+
+```
+g      = dL/dW_eff                    （标准反传教学基，全局 clip）
+adam   = Adam(g; m, v)
+dW_fast = -eta_fast * softplus(P) * adam - fast_decay * W_fast
+dP      = eta_plast * progress * relevance(g) - stability * (P - P0)
+dQ      = alpha_q * dW_fast * max(progress, 0)
+```
+
+睡眠时 `W_slow += beta * Q`、衰减 `W_fast/Q`、清空力矩——知识与技能在同一个
+Transformer 权重上分居“慢/快”两层。实验脚本 `stage4_transformer_pilot.py` 用
+6.59M 中文 nanoGPT 跑一生：**维基(A) → SFT 问答(B) → 维基重学(A)**，对比
+普通 AdamW 微调，指标全部相对个体自身起点：
+
+* adaptation gain：当前域 PPL 相对下降
+* forgetting：学完 B 后 A 的 PPL 相对上升
+* relearning：重学 A 后恢复的比例
+* plasticity trajectory：各权重矩阵 softplus(P) 的发育轨迹
+
+> Stage 4 用 per-parameter 规则而非 per-connection F_phi：对 6.59M 个连接逐一
+> 跑规则网络在 CPU 上不可行，且 Stage 4 要验证的是“发育动力学”在真实
+> Transformer 上的迁移，不是规则网络本身。
 
 ## 边界（诚实声明）
 
