@@ -1,0 +1,5 @@
+# Server environment already has torch 2.9.1+cpu; only matplotlib needs adding.
+#   ~/llm-lab/venv/bin/pip install -i https://pypi.tuna.tsinghua.edu.cn/simple matplotlib
+torch>=2.0
+numpy
+matplotlib>=3.6
