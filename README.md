@@ -131,6 +131,13 @@ cd ~/llm-lab/dla-v0.2
 # 结果在 results/<stage>/ 下：results.json + PNG
 ```
 
+## 实验结果
+
+完整数字与解释见 [`docs/experiments.md`](docs/experiments.md)。一句话版本：
+Stage 1 可塑性有效（遗忘减半）、Stage 2 学到的规则显著优于固定 Hebbian、
+Stage 3 adaptive φ 提高稳定性但 Λ_t 假设需递进课程重测、DNA 四体轨迹分化；
+Stage 4 pilot 在 6.59M nanoGPT 上实现 **B 域 +13.5% 适应增益 + 慢记忆层零遗忘**。
+
 ## 实验假设（与三阶段对应）
 
 1. **Stage 1**：可塑性有效 —— 同样的一生，DLA（自适应可塑性）比静态 MLP（SGD
