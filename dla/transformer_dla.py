@@ -23,7 +23,7 @@ Design constraints (per the 2026-09-07 decision):
 
 * task boundary (sleep):
 
-      W_slow += consolidate_beta * Q
+      W_slow += consolidate_beta * Q + consolidate_fast_direct * W_fast
       W_fast *= consolidate_fast_decay
       Q      *= consolidate_q_decay
       m, v    reset (fresh Adam state for the new task)
@@ -53,8 +53,9 @@ class TransformerDLAConfig:
     eta_plast: float = 0.02       # meta-plasticity step size for P
     fast_decay: float = 0.02      # per-step forgetting of W_fast
     stability_pressure: float = 0.01  # pull of P back to P0
-    alpha_q: float = 0.10         # EMA rate of Q
-    consolidate_beta: float = 0.30    # sleep: W_slow += beta * Q
+    alpha_q: float = 0.30         # EMA rate of Q
+    consolidate_beta: float = 1.0     # sleep: W_slow += beta * Q
+    consolidate_fast_direct: float = 0.15  # sleep: W_slow += beta_f * W_fast
     consolidate_fast_decay: float = 0.5
     consolidate_q_decay: float = 0.7
     consolidate_p_decay: float = 0.0  # sleep relaxation of P towards P0
@@ -223,6 +224,11 @@ def make_dla_gpt_class(GPT):
                 new_acc_ema = (1 - a) * state.ema["acc_ema"] + a * acc
                 progress = math.tanh((prev_loss.item() - new_loss_ema.item()) / (prev_loss.item() + 1e-4))
                 new_progress_ema = (1 - a) * state.ema["progress_ema"] + a * progress
+                # consolidation success: relative improvement of the current step
+                # over the recent loss EMA, clipped to [0,1].  Unlike ``progress``
+                # (which can oscillate and average to ~0) this is always >= 0,
+                # so Q reliably accumulates updates that actually helped.
+                success = max(0.0, min(1.0, (prev_loss.item() - loss_v) / (prev_loss.item() + 1e-4)))
 
                 for key, mod in self.key_modules.items():
                     s = state.store[key]
@@ -249,7 +255,7 @@ def make_dla_gpt_class(GPT):
                     s["p"].add_(dp).clamp_(self.dla_cfg.p_min, self.dla_cfg.p_max)
 
                     # slow-eligibility trace: remember updates that worked
-                    q_inc = dw * max(progress, 0.0)
+                    q_inc = dw * success
                     s["q"].mul_(1 - cfg.alpha_q).add_(q_inc, alpha=cfg.alpha_q)
 
                 state.ema["loss_ema"] = new_loss_ema
@@ -263,6 +269,7 @@ def make_dla_gpt_class(GPT):
                 "ppl": math.exp(loss_v),
                 "acc": acc,
                 "progress": progress,
+                "success": success,
                 "loss_ema": new_loss_ema.item(),
                 "life_step": state.life_step,
             }
@@ -273,7 +280,9 @@ def make_dla_gpt_class(GPT):
             cfg = self.dla_cfg
             for key, mod in self.key_modules.items():
                 s = state.store[key]
-                mod.weight.add_(cfg.consolidate_beta * s["q"])
+                # sleep consolidation: eligibility trace Q + a direct transfer of
+                # currently expressed fast knowledge into the slow store
+                mod.weight.add_(cfg.consolidate_beta * s["q"] + cfg.consolidate_fast_direct * s["w_fast"])
                 s["w_fast"].mul_(cfg.consolidate_fast_decay)
                 s["q"].mul_(cfg.consolidate_q_decay)
                 if cfg.consolidate_p_decay > 0:
