@@ -247,6 +247,34 @@ Learning History → Learner State（Body：W/P/fast-slow）→ Future Adaptatio
 Development 主要由学习积累出来的 body 状态介导，而不是由 9 个 tempo 介导。
 下一步可做 body 状态的具体分解（哪一层、哪个矩阵、哪个状态分量中介）。
 
+## Stage 5.5d：Body 分解（3 seeds，用 5.5c 的 body）
+
+将 Body 拆成 W_slow / W_fast / P / Q，以及 attention / MLP / embedding 慢权重，
+在 EH↔HE 之间 cross-swap，统一未见域 D 上测 LE_D。
+
+| 操作 | LE_D mean | T80 mean |
+|---|---|---|
+| EH/EH（native） | 0.333 | 26.0 |
+| EH body + HE W_slow | 0.333 | 30.0 |
+| EH body + **HE W_fast** | **0.908** | 12.0 |
+| EH body + HE P | 0.253 | 27.3 |
+| EH body + HE Q | 0.241 | 25.3 |
+| EH body + HE attn slow / mlp slow / emb slow | 0.33 / 0.19 / 0.33 | ~25–29 |
+| HE/HE（native） | 0.958 | 17.3 |
+| HE body + EH W_slow | 0.996 | 12.0 |
+| HE body + **EH W_fast** | **0.000** | 30.0 |
+| HE body + EH P / Q | 0.87 / 0.90 | ~20 |
+| HE body + EH attn slow / mlp slow / emb slow | 0.94 / 0.88 / 0.90 | ~16–23 |
+
+**判定：History effect 主要由 W_fast 携带。**
+* 把 HE 的 W_fast 放进 EH body，LE 从 0.33 → 0.91；
+* 把 EH 的 W_fast 放进 HE body，LE 从 0.96 → 0.00；
+* 慢权重、P、Q、φ 的贡献都很小。
+
+这与 5.5c 的 cross-injection 一致：φ（9 个 tempo）不是 carrier；body 里真正
+carry development 的是 **当前学习轨迹 W_fast**——不是慢记忆，也不是可塑性标量。
+下一步应继续对 W_fast 本身做模块/秩/分布分解（哪一层、attention vs MLP、主方向）。
+
 ## 下一步
 
 1. Stage 5.5b：把 meta 更新从“阶段边界一步”改成终身在线（每阶段内多次、用
