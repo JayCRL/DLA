@@ -82,7 +82,7 @@ def build_science_text():
         t = (d.get("completion") or "").strip()
         if t and any(k in t for k in SCI_KEYWORDS):
             picked.append(t)
-            if sum(len(x) for x in picked) >= 4_000_000:
+            if sum(len(x) for x in picked) >= 12_000_000:
                 break
     return "\n\n".join(picked)
 

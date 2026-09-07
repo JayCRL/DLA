@@ -1,0 +1,24 @@
+{
+  "n_seeds": 12,
+  "protocol": "stage55e_wfast_p0.py, d_steps=40",
+  "combos": {
+    "EH/EH": {"LE_mean": 0.517, "gain40_mean": -0.0006},
+    "HE/HE": {"LE_mean": 0.709, "gain40_mean": 0.0143},
+    "EH_body+HE_fast": {"LE_mean": 0.411, "gain40_mean": 0.0049},
+    "HE_body+EH_fast": {"LE_mean": 0.373, "gain40_mean": -0.0052}
+  },
+  "contrasts": {
+    "EH_plus_HEfast_minus_EH": {
+      "mean": 0.0055, "sd": 0.023, "median": 0.0059,
+      "boot95ci": [-0.0064, 0.019], "cohen_d": 0.24,
+      "sign_positive": 7, "sign_n": 12, "sign_p": 0.387
+    },
+    "HE_plus_EHfast_minus_HE": {
+      "mean": -0.0195, "sd": 0.0245, "median": -0.0176,
+      "boot95ci": [-0.0337, -0.0071], "cohen_d": -0.795,
+      "sign_negative": 10, "sign_n": 12, "sign_p": 0.0193
+    }
+  },
+  "body_decomposition_n": 5,
+  "blocked_extension": "SFT unique slices exhausted at seed 11"
+}

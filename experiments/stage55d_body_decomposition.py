@@ -77,15 +77,20 @@ def copy_slow_group(src_model, dst_model, group):
 
 
 def copy_state_component(src_state, dst_state, component):
-    """Copy W_fast/P/Q from src_state into dst_state."""
+    """Copy selected fast/P/Q state from src_state into dst_state.
+
+    ``component`` may be a comma-separated set, e.g. "fast,p", "fast,q",
+    "p,q", "fast,p,q", or "all_state".
+    """
+    parts = set(component.split(",")) | ({"fast", "p", "q"} if component == "all_state" else set())
     for key, ss in src_state.store.items():
         if key not in dst_state.store:
             continue
-        if component in ("fast", "all_state"):
+        if "fast" in parts:
             dst_state.store[key]["w_fast"].copy_(ss["w_fast"])
-        if component in ("p", "all_state"):
+        if "p" in parts:
             dst_state.store[key]["p"].copy_(ss["p"])
-        if component in ("q", "all_state"):
+        if "q" in parts:
             dst_state.store[key]["q"].copy_(ss["q"])
 
 
@@ -125,6 +130,11 @@ def main():
         ("swap", "EH_body+HE_fast", "EH", "HE", "fast"),
         ("swap", "EH_body+HE_P", "EH", "HE", "p"),
         ("swap", "EH_body+HE_Q", "EH", "HE", "q"),
+        ("swap", "EH_body+HE_fastP", "EH", "HE", "fast,p"),
+        ("swap", "EH_body+HE_fastQ", "EH", "HE", "fast,q"),
+        ("swap", "EH_body+HE_PQ", "EH", "HE", "p,q"),
+        ("swap", "EH_body+HE_fastPQ", "EH", "HE", "fast,p,q"),
+        ("swap", "EH_body+HE_allState", "EH", "HE", "all_state"),
         ("swap", "EH_body+HE_attn_slow", "EH", "HE", "attn"),
         ("swap", "EH_body+HE_mlp_slow", "EH", "HE", "mlp"),
         ("swap", "EH_body+HE_emb_slow", "EH", "HE", "emb"),
@@ -132,6 +142,11 @@ def main():
         ("swap", "HE_body+EH_fast", "HE", "EH", "fast"),
         ("swap", "HE_body+EH_P", "HE", "EH", "p"),
         ("swap", "HE_body+EH_Q", "HE", "EH", "q"),
+        ("swap", "HE_body+EH_fastP", "HE", "EH", "fast,p"),
+        ("swap", "HE_body+EH_fastQ", "HE", "EH", "fast,q"),
+        ("swap", "HE_body+EH_PQ", "HE", "EH", "p,q"),
+        ("swap", "HE_body+EH_fastPQ", "HE", "EH", "fast,p,q"),
+        ("swap", "HE_body+EH_allState", "HE", "EH", "all_state"),
         ("swap", "HE_body+EH_attn_slow", "HE", "EH", "attn"),
         ("swap", "HE_body+EH_mlp_slow", "HE", "EH", "mlp"),
         ("swap", "HE_body+EH_emb_slow", "HE", "EH", "emb"),
@@ -140,8 +155,13 @@ def main():
     all_out = {}
     stoi = pickle.load(open(_s55.META, "rb"))["stoi"]
     for seed in args.seeds:
-        body_dir = os.path.join(_s55c.ROOT, "results", "stage55c", f"seed{seed}", "bodies")
-        paths = {o: os.path.join(body_dir, f"seed{seed}_{o}_meta.pt") for o in ("easy_hard", "hard_easy")}
+        cand1 = os.path.join(_s55c.ROOT, "results", "stage55c", f"seed{seed}", "bodies")
+        cand2 = os.path.join(_s55c.ROOT, "results", "stage55e", "bodies")
+        paths = {}
+        for o in ("easy_hard", "hard_easy"):
+            p1 = os.path.join(cand1, f"seed{seed}_{o}_meta.pt")
+            p2 = os.path.join(cand2, f"seed{seed}_{o}_meta.pt")
+            paths[o] = p1 if os.path.exists(p1) else p2
         domains, phases, d_train, d_val = _s55.build_curriculum(seed, args, stoi)
         eb = _s55.make_eval_batches(domains, d_val, args, device, seed)
         order_short = {"easy_hard": "EH", "hard_easy": "HE"}
