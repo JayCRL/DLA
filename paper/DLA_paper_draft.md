@@ -144,6 +144,13 @@ All scripts and per-seed JSONs are in the public repository:
 DLA matches tuned AdamW on adaptation while the consolidated slow memory is
 essentially stable. This is our cleanest positive result.
 
+![A across lifetime](figures/A_across_lifetime.png)
+
+![B adaptation curve](figures/B_adaptation_curve.png)
+
+![A relearning curve](figures/A_relearning_curve.png)
+
+
 ### 5.2 Difficulty robustness (Stage 5, 5 seeds)
 
 With a fixed 4% relative-gain threshold, both AdamW and DLA appear to "get
@@ -156,6 +163,13 @@ worse" as tasks get harder, but this is a metric confound. Under normalized LE,
 | DLA slow | [0,0,0] | 0 |
 
 DLA does not collapse when difficulty increases.
+
+![Normalized LE across curriculum](figures/LE_curriculum.png)
+
+![Raw Lambda](figures/lambda_curriculum.png)
+
+![Speed to 80% of own best](figures/speed80_curriculum.png)
+
 
 ### 5.3 Scalar learning-rule parameters are not the carrier (5.5b/c, 5 seeds)
 
@@ -170,6 +184,11 @@ DLA does not collapse when difficulty increases.
 
 The body (slow/fast/plasticity state) dominates; swapping the 9 tempos has
 little and inconsistent effect.
+
+![2x2 Development](figures/2x2_D.png)
+
+![Cross-injection 2x2](figures/cross_2x2.png)
+
 
 ### 5.4 Fast weights carry (part of) the history effect (5.5d/5.5e, 10 seeds)
 
@@ -195,6 +214,11 @@ future learning dynamics rather than simply encoding memory. However, with
 (p≈0.055). Fast-weight transfer is therefore an important but not self-sufficient
 carrier; it interacts with the rest of the body.
 
+![Body decomposition](figures/body_decomposition.png)
+
+![P0 future adaptation trajectories](figures/p0_trajectory.png)
+
+
 ## 6 Discussion
 
 **What we now believe**
@@ -219,7 +243,7 @@ carrier; it interacts with the rest of the body.
 - No standard continual-learning baselines (EWC, replay, LoRA) yet.
 - 5–10 seeds on noisy PPL metrics; several effects need more power.
 - Sleep consolidation writes very little to slow memory in the current
-  implementation (`gain_B_slow ≈ 0`); fast/slow separation is achieved mostly
+  implementation (`gain_B_slow ~ 0`); fast/slow separation is achieved mostly
   by isolation, not yet by strong consolidation.
 
 ## 7 Conclusion
