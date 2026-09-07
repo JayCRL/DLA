@@ -225,7 +225,7 @@ def sweep(args, device):
     best_lr, best_lr_score = None, -1e9
     for lr in args.lr_candidates:
         scores = []
-        for sw_seed in (100, 101):
+        for sw_seed in (6, 7):
             domains, phases = build_lifetime(sw_seed, args, stoi)
             eb = make_eval_batches(domains, args, device, sw_seed)
             rng = random.Random(100000 + sw_seed)
@@ -242,7 +242,7 @@ def sweep(args, device):
     best_eta, best_eta_score = None, -1e9
     for eta in args.eta_candidates:
         scores = []
-        for sw_seed in (100, 101):
+        for sw_seed in (6, 7):
             domains, phases = build_lifetime(sw_seed, args, stoi)
             eb = make_eval_batches(domains, args, device, sw_seed)
             rng = random.Random(100000 + sw_seed)
