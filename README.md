@@ -133,7 +133,7 @@ cd ~/llm-lab/dla-v0.2
 
 ## 实验结果
 
-完整数字与解释见 [`docs/experiments.md`](docs/experiments.md)。一句话版本：
+论文初稿见 [`paper/DLA_paper_draft.md`](paper/DLA_paper_draft.md)（可投稿英文草稿）。完整数字与解释见 [`docs/experiments.md`](docs/experiments.md)。一句话版本：
 Stage 1 可塑性有效（遗忘减半）、Stage 2 学到的规则显著优于固定 Hebbian、
 Stage 3 adaptive φ 提高稳定性但 Λ_t 假设需递进课程重测、DNA 四体轨迹分化；
 Stage 4 pilot 在 6.59M nanoGPT 上实现 **B 域 +13.5% 适应增益 + 慢记忆层零遗忘**。
