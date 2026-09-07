@@ -275,6 +275,30 @@ Development 主要由学习积累出来的 body 状态介导，而不是由 9 �
 carry development 的是 **当前学习轨迹 W_fast**——不是慢记忆，也不是可塑性标量。
 下一步应继续对 W_fast 本身做模块/秩/分布分解（哪一层、attention vs MLP、主方向）。
 
+## Stage 5.5e P0：W_fast 是 memory 还是 future-learning dynamics？（10 seeds）
+
+protocol：固定 D、同一 update rule/budget/eval；4 组合 full trajectories。
+EH/EH 与 HE/HE 为 native；另两组为 W_fast cross-injection。
+
+| combo | LE_D mean±std | T80 mean | gain@40 mean |
+|---|---|---|---|
+| EH/EH | 0.541±0.473 | 28.8 | −0.001 |
+| HE/HE | 0.686±0.403 | 17.2 | +0.014 |
+| EH body + HE W_fast | 0.408±0.449 | 22.2 | +0.005 |
+| HE body + EH W_fast | 0.299±0.447 | 27.6 | −0.007 |
+
+Paired trajectory deltas（g40）：
+* `EH+HE_fast − EH/EH`：+0.0059，10 seeds 中 6 正；
+* `HE+EH_fast − HE/HE`：−0.0211，10 seeds 中 8 负。
+
+**判定：方向支持 “W_fast 影响 future learning dynamics”，但效应中等、不是全部。**
+* pre PPL 差异很小：HE_fast 带来的优势主要体现在 adaptation slope，而不是一开始就
+  “知道更多” → 更接近 dynamics，而非纯 memory；
+* 但把 HE_fast 放到 EH body 只恢复一半左右（gain@40 从 −0.001 → +0.005，仍低于
+  native HE 的 +0.014）；EH_fast 放进 HE body 会压制学习（+0.014 → −0.007）。
+* 结论：W_fast 是 history effect 的重要中介之一，但**与 body 的其余部分有交互**，
+  不是自足的 carrier。
+
 ## 下一步
 
 1. Stage 5.5b：把 meta 更新从“阶段边界一步”改成终身在线（每阶段内多次、用

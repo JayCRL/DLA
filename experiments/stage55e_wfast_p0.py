@@ -83,8 +83,8 @@ def run_seed(seed, args, device):
             from model import GPT as _GPT
             p = _s55.load_checkpoint(_GPT)
             pre = {dom: _s55.eval_ppl(p, eb[dom]) for dom in domains}
-            order = sorted(domains, key=lambda d: pre[d])
-            fwd = sorted(phases, key=lambda ph_: order.index(ph_[2]))
+            domain_order = sorted(domains, key=lambda d: pre[d])
+            fwd = sorted(phases, key=lambda ph_: domain_order.index(ph_[2]))
             rev = list(reversed(fwd))
             ph = fwd if order == "easy_hard" else rev
             print(f"[seed {seed}] creating missing body {order} ...", flush=True)
