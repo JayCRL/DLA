@@ -76,6 +76,48 @@ class TransformerDLAConfig:
         return math.log(math.exp(y) - 1.0)
 
 
+def _logit(p: float, eps: float = 1e-4) -> float:
+    p = min(max(p, eps), 1.0 - eps)
+    return math.log(p / (1.0 - p))
+
+
+class TransformerTempoParams(nn.Module):
+    """phi_t - the learning-rule parameters of the Transformer DLA individual.
+
+    These are the object of Stage 5.5: they start as DNA priors and can be
+    updated in a lifetime by meta-gradient on FUTURE learning.  Stored in
+    log/logit space so they stay in valid ranges.
+    """
+
+    def __init__(self, cfg: TransformerDLAConfig):
+        super().__init__()
+        self.log_eta_fast = nn.Parameter(torch.tensor(math.log(max(cfg.eta_fast, 1e-5))))
+        self.log_eta_plast = nn.Parameter(torch.tensor(math.log(max(cfg.eta_plast, 1e-5))))
+        self.logit_fast_decay = nn.Parameter(torch.tensor(_logit(cfg.fast_decay)))
+        self.log_stability = nn.Parameter(torch.tensor(math.log(max(cfg.stability_pressure, 1e-5))))
+        self.log_alpha_q = nn.Parameter(torch.tensor(math.log(max(cfg.alpha_q, 1e-5))))
+        self.logit_consolidate_beta = nn.Parameter(torch.tensor(_logit(cfg.consolidate_beta)))
+        self.logit_consolidate_fast_direct = nn.Parameter(torch.tensor(_logit(cfg.consolidate_fast_direct)))
+        self.logit_consolidate_fast_decay = nn.Parameter(torch.tensor(_logit(cfg.consolidate_fast_decay)))
+        self.logit_consolidate_q_decay = nn.Parameter(torch.tensor(_logit(cfg.consolidate_q_decay)))
+
+    def values(self):
+        return {
+            "eta_fast": F.softplus(self.log_eta_fast),
+            "eta_plast": F.softplus(self.log_eta_plast),
+            "fast_decay": torch.sigmoid(self.logit_fast_decay),
+            "stability_pressure": F.softplus(self.log_stability),
+            "alpha_q": F.softplus(self.log_alpha_q),
+            "consolidate_beta": torch.sigmoid(self.logit_consolidate_beta),
+            "consolidate_fast_direct": torch.sigmoid(self.logit_consolidate_fast_direct),
+            "consolidate_fast_decay": torch.sigmoid(self.logit_consolidate_fast_decay),
+            "consolidate_q_decay": torch.sigmoid(self.logit_consolidate_q_decay),
+        }
+
+    def snapshot(self):
+        return {k: float(v.detach()) for k, v in self.values().items()}
+
+
 class DLAState:
     """Per-parameter developmental state of one DLA-Transformer individual."""
 
@@ -137,6 +179,7 @@ def make_dla_gpt_class(GPT):
         def __init__(self, config, dla_cfg: TransformerDLAConfig):
             super().__init__(config)
             self.dla_cfg = dla_cfg
+            self.tempos = TransformerTempoParams(dla_cfg)
             self.ref = _Ref()
             self.wrapped: List[Tuple[str, nn.Module]] = []
             self._wrap_all(self, "")
@@ -214,6 +257,7 @@ def make_dla_gpt_class(GPT):
             torch.nn.utils.clip_grad_norm_(self.parameters(), cfg.grad_clip)
 
             with torch.no_grad():
+                tv = self.tempos.values()
                 mask = targets != -1
                 acc = ((logits.argmax(dim=-1)[mask] == targets[mask]).float().mean()).item()
                 loss_v = loss.item()
@@ -244,19 +288,19 @@ def make_dla_gpt_class(GPT):
                     v_hat = s["v"] / (1 - b2 ** t)
                     adam = m_hat / (v_hat.sqrt() + 1e-8)
 
-                    dw = -cfg.eta_fast * gate * adam - cfg.fast_decay * s["w_fast"]
+                    dw = -tv["eta_fast"] * gate * adam - tv["fast_decay"] * s["w_fast"]
                     s["w_fast"].add_(dw)
 
                     # meta-plasticity: relevant params become more plastic while
                     # loss improves, less plastic while it stagnates/degrades
                     n = g.numel()
                     relevance = (g.abs() / (g.norm() / math.sqrt(n) + 1e-6)).clamp(0.0, 5.0)
-                    dp = cfg.eta_plast * progress * relevance - cfg.stability_pressure * (s["p"] - self.dla_cfg.p0)
+                    dp = tv["eta_plast"] * progress * relevance - tv["stability_pressure"] * (s["p"] - self.dla_cfg.p0)
                     s["p"].add_(dp).clamp_(self.dla_cfg.p_min, self.dla_cfg.p_max)
 
                     # slow-eligibility trace: remember updates that worked
                     q_inc = dw * success
-                    s["q"].mul_(1 - cfg.alpha_q).add_(q_inc, alpha=cfg.alpha_q)
+                    s["q"].mul_(1 - tv["alpha_q"]).add_(q_inc, alpha=tv["alpha_q"])
 
                 state.ema["loss_ema"] = new_loss_ema
                 state.ema["acc_ema"] = new_acc_ema
@@ -278,17 +322,101 @@ def make_dla_gpt_class(GPT):
         @torch.no_grad()
         def dla_sleep(self, state: DLAState):
             cfg = self.dla_cfg
+            tv = self.tempos.values()
             for key, mod in self.key_modules.items():
                 s = state.store[key]
                 # sleep consolidation: eligibility trace Q + a direct transfer of
                 # currently expressed fast knowledge into the slow store
-                mod.weight.add_(cfg.consolidate_beta * s["q"] + cfg.consolidate_fast_direct * s["w_fast"])
-                s["w_fast"].mul_(cfg.consolidate_fast_decay)
-                s["q"].mul_(cfg.consolidate_q_decay)
+                mod.weight.add_(tv["consolidate_beta"] * s["q"] + tv["consolidate_fast_direct"] * s["w_fast"])
+                s["w_fast"].mul_(tv["consolidate_fast_decay"])
+                s["q"].mul_(tv["consolidate_q_decay"])
                 if cfg.consolidate_p_decay > 0:
                     s["p"].add_((self.dla_cfg.p0 - s["p"]) * cfg.consolidate_p_decay)
             state.reset_moments()
             return state
+
+        # --------------------------------------- meta-learning of phi (Stage 5.5)
+        def meta_unroll_loss(self, state: DLAState, batches):
+            """Differentiable surrogate of the wake dynamics.
+
+            Runs the same fast/plasticity updates (plain-gradient variant, no
+            Adam moments) on a short sequence of batches, with
+            ``backward(create_graph=True)`` so the meta-gradient can flow from
+            FUTURE losses back into the learning-rule parameters phi (tempos).
+
+            The actual ``state`` is NOT modified: a detached snapshot is used
+            for the unroll and discarded afterwards.
+            """
+            cfg = self.dla_cfg
+            tv = self.tempos.values()
+            cur = {
+                key: {
+                    "w_fast": s["w_fast"].detach().clone(),
+                    "p": s["p"].detach().clone(),
+                    "q": s["q"].detach().clone(),
+                }
+                for key, s in state.store.items()
+            }
+            losses = []
+            prev_loss = state.ema["loss_ema"].detach()
+            for x, y in batches:
+                fake = DLAState(cur, state.ema)
+                self.set_dla_state(fake)
+                self.zero_grad(set_to_none=True)
+                logits, loss = self(x, y)
+                # create_graph: the teaching signal g itself is differentiable
+                # w.r.t. the fast weights/phi of previous steps.
+                loss.backward(create_graph=True)
+                loss_v = loss.detach()
+                success = max(0.0, min(1.0, (prev_loss.item() - loss_v.item()) / (prev_loss.item() + 1e-4)))
+                prev_loss = (1 - cfg.cog_alpha) * prev_loss + cfg.cog_alpha * loss_v
+
+                new_cur = {}
+                for key, mod in self.key_modules.items():
+                    s = cur[key]
+                    g = mod.weight.grad
+                    if g is None:
+                        new_cur[key] = {k: v.clone() for k, v in s.items()}
+                        continue
+                    gate = F.softplus(s["p"])
+                    dw = -tv["eta_fast"] * gate * g - tv["fast_decay"] * s["w_fast"]
+                    n = g.numel()
+                    relevance = (g.abs() / (g.norm() / math.sqrt(n) + 1e-6)).clamp(0.0, 5.0)
+                    progress = math.tanh((prev_loss.item() - loss_v.item()) / (prev_loss.item() + 1e-4))
+                    dp = tv["eta_plast"] * progress * relevance - tv["stability_pressure"] * (s["p"] - cfg.p0)
+                    q_inc = dw * success
+                    new_cur[key] = {
+                        "w_fast": s["w_fast"] + dw,
+                        "p": (s["p"] + dp).clamp(cfg.p_min, cfg.p_max),
+                        "q": (1 - tv["alpha_q"]) * s["q"] + tv["alpha_q"] * q_inc,
+                    }
+                cur = new_cur
+                losses.append(loss)
+            self.set_dla_state(state)
+            self.zero_grad(set_to_none=True)
+            return torch.stack(losses).mean()
+
+        def meta_update_phi(self, state: DLAState, batches, opt: torch.optim.Optimizer, grad_clip: float = 1.0):
+            """phi <- phi - lr * grad_phi L_future (one lifetime meta step).
+
+            ``batches`` must come from the FUTURE task / held-out transfer task,
+            so the gradient measures future learning, not current performance.
+            """
+            params = list(self.tempos.parameters())
+            self.zero_grad(set_to_none=True)
+            loss = self.meta_unroll_loss(state, batches)
+            grads = torch.autograd.grad(loss, params, allow_unused=True, retain_graph=False)
+            for p, g in zip(params, grads):
+                p.grad = g.detach() if g is not None else None
+            if any(g is not None for g in grads):
+                torch.nn.utils.clip_grad_norm_(params, grad_clip)
+            opt.step()
+            self.zero_grad(set_to_none=True)
+            return loss.item()
+
+        def tempo_delta(self, before: Dict[str, float]) -> Dict[str, float]:
+            after = self.tempos.snapshot()
+            return {k: after[k] - before[k] for k in before}
 
         # ------------------------------------------------------------ analysis
         def plasticity_by_layer(self, state: DLAState) -> Dict[str, float]:
