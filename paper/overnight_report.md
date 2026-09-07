@@ -168,3 +168,23 @@ HE − EH difference: −0.0053±0.0139, paired t = −1.21, p = 0.23.
 **Verdict: no significant effective-rank difference between histories.**
 This does not contradict the W_fast causal effect found in P0; it suggests the
 effect is not captured by a simple global effective-rank statistic.
+
+## Addendum C2: per-module effective rank + difference-matrix analysis (10 seeds)
+
+Per-module W_fast effective rank differences (HE − EH):
+
+| module | diff mean | std | paired p |
+|---|---|---|---|
+| embedding | +0.0089 | 0.0281 | 0.317 |
+| attention | −0.0077 | 0.0149 | 0.104 |
+| mlp | −0.0129 | 0.0220 | 0.064 |
+| all | −0.0053 | 0.0139 | 0.228 |
+
+Difference matrix D = W_fast_HE − W_fast_EH:
+  * effective rank (weighted) = 5.327 ± 0.008
+  * top-10 singular directions explain ~30.8% of squared variance.
+
+**Interpretation:** no module reaches significance at p<0.05; MLP is the most
+suggestive (HE MLP W_fast has lower effective rank, p=0.064, 7/10 negative).
+The EH/HE difference is not captured by a single low-rank global mode; top-10
+directions explain only ~31% of the difference energy.
