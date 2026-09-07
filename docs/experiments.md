@@ -113,10 +113,45 @@
 量还太小——这是 Stage 4.5 / 后续版本要修的“巩固深度”，但不影响 fast/slow
 分离机制本身的结论。
 
+## Stage 5：递进课程 + Λ_t / Learning Efficiency（5 seeds）
+
+课程按出生模型在该 seed 的 PPL 自动从易到难排序（如 sft→wiki→science）。
+原始指标（固定 4% 目标）：
+
+| arm | Λ_t 三个课程阶段 | 趋势 |
+|---|---|---|
+| AdamW | [0.150, 0.175, 0.050] | 随难度下降 |
+| DLA fast | [0.150, 0.050, 0.050] | 随难度下降 |
+| DLA slow | [0, 0, 0] | 0 |
+
+固定阈值把 Learning Capacity 和 Task Difficulty 混淆了（正是运行后发现的
+confound），因此增加难度归一化指标：
+
+    G_max(t) = 该个体在该阶段 80 步内的最佳增益
+    LE_t     = G(final) / G_max
+    T80_t    = min{k : G(k) >= 0.8 G_max}
+
+| arm | LE_t 三阶段 | T80_t | LE 斜率 |
+|---|---|---|---|
+| AdamW | [0.634, 0.865, 0.253] | [44.8, 14.4, 20.0] | −0.19 |
+| DLA fast | [0.794, 0.702, 0.693] | [44.0, 32.8, 38.4] | −0.05 |
+| DLA slow | 0（快权重承担全部学习） | 80/80/80 | 0 |
+
+**判定：核心发育假设（`LE_DLA(t+1) > LE_DLA(t)`）未被支持。** DLA 的归一化
+效率几乎平坦（0.79→0.70→0.69），没有随发育上升；但它不随难度崩坏（AdamW
+在第三阶段掉到 0.25，DLA 保持 0.69）。同时 DLA slow 增益仍为 0：睡眠巩固
+依然没有把新知识写进慢记忆。
+
+这是有价值的 negative result：当前 DLA 能做到**适应 + 抗遗忘 + 效率稳定**，
+但还没有证据表明它能**改变自身的学习效率**。下一步方向因此明确：
+（a）让 φ/学习规则参数本身在生命周期内可更新（而不是只有 P 在动）；
+（b）把巩固做深，让 slow 真正获得新知识；
+（c）如果仍是 flat，论文叙事应改成“发育式记忆分离”，而非“学习能力增长”。
+
 ## 下一步
 
-1. Stage 5：递进难度课程（通用 → 科学 → SFT），测 `Λ_t = 1/steps_to_target_gain`
-   是否随发育上升；对照 frozen φ vs adaptive φ。
-2. Stage 4.5：增大慢记忆巩固（调 consolidate_fast_direct / Q 信号），让 B 真正
+1. Stage 4.5：增大慢记忆巩固（调 consolidate_fast_direct / Q 信号），让 B 真正
    进入 W_slow，而不是只靠快权重持有。
-3. 若 Λ_t 信号稳定，再用 Mac M2 MLX 训 10–30M 专用出生模型做论文主实验。
+2. Stage 5.5：给 Transformer-DLA 增加可适应的学习规则参数（tempos 的终身
+   meta-gradient），重测 LE 是否上升；若仍 flat，接受 negative result。
+3. 若信号稳定，再用 Mac M2 MLX 训 10–30M 专用出生模型做论文主实验。
