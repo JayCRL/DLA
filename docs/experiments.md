@@ -178,6 +178,41 @@ DLA-meta 在正序课程的最难阶段 LE 明显高于 static（0.54 vs 0.24）
 结论：φ 能发育、发育有方向性影响，但**尚无稳定证据证明发育让未来学习更好**。
 这是一个可写进论文的 nuanced result，不是干净的成功，也不是干净的失败。
 
+## Stage 5.5b：2×2 Development 验证（5 seeds）
+
+设计：`curriculum history (easy→hard / hard→easy) × learner (DLA-static / DLA-meta)`，
+5 seeds × 4 conditions，每个个体最后在从未见过的 science 域 D 上测 LE_D / T80_D。
+
+| condition | LE_D（5 seeds） | mean | T80_D mean |
+|---|---|---|---|
+| easy→hard / static | [1.00, 0.17, 0.17, 0.79, 0.41] | 0.506 | 40.0 |
+| easy→hard / meta | [1.00, 0.00, 0.62, 0.91, 0.23] | 0.551 | 44.0 |
+| hard→easy / static | [1.00, 0.88, 0.86, 1.00, 0.00] | 0.748 | 34.4 |
+| hard→easy / meta | [1.00, 0.84, 0.91, 0.91, 0.47] | 0.824 | 37.6 |
+
+Development Gain（meta − static）：
+
+| metric | easy→hard | hard→easy |
+|---|---|---|
+| DG (LE_D) | +0.045（weak +） | +0.076（weak +） |
+| DG_T (static T80 − meta T80) | −4.0 | −3.2 |
+| interaction LE | +0.031 | |
+| interaction T | +0.8 | |
+
+φ 距离：`||φ_final(EH) − φ_final(HE)||` = 0.00321（non-zero，历史确实改变 φ）。
+
+**判定：历史效应大而稳定，development gain 小而不稳定。**
+* **History × D 主效应强**：hard→easy 的两类 learner 在 D 上都明显优于 easy→hard
+  （LE_D 0.75–0.82 vs 0.51–0.55）——经历顺序塑造未来学习者是可重复的。
+* **Meta vs static 的差距弱**：meta 平均略高于 static（DG 正），但每个 seed 有正
+  有负；T80 上 meta 没有稳定优势（DG_T 平均为负）。5 seeds 尚不能拒绝
+  “meta 并不比 static 更利于迁移”的原假设。
+* **Development 核心假设（LE_D_meta > LE_D_static）未通过严格检验。**
+
+这仍是有价值的科学结论：**Development（经历顺序）确实 shaping learner；但当前
+的 meta 学习规则更新方式还不足以稳定地把这种 shaping 变成迁移收益。** 下一步应
+该改进 meta 更新（更多在线步、更强信号、或让 φ 维度更大），而不是扩大跑量。
+
 ## 下一步
 
 1. Stage 5.5b：把 meta 更新从“阶段边界一步”改成终身在线（每阶段内多次、用
