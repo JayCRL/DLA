@@ -213,6 +213,40 @@ Development Gain（meta − static）：
 的 meta 学习规则更新方式还不足以稳定地把这种 shaping 变成迁移收益。** 下一步应
 该改进 meta 更新（更多在线步、更强信号、或让 φ 维度更大），而不是扩大跑量。
 
+## Stage 5.5c：机制与因果拆解（3 seeds）
+
+在 5.5b 基础上新增 state snapshots、2×2 cross-injection、φ sensitivity。
+
+Cross-injection 2×2（Body=W+P+W_fast+Q，φ=9 个 tempo；统一未见域 D）：
+
+| Body / φ | LE_D（3 seeds） | mean | T80 mean |
+|---|---|---|---|
+| EH / EH | [1.00, 0.00, 0.57] | 0.522 | 34.7 |
+| EH / HE | [0.00, 0.00, 0.44] | 0.148 | 37.3 |
+| HE / EH | [0.87, 0.82, 1.00] | 0.898 | 16.0 |
+| HE / HE | [0.99, 0.75, 0.96] | 0.900 | 24.0 |
+
+φ sensitivity（固定 EH body，沿 `d=(φ_HE−φ_EH)/||…||`）：
+
+| α | −1 | −0.5 | 0 | 0.5 | 1 | 1.5 |
+|---|---|---|---|---|---|---|
+| LE_D mean | 0.998 | 1.000 | 0.358 | 0.000 | 0.000 | 0.000 |
+
+H→State 末态：P_gate 两种历史都≈0.50，差异极小；W_slow norm 只差 ~0.05；
+W_fast norm 在 EH 下波动大（6.2–7.9），HE 下更集中（~7.4）。
+
+**判定：Body 是 history effect 的主要中介，9 维 tempo φ 不是稳定的 development
+carrier。**
+* 换 body 的效应远大于换 φ（HE body mean LE_D 0.90 vs EH body 0.52/0.15）；
+* 同一个 body 上换 φ 变化很小且方向不一致；
+* φ sensitivity 非单调、方向与“HE 更好”相反——EH→HE 的 φ 方向本身不携带
+  “更好的未来学习者”。
+
+因此：**停止追“更强 meta φ”。** 论文主线应采用结局 B：
+Learning History → Learner State（Body：W/P/fast-slow）→ Future Adaptation，
+Development 主要由学习积累出来的 body 状态介导，而不是由 9 个 tempo 介导。
+下一步可做 body 状态的具体分解（哪一层、哪个矩阵、哪个状态分量中介）。
+
 ## 下一步
 
 1. Stage 5.5b：把 meta 更新从“阶段边界一步”改成终身在线（每阶段内多次、用
