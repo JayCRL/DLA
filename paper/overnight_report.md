@@ -131,3 +131,24 @@ Confirm and localise the destructive effect:
    find the layer whose swap is responsible for the performance collapse.
 3. Optionally test whether the destructive effect is due to W_fast *content* or
    to its *magnitude/norm* by normalising EH W_fast to HE norms before injection.
+
+## Stage 6 addendum: within-lifetime B test (10 seeds, matched-difficulty science slices)
+
+Design: one DLA individual per seed sequentially learns 4 disjoint Science-Wikipedia
+slices selected for similar birth PPL (pre means 39.3 / 37.0 / 39.7 / 40.7). Metric:
+normalised loss slope over first 10 steps (loss/loss0 regression slope).
+
+| task | norm_slope mean | raw_slope mean |
+|---|---|---|
+| 1 | +0.00047 | +0.00163 |
+| 2 | +0.00108 | +0.00402 |
+| 3 | −0.00192 | −0.00771 |
+| 4 | −0.00089 | −0.00357 |
+
+Paired task4−task1: mean −0.00136, SD 0.00404, bootstrap 95% CI (−0.00355, +0.00109),
+Cohen's d −0.34, 7/10 negative, sign-test p=0.17.
+
+**Verdict: weak directional evidence, NOT statistically conclusive.** The same
+individual does show a tendency to have more negative normalised slopes on later
+matched-difficulty tasks (7/10 seeds), but the effect is small and the CI includes
+zero. B ("more learning -> faster learning") remains unproven at n=10.
