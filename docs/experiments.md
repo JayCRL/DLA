@@ -148,10 +148,41 @@ confound），因此增加难度归一化指标：
 （b）把巩固做深，让 slow 真正获得新知识；
 （c）如果仍是 flat，论文叙事应改成“发育式记忆分离”，而非“学习能力增长”。
 
+## Stage 5.5：让 learning rule（φ）发育（3 seeds 正序 + 2 seeds 反向课程）
+
+三臂：AdamW / DLA-static（φ 冻结）/ DLA-meta（每进入新阶段前，φ 对 **future
+stage 的损失**做一步 meta-gradient，`φ ← φ − β ∇_φ L_future`）。φ 是 9 个
+tempo 参数（η_fast, η_plast, fast_decay, stability, α_q, 三个 consolidate 率）。
+
+| arm | LE_t 三阶段 | LE 斜率 | 未见域 D 的 LE_D |
+|---|---|---|---|
+| AdamW | [0.994, 0.960, 0.443] | −0.276 | 0.282 |
+| DLA-static | [0.999, 0.964, 0.243] | −0.378 | **0.474** |
+| DLA-meta | [0.997, 0.941, **0.539**] | **−0.229** | 0.230 |
+
+Δφ 记录：DLA-meta 每次 meta 更新的 φ 变化范数 ≈ 0.0028（非零、可测）。
+
+反向课程（2 seeds）：
+
+| 历史 | DLA-static T80_D | DLA-meta T80_D |
+|---|---|---|
+| easy→hard | 36 / 56 | 36 / 56 |
+| hard→easy | 40 / 32 | **24 / 12** |
+
+**判定：部分正信号，但不构成“LE 随发育单调上升”的证据。**
+DLA-meta 在正序课程的最难阶段 LE 明显高于 static（0.54 vs 0.24），且 LE 衰减
+斜率最缓；反向课程中 hard→easy 的 meta 个体在未见域 D 上 T80 更快（24/12 vs
+40/32）。即：**learning history 确实改变了 φ 和未来学习表现**，但该优势没有
+稳定迁移到 LE_D（forward 序下 meta 反而低于 static，seed 方差很大）。
+
+结论：φ 能发育、发育有方向性影响，但**尚无稳定证据证明发育让未来学习更好**。
+这是一个可写进论文的 nuanced result，不是干净的成功，也不是干净的失败。
+
 ## 下一步
 
-1. Stage 4.5：增大慢记忆巩固（调 consolidate_fast_direct / Q 信号），让 B 真正
-   进入 W_slow，而不是只靠快权重持有。
-2. Stage 5.5：给 Transformer-DLA 增加可适应的学习规则参数（tempos 的终身
-   meta-gradient），重测 LE 是否上升；若仍 flat，接受 negative result。
-3. 若信号稳定，再用 Mac M2 MLX 训 10–30M 专用出生模型做论文主实验。
+1. Stage 5.5b：把 meta 更新从“阶段边界一步”改成终身在线（每阶段内多次、用
+   重放缓冲），并加 5 seeds；看 φ 发育优势能否稳定迁移到 LE_D。
+2. Stage 4.5：增大慢记忆巩固，让 B 真正进入 W_slow（与 5.5b 并行或随后）。
+3. 若仍无稳定优势，论文叙事采用结局 B：
+   “Adaptive plasticity + fast/slow memory + difficulty robustness”，
+   不声称 learning ability grows。
