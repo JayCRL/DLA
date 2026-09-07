@@ -214,14 +214,19 @@ def make_dla_gpt_class(GPT):
                     self._wrap_all(child, p)
 
         def _collect_state_keys(self):
-            seen = set()
+            # Use stable string names (module paths), not data_ptr, so states can
+            # be saved / loaded / cross-injected between separately constructed
+            # individuals. Tied weights (wte/lm_head) share one key.
+            seen_ptr = {}
             for name, mod in self.wrapped:
-                key = mod.weight.data_ptr()
-                mod.state_key = key
-                if key not in seen:
-                    seen.add(key)
-                    self.state_shapes.append((key, tuple(mod.weight.shape)))
-                    self.key_modules[key] = mod
+                ptr = mod.weight.data_ptr()
+                if ptr in seen_ptr:
+                    mod.state_key = seen_ptr[ptr]
+                else:
+                    seen_ptr[ptr] = name
+                    mod.state_key = name
+                    self.state_shapes.append((name, tuple(mod.weight.shape)))
+                    self.key_modules[name] = mod
 
         # ---------------------------------------------------------------- state
         def set_dla_state(self, state: Optional[DLAState]):
