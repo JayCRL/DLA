@@ -152,3 +152,19 @@ Cohen's d −0.34, 7/10 negative, sign-test p=0.17.
 individual does show a tendency to have more negative normalised slopes on later
 matched-difficulty tasks (7/10 seeds), but the effect is small and the CI includes
 zero. B ("more learning -> faster learning") remains unproven at n=10.
+
+## Addendum C: W_fast effective rank EH vs HE (10 seeds)
+
+Computed on saved 5.5c/e bodies. Effective rank is the weighted mean of
+per-matrix spectral entropy (exp of Shannon entropy of normalised singular values).
+
+| body | effective rank mean±std |
+|---|---|
+| EH | 5.2750±0.0095 |
+| HE | 5.2697±0.0089 |
+
+HE − EH difference: −0.0053±0.0139, paired t = −1.21, p = 0.23.
+
+**Verdict: no significant effective-rank difference between histories.**
+This does not contradict the W_fast causal effect found in P0; it suggests the
+effect is not captured by a simple global effective-rank statistic.
