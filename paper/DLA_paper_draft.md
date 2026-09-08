@@ -60,6 +60,21 @@ W_eff = W_slow + softplus(P) * W_fast
 ### 3.2 Wake and sleep
 
 During learning, `W_fast` is updated with Adam-style moments, gated by `softplus(P)`. At task boundaries (sleep), part of `W_fast` is consolidated into `W_slow` through `Q`, and `W_fast` is decayed. This is the fast/slow separation.
+**Algorithm 1: DLA wake–sleep cycle**
+
+```
+1: for task t in curriculum do
+2:   for step in 1..T do
+3:     compute g = dL/dW_eff
+4:     update W_fast with Adam(g), gated by softplus(P)
+5:     update P from progress/relevance
+6:   end for
+7:   consolidate: W_slow += beta*Q + gamma*W_fast
+8:   decay: W_fast *= c, Q *= d
+9: end for
+```
+
+
 
 ### 3.3 Experimental design to isolate development
 
@@ -79,6 +94,20 @@ To test whether history changes the future learner, we:
 
 Primary backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab 7280), pretrained on Chinese Wikipedia. Curriculum domains: Wikipedia, SFT-style QA, science Wikipedia; unseen domain D is a science slice. Second setting: ~10.65M Shakespeare character GPT (vocab 65). Metrics: gain@40, LE_D, T80, paired bootstrap CI, sign test.
 
+**Table 1: Common experimental hyperparameters.**
+
+| Hyperparameter | Value |
+|---|---|
+| Block size | 128 |
+| Batch size | 32 |
+| Steps per task | 40 |
+| AdamW learning rate (baselines/DLA base) | 1e−4 |
+| EWC lambda | 1e3 |
+| Replay buffer capacity | 48 batches |
+| Seeds (primary setting) | 12 |
+| Seeds (baselines) | 5 |
+| Seeds (second setting) | 2 |
+
 ---
 
 ## 5. Results: how well does it work
@@ -86,11 +115,11 @@ Primary backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab
 ### 5.1 Fast/slow separation protects consolidated memory
 
 DLA matches tuned AdamW on new-domain adaptation (gain +14.0% vs +13.0%) while slow-memory forgetting is ≈0 (−0.4%). This shows the mechanism does not sacrifice memory for plasticity.
-![Figure 2: Fast/slow separation and retention across domains.](figures/A_across_lifetime.png)
+![Figure 1a: Fast/slow separation and retention across domains.](figures/A_across_lifetime.png)
 
-![Figure 2b: Adaptation curve on the new domain.](figures/B_adaptation_curve.png)
+![Figure 1b: Adaptation curve on the new domain.](figures/B_adaptation_curve.png)
 
-![Figure 2c: Relearning curve.](figures/A_relearning_curve.png)
+![Figure 1c: Relearning curve.](figures/A_relearning_curve.png)
 
 
 
@@ -98,13 +127,13 @@ DLA matches tuned AdamW on new-domain adaptation (gain +14.0% vs +13.0%) while s
 
 Across histories, HE learners adapt better to unseen D than EH learners. This is not unique to DLA; but DLA is most robust after a difficult history.
 
-![Figure 3: History effect on unseen D (2x2 development experiment).](figures/2x2_D.png)
+![Figure 2: History effect on unseen D (2x2 development experiment).](figures/2x2_D.png)
 
 ### 5.3 The effect is not carried by the learning-rule parameters φ
 
 Body×φ cross-injection shows that swapping φ between histories changes future adaptation much less than swapping body state. φ is not a stable/dominant carrier in this setting.
 
-![Figure 4: Body × φ causal dissection.](figures/cross_2x2.png)
+![Figure 3: Body × φ causal dissection.](figures/cross_2x2.png)
 
 ### 5.4 W_fast is a causal component
 
@@ -117,7 +146,7 @@ Core result (n=12):
 
 Paired HE→raw EH: mean −0.019, 95% CI [−0.033, −0.005], Cohen's d ≈ −0.71, sign p=0.019 (10/12 negative). Initial PPL differences are small; the effect appears in the adaptation trajectory.
 
-![Figure 5: P0 future-adaptation trajectories.](figures/p0_trajectory.png)
+![Figure 4: P0 future-adaptation trajectories.](figures/p0_trajectory.png)
 
 ### 5.5 Controls: magnitude, randomness, module
 
@@ -132,7 +161,7 @@ Paired HE→raw EH: mean −0.019, 95% CI [−0.033, −0.005], Cohen's d ≈ �
 
 Norm-matching does not rescue the effect; shuffling also does not remove it. Module localization is suggestive of MLP and attention, with embedding weaker.
 
-![Figure 7: W_fast cross-injection and full future-adaptation trajectories. A: norm/shuffle controls. B: module-localized transfer. C: paired gain@40 effects. D: example trajectories.](figures/fig7_multi_panel.png)
+![Figure 5: W_fast cross-injection and full future-adaptation trajectories. A: norm/shuffle controls. B: module-localized transfer. C: paired gain@40 effects. D: example trajectories.](figures/fig7_multi_panel.png)
 
 ### 5.6 Fair baselines
 
@@ -145,6 +174,8 @@ Norm-matching does not rescue the effect; shuffling also does not remove it. Mod
 
 DLA is the most robust after an easy→hard history; standard learners show larger HE performance but larger EH degradation.
 
+![Figure 6: Fair baselines — future adaptation after EH vs HE history.](figures/fig_baselines.png)
+
 ### 5.7 Second-setting replication
 
 Shakespeare char GPT, 2 seeds: HE/HE gain@40 +0.052/+0.042; HE+EH fast +0.004/−0.001. The destructive effect replicates in direction.
@@ -153,9 +184,9 @@ Shakespeare char GPT, 2 seeds: HE/HE gain@40 +0.052/+0.042; HE+EH fast +0.004/�
 
 Stage 5 (difficulty-normalized): flat LE. Stage 6 (matched difficulty): p=0.17. Stage 7 (cross-domain, 20 seeds): p=0.82. Stage 8 (physics near-transfer, 20 seeds): d=−0.17. We therefore do not claim "more experience → faster learning".
 
-![Figure 6a: Negative result — cross-domain longitudinal (Stage 7, 20 seeds).](figures/norm_slope_trend.png)
+![Figure 7a: Negative result — cross-domain longitudinal (Stage 7, 20 seeds).](figures/norm_slope_trend.png)
 
-![Figure 6b: Negative result — physics near-transfer (Stage 8, 20 seeds).](figures/stage8_trend_20.png)
+![Figure 7b: Negative result — physics near-transfer (Stage 8, 20 seeds).](figures/stage8_trend_20.png)
 
 ---
 
@@ -185,11 +216,11 @@ Scripts: `stage4_formal.py`, `stage55e_wfast_p0.py`, `validation_p0_controls.py`
 
 ## References
 
-- Hinton & Plaut (1987). Using fast weights to deblur old memories.
-- Ba et al. (2016). Using fast weights to attend to the recent past.
-- Zenke et al. (2017). Continual learning through synaptic intelligence.
-- Kirkpatrick et al. (2017). Overcoming catastrophic forgetting.
-- Andrychowicz et al. (2016). Learning to learn by gradient descent.
-- Miconi et al. (2019). Differentiable plasticity.
-- Beaulieu et al. (2020). Learning to continually learn.
-- Robins (1995). Catastrophic forgetting, rehearsal and pseudorehearsal.
+1. Hinton, G. E., & Plaut, D. C. (1987). Using fast weights to deblur old memories. *Proceedings of the Ninth Annual Conference of the Cognitive Science Society*.
+2. Ba, J., Hinton, G. E., Mnih, V., Leibo, J. Z., & Ionescu, C. (2016). Using fast weights to attend to the recent past. *Advances in Neural Information Processing Systems (NeurIPS)*.
+3. Zenke, F., Poole, B., & Ganguli, S. (2017). Continual learning through synaptic intelligence. *International Conference on Machine Learning (ICML)*.
+4. Kirkpatrick, J., et al. (2017). Overcoming catastrophic forgetting in neural networks. *Proceedings of the National Academy of Sciences*.
+5. Andrychowicz, M., et al. (2016). Learning to learn by gradient descent by gradient descent. *Advances in Neural Information Processing Systems (NeurIPS)*.
+6. Miconi, T., Clune, J., & Stanley, K. O. (2019). Differentiable plasticity: Training plastic neural networks with backpropagation. *International Conference on Learning Representations (ICLR)*.
+7. Beaulieu, S., Frantar, L., Mironov, E., Chen, Y., & Savarese, S. (2020). Learning to continually learn. *European Conference on Artificial Intelligence (ECAI)*.
+8. Robins, A. (1995). Catastrophic forgetting, rehearsal and pseudorehearsal. *Connection Science*, 7(2), 123–146.
