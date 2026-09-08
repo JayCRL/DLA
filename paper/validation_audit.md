@@ -147,3 +147,40 @@ Interpretation (preliminary, n=3 for baselines):
   paper framing: DLA protects/stabilises future adaptation after difficult early
   histories rather than universally accelerating learning.
 - Baseline results are preliminary (n=3); extend to n=5+ before strong claims.
+
+## 9. Fair baselines extended (n=5) and second-setting replication (n=2)
+
+Baselines n=5 (LE_D means):
+
+| method | EH | HE | HE−EH |
+|---|---|---|---|
+| AdamW | 0.339 | 0.675 | +0.336 |
+| AdamW+replay | 0.375 | 0.961 | +0.586 |
+| EWC | 0.292 | 0.895 | +0.603 |
+| DLA (n=12) | 0.517 | 0.709 | +0.192 |
+
+Gain@40 means (baselines n=5):
+
+| method | EH | HE |
+|---|---|---|
+| AdamW | +0.0081 | +0.0238 |
+| AdamW+replay | +0.0042 | +0.0168 |
+| EWC | +0.0062 | +0.0279 |
+| DLA (n=12) | −0.0006 | +0.0143 |
+
+Interpretation: DLA remains the most robust after EH history; standard
+learners show larger HE performance but also larger EH degradation.
+
+Second-setting replication (Shakespeare character GPT, ~10.65M, 2 seeds):
+
+| seed | HE/HE gain40 | HE+EH_fast gain40 |
+|---|---|---|
+| 0 | +0.0522 | +0.0039 |
+| 1 | +0.0424 | −0.0012 |
+
+The destructive W_fast effect replicates in the second backbone/corpus (2/2
+seeds, direction consistent). Small n, exploratory.
+
+Remaining gaps after this audit:
+- Second-setting n is small (2); increase to 5+ if used in paper.
+- Fair baselines still n=5; enough for workshop/undergrad, more for strong claim.
