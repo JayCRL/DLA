@@ -206,3 +206,17 @@ mean +0.00002, sd 0.00039, t=0.229, p=0.82, 95% CI (-0.00015, +0.00019).
 significant monotonic improvement in first-10-step learning speed in this DLA
 variant. Results/analysis: results/stage7/analysis.json, figure
 results/stage7/norm_slope_trend.png.
+
+## Addendum Stage 8: physics near-transfer (5 seeds)
+
+Same-domain physics difficulty tiers (basic->intermediate->advanced->frontier),
+one DLA individual per seed, 40 steps/task.
+
+norm_slope10 means:
+  task1 -0.00297, task2 +0.00018, task3 -0.00310, task4 -0.00115
+
+Task4 - Task1: mean +0.00182, SD 0.00465, Cohen's d = 0.39, 4/5 seeds positive.
+
+**Verdict: weak positive direction (d~0.4), not conclusive.** With d in the
+0.2-0.5 range and only 5 seeds, this should be expanded to 20 seeds before
+making a claim. Data/plots: results/stage8_physics_test/.
