@@ -70,51 +70,50 @@ Must be updated to:
 3. Run fair baselines only after controls.
 4. Leave second-setting replication as P1 if compute allows.
 
-## 7. P0 controls result (validation run, n=12, LE_D metric)
+## 7. P0 controls result (gain@40, n=12, per-seed JSON)
 
-Run: `experiments/validation_p0_controls.py`, seeds 0-11, all 7 tags.
-Concurrent writes overwrote the single output file, so the 12-seed table was
-recovered from per-seed logs (`LE_D` only; full gain curves were not retained
-for all seeds).
+Run: `experiments/validation_p0_controls.py`, seeds 0-11, all 7 tags, per-seed
+JSON + full curves saved under `results/validation/seeds/`.
 
-Mean LE_D:
+Gain@40 means:
 
-| tag | mean LE_D |
+| tag | mean gain@40 |
 |---|---|
-| HE/HE | 0.684 |
-| HE+EH_Wfast (raw) | 0.507 |
-| HE+normEH | 0.230 |
-| HE+shuffleEH | 0.345 |
-| HE+EH_emb | 0.611 |
-| HE+EH_attn | 0.270 |
-| HE+EH_mlp | 0.279 |
+| HE/HE native | +0.0141 |
+| HE+EH_Wfast raw | −0.0051 |
+| HE+normEH | −0.0078 |
+| HE+shuffleEH | −0.0026 |
+| HE+EH_emb | +0.0080 |
+| HE+EH_attn | +0.0021 |
+| HE+EH_mlp | −0.0028 |
 
-Paired LE_D differences (bootstrap 95% CI):
+Paired gain@40 contrasts:
 
-| contrast | mean | CI | Cohen d |
-|---|---|---|---|
-| HE/HE -> HE+EH_Wfast | −0.177 | (−0.505, +0.177) | −0.28 |
-| HE/HE -> HE+normEH | −0.454 | (−0.739, −0.145) | −0.80 |
-| HE/HE -> HE+shuffleEH | −0.339 | (−0.559, −0.126) | −0.82 |
-| raw -> norm | −0.276 | (−0.459, −0.099) | −0.81 |
-| raw -> shuffle | −0.162 | (−0.518, +0.206) | −0.24 |
-| HE/HE -> HE+EH_emb | −0.073 | (−0.154, +0.007) | −0.49 |
-| HE/HE -> HE+EH_attn | −0.415 | (−0.632, −0.212) | −1.07 |
-| HE/HE -> HE+EH_mlp | −0.406 | (−0.633, −0.170) | −0.92 |
+| contrast | mean | bootstrap 95% CI | Cohen d | sign p |
+|---|---|---|---|---|
+| HE/HE → raw EH | −0.0192 | (−0.0335, −0.0054) | −0.71 | 0.019 |
+| HE/HE → norm EH | −0.0219 | (−0.0344, −0.0088) | −0.90 | 0.073 |
+| HE/HE → shuffle EH | −0.0167 | (−0.0233, −0.0092) | −1.25 | 0.003 |
+| raw → norm | −0.0027 | (−0.0063, +0.0014) | −0.39 | 0.073 |
+| raw → shuffle | +0.0025 | (−0.0066, +0.0145) | +0.13 | 0.39 |
+| HE/HE → EH_emb | −0.0061 | (−0.0093, −0.0018) | −0.87 | 0.003 |
+| HE/HE → EH_attn | −0.0120 | (−0.0180, −0.0059) | −1.06 | 0.019 |
+| HE/HE → EH_mlp | −0.0169 | (−0.0253, −0.0079) | −1.05 | 0.073 |
 
-Important caveat:
-- This validation run used LE_D, not the gain@40 that produced the strongest P0
-  result. In LE_D, the raw destructive contrast is not significant
-  (CI includes zero).
-- Norm-matching does NOT rescue the effect; if anything it makes the LE_D drop
-  larger, so global magnitude alone cannot explain the destructive effect.
-- Shuffle does NOT remove the LE_D drop (CI excludes zero vs native), so a
-  simple structure-preserving within-matrix shuffle also does not explain it.
-- Attention and MLP module transfers both show CI-excluding-zero drops;
-  embedding transfer is weaker. Localization is suggestive for attention+MLP,
-  not definitive for one module.
+Conclusions (gain@40):
+- The destructive raw transfer replicates robustly (CI excludes zero, d≈−0.7).
+- Norm-matching does NOT rescue the effect: norm-matched EH W_fast is as
+  destructive as raw (CI vs native excludes zero; raw-vs-norm CI includes zero).
+  Global magnitude cannot explain the effect.
+- Shuffle also does NOT rescue the effect: within-matrix shuffled EH W_fast is
+  destructive (CI excludes zero; raw-vs-shuffle not different). A simple
+  random-parameter control is not a sufficient explanation; the effect depends
+  on more than exact EH structure alone (it also does not require exact EH
+  structure, since shuffled EH is still harmful).
+- Module localization: MLP and attention both show clear destructive drops;
+  embedding also contributes but is smaller. Localization is suggestive of
+  MLP+attention, not a single module.
 
-Because of the metric mismatch, the norm/shuffle/module P0 controls should be
-re-run with per-seed JSON + gain@40 output before being used as confirmatory
-paper evidence. The raw P0 gain@40 evidence from Stage 5.5e remains the
-strongest single result.
+Metric note: earlier LE_D-only analysis showed weaker raw-signal because LE_D
+is noisier; gain@40 is the primary paper metric and is used here.
+

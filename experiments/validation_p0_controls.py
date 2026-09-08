@@ -177,9 +177,11 @@ def main():
         probe("HE+EH_attn", lambda st: copy_module_group(eh_state, st, "attn"))
         probe("HE+EH_mlp", lambda st: copy_module_group(eh_state, st, "mlp"))
 
-    with open(os.path.join(args.out, "results_validation.json"), "w") as f:
+    # per-seed output so concurrent runs do not overwrite each other
+    os.makedirs(os.path.join(args.out, "seeds"), exist_ok=True)
+    with open(os.path.join(args.out, "seeds", f"seed{args.seeds[0]}.json"), "w") as f:
         json.dump(all_rows, f, indent=2, ensure_ascii=False)
-    print(f"saved -> {args.out}/results_validation.json")
+    print(f"saved -> {args.out}/seeds/seed{args.seeds[0]}.json")
 
 
 if __name__ == "__main__":
