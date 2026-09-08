@@ -117,3 +117,33 @@ Conclusions (gain@40):
 Metric note: earlier LE_D-only analysis showed weaker raw-signal because LE_D
 is noisier; gain@40 is the primary paper metric and is used here.
 
+
+## 8. Fair baselines (preliminary, n=3 seeds)
+
+Same EH/HE curriculum and D protocol as Stage 5.5e, but with standard learners.
+LE_D means:
+
+| method | EH | HE | HE−EH |
+|---|---|---|---|
+| AdamW | 0.232 | 0.967 | +0.735 |
+| AdamW+replay | 0.291 | 0.997 | +0.706 |
+| EWC | 0.153 | 0.951 | +0.798 |
+| DLA (Stage5.5e, n=12) | 0.517 | 0.709 | +0.192 |
+
+Gain@40 means:
+
+| method | EH | HE |
+|---|---|---|
+| AdamW | −0.0024 | +0.0412 |
+| AdamW+replay | +0.0007 | +0.0219 |
+| EWC | −0.0031 | +0.0425 |
+| DLA (n=12) | −0.0006 | +0.0143 |
+
+Interpretation (preliminary, n=3 for baselines):
+- Standard continual learners also show a history effect (HE > EH), so history
+  sensitivity is not unique to DLA.
+- DLA is more robust after the EH history (EH LE 0.52 vs baselines 0.15-0.29),
+  while baselines achieve higher HE performance. This is consistent with the
+  paper framing: DLA protects/stabilises future adaptation after difficult early
+  histories rather than universally accelerating learning.
+- Baseline results are preliminary (n=3); extend to n=5+ before strong claims.
