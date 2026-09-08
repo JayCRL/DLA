@@ -69,3 +69,52 @@ Must be updated to:
 2. Run the already-written validation script (`experiments/validation_p0_controls.py`) on seeds 0–11 to close norm/shuffle/module gaps. This is the highest-value, already-scoped P0.
 3. Run fair baselines only after controls.
 4. Leave second-setting replication as P1 if compute allows.
+
+## 7. P0 controls result (validation run, n=12, LE_D metric)
+
+Run: `experiments/validation_p0_controls.py`, seeds 0-11, all 7 tags.
+Concurrent writes overwrote the single output file, so the 12-seed table was
+recovered from per-seed logs (`LE_D` only; full gain curves were not retained
+for all seeds).
+
+Mean LE_D:
+
+| tag | mean LE_D |
+|---|---|
+| HE/HE | 0.684 |
+| HE+EH_Wfast (raw) | 0.507 |
+| HE+normEH | 0.230 |
+| HE+shuffleEH | 0.345 |
+| HE+EH_emb | 0.611 |
+| HE+EH_attn | 0.270 |
+| HE+EH_mlp | 0.279 |
+
+Paired LE_D differences (bootstrap 95% CI):
+
+| contrast | mean | CI | Cohen d |
+|---|---|---|---|
+| HE/HE -> HE+EH_Wfast | −0.177 | (−0.505, +0.177) | −0.28 |
+| HE/HE -> HE+normEH | −0.454 | (−0.739, −0.145) | −0.80 |
+| HE/HE -> HE+shuffleEH | −0.339 | (−0.559, −0.126) | −0.82 |
+| raw -> norm | −0.276 | (−0.459, −0.099) | −0.81 |
+| raw -> shuffle | −0.162 | (−0.518, +0.206) | −0.24 |
+| HE/HE -> HE+EH_emb | −0.073 | (−0.154, +0.007) | −0.49 |
+| HE/HE -> HE+EH_attn | −0.415 | (−0.632, −0.212) | −1.07 |
+| HE/HE -> HE+EH_mlp | −0.406 | (−0.633, −0.170) | −0.92 |
+
+Important caveat:
+- This validation run used LE_D, not the gain@40 that produced the strongest P0
+  result. In LE_D, the raw destructive contrast is not significant
+  (CI includes zero).
+- Norm-matching does NOT rescue the effect; if anything it makes the LE_D drop
+  larger, so global magnitude alone cannot explain the destructive effect.
+- Shuffle does NOT remove the LE_D drop (CI excludes zero vs native), so a
+  simple structure-preserving within-matrix shuffle also does not explain it.
+- Attention and MLP module transfers both show CI-excluding-zero drops;
+  embedding transfer is weaker. Localization is suggestive for attention+MLP,
+  not definitive for one module.
+
+Because of the metric mismatch, the norm/shuffle/module P0 controls should be
+re-run with per-seed JSON + gain@40 output before being used as confirmatory
+paper evidence. The raw P0 gain@40 evidence from Stage 5.5e remains the
+strongest single result.
