@@ -188,3 +188,21 @@ Difference matrix D = W_fast_HE − W_fast_EH:
 suggestive (HE MLP W_fast has lower effective rank, p=0.064, 7/10 negative).
 The EH/HE difference is not captured by a single low-rank global mode; top-10
 directions explain only ~31% of the difference energy.
+
+## Addendum Stage 7: cross-domain 10-task longitudinal (20 seeds)
+
+Protocol: one DLA individual per seed, fixed order of 10 different domain pools
+(general wiki, synthetic QA, physics, math, computer, biology, economics, law,
+history, literature), 40 steps each. Metric: norm_slope10.
+
+Per-task means:
+task1 -0.0015, task2 -0.0015, task3 -0.0009, task4 -0.0013, task5 -0.0009,
+task6 -0.0012, task7 -0.0013, task8 -0.0000, task9 -0.0001, task10 -0.0027
+
+Per-seed regression slope of task index on norm_slope:
+mean +0.00002, sd 0.00039, t=0.229, p=0.82, 95% CI (-0.00015, +0.00019).
+
+**Verdict: B is not supported.** More cross-domain experience does not produce a
+significant monotonic improvement in first-10-step learning speed in this DLA
+variant. Results/analysis: results/stage7/analysis.json, figure
+results/stage7/norm_slope_trend.png.
