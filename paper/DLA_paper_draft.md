@@ -22,9 +22,11 @@ performance on an unseen domain, but the 9-dimensional learning-rule
 parameters (tempos) are *not* the carrier of this effect. Fourth, body-state
 cross-injection localises the carrier to the fast weights: transplanting the
 fast weights from a hard→easy learner into an easy→hard body changes the
-future adaptation *trajectory* rather than the initial perplexity. However,
-with 10 seeds this fast-weight transfer effect is directionally consistent but
-not statistically conclusive (one near-significant contrast). We therefore
+future adaptation *trajectory* rather than the initial perplexity. The
+destructive direction of this fast-weight transfer is statistically robust at
+n=12 seeds (paired gain@40 difference −0.0195, bootstrap 95% CI excludes zero,
+Cohen's d ≈ −0.80, sign test p=0.019); the positive transfer direction remains
+not significant. We therefore
 frame this paper as an honest mechanistic study: learning history shapes the
 learner, the effect is carried by accumulated fast-weight state, and current
 meta-updates of scalar learning-rule parameters do not yet produce stable
@@ -190,29 +192,32 @@ little and inconsistent effect.
 ![Cross-injection 2x2](figures/cross_2x2.png)
 
 
-### 5.4 Fast weights carry (part of) the history effect (5.5d/5.5e, 10 seeds)
+### 5.4 Fast weights carry (part of) the history effect (5.5d/5.5e, 10->12 seeds)
 
 Body decomposition (5.5d, 3 seeds):
 
 - EH body + HE fast weights → LE_D jumps from 0.33 to 0.91;
 - HE body + EH fast weights → LE_D drops from 0.96 to 0.00.
 
-Extended P0 trajectory experiment (10 seeds):
+Extended P0 trajectory experiment (10->12 seeds; destructive row n=12):
 
 | combo | gain@40 mean | sign |
 |---|---|---|
 | EH/EH | −0.001 | — |
 | HE/HE | +0.014 | — |
-| EH body + HE fast | +0.005 | +0.006 vs EH/EH (6/10 positive) |
-| HE body + EH fast | −0.007 | −0.021 vs HE/HE (8/10 negative) |
+| EH body + HE fast | +0.005 | +0.006 vs EH/EH (7/12 positive) |
+| HE body + EH fast | −0.007 | **−0.0195 vs HE/HE (10/12 negative)** |
 
 Initial perplexity differences are small; the differences appear in the
 adaptation *slope*. This supports the interpretation that fast weights change
-future learning dynamics rather than simply encoding memory. However, with
-10 seeds the positive transfer contrast is not statistically significant
-(sign-test p≈0.38), while the negative "destructive" contrast is borderline
-(p≈0.055). Fast-weight transfer is therefore an important but not self-sufficient
-carrier; it interacts with the rest of the body.
+future learning dynamics rather than simply encoding memory. At n=12 the
+destructive contrast is robust: bootstrap 95% CI [−0.0337, −0.0071], Cohen's d
+≈ −0.80, sign-test p=0.019. The positive transfer contrast (adding HE fast
+weights to an EH body) remains not significant (p≈0.39). Fast-weight transfer
+is therefore an important but not self-sufficient carrier; it interacts with
+the rest of the body. Transparent history: the original n=10 run was
+near-borderline for the destructive contrast; n=12 includes two additional
+seeds and is reported as an extension, not as a pre-registered confirmatory run.
 
 ![Body decomposition](figures/body_decomposition.png)
 
