@@ -1,7 +1,5 @@
 # DLA v0.2 — Developmental Learning Architecture
 
-![DLA architecture](docs/architecture.png)
-
 > 研究对象不是“再加一个 fast weight”，而是：**学习规则本身是否可以成为发育状态**。
 
 当前论文主线（2026-09-08）：
@@ -109,7 +107,6 @@ paper/
   overnight_report.md  最新实验结果汇总
 docs/
   experiments.md       分阶段详细结果与判定
-  architecture.png     架构图
 results/               服务器结果（JSON/PNG）
 ```
 
