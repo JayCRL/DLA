@@ -220,3 +220,18 @@ Task4 - Task1: mean +0.00182, SD 0.00465, Cohen's d = 0.39, 4/5 seeds positive.
 **Verdict: weak positive direction (d~0.4), not conclusive.** With d in the
 0.2-0.5 range and only 5 seeds, this should be expanded to 20 seeds before
 making a claim. Data/plots: results/stage8_physics_test/.
+
+## Addendum Stage 8 (20 seeds): physics near-transfer
+
+Same-domain physics difficulty tiers, 20 seeds, 40 steps/task. Slices reduced to
+100k train + 10k val per task to allow 20 non-overlapping seeds within each
+~2.5M-char physics tier file.
+
+norm_slope10 means:
+  task1 -0.00233, task2 -0.00353, task3 -0.00292, task4 -0.00290
+
+Task4 - Task1: mean -0.00058, SD 0.00342, Cohen's d = -0.17, 9/20 seeds
+positive, z=-0.76, p=0.45.
+
+**Verdict: no positive near-transfer effect.** The 5-seed weak-positive trend
+did not replicate at 20 seeds. Data/plots: results/stage8_physics_20/.
