@@ -34,9 +34,12 @@ def build_pdf(md_path: Path, pdf_path: Path) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         html_path = tmp / "paper.html"
-        # pandoc standalone html; images remain relative to the html file's dir.
+        # pandoc standalone HTML; copy figures next to it so Chrome can load them.
         run(["pandoc", str(md_path), "-f", "markdown", "-t", "html5", "-s",
              "-o", str(html_path), "--metadata", "title=DLA Draft"])
+        fig_src = md_path.parent / "figures"
+        if fig_src.exists():
+            shutil.copytree(fig_src, tmp / "figures")
         run([CHROME, "--headless", "--disable-gpu", "--no-sandbox",
              "--print-to-pdf=" + str(pdf_path),
              "--no-margins", "file://" + str(html_path)])
