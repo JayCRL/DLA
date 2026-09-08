@@ -99,9 +99,22 @@ experiments/
   stage2_learned_rule.py              Stage 2：固定 Hebbian vs 学到的规则 F_phi
   stage3_learning_rule_development.py Stage 3：φ 固定 vs φ 在生命周期内发育
   dna_lifetimes.py                    DNA-A/B/C/D 同一段人生
-  stage4_transformer_pilot.py         Stage 4：真实 Transformer（nanoGPT 6.59M）
-                                      维基 -> SFT 问答 -> 维基重学，AdamW vs DLA
-  run_all_smoke.py                    全流程冒烟测试
+  stage4_formal.py                    Stage 4 Formal：AdamW LR sweep + 5 seeds
+  stage5_progressive_curriculum.py    Stage 5：递进课程 + Λ_t
+  stage5_analysis.py                  Stage 5：难度归一化 LE 分析
+  stage55_learning_rule_development.py     Stage 5.5：φ 发育对照
+  stage55b_development_2x2.py              Stage 5.5b：History × Learner 2×2
+  stage55c_causality.py                    Stage 5.5c：因果拆解（body/φ cross）
+  stage55d_body_decomposition.py           Stage 5.5d：body 组件分解
+  stage55e_wfast_p0.py                     Stage 5.5e P0：W_fast trajectory
+  stage6_longitudinal.py                   Stage 6：同难度纵向
+  stage7_cross_domain.py                   Stage 7：跨领域 10 任务纵向
+  stage7_analyze.py                        Stage 7 分析
+  stage8_physics.py                        Stage 8：物理近迁移
+  run_all_smoke.py                        全流程冒烟测试
+analysis/
+  compute_wfast_effective_rank.py          EH/HE 有效秩比较
+  compute_wfast_decompose_rank.py          per-module + 差矩阵有效秩
 tests/test_core.py                    核心机制 sanity check
 ```
 
@@ -122,21 +135,37 @@ cd ~/llm-lab/dla-v0.2
 # 4) 冒烟
 ~/llm-lab/venv/bin/python experiments/run_all_smoke.py
 
-# 5) 正式实验（默认 100 个元 epoch；Xeon CPU 约 2-4 分钟/脚本/seed）
-~/llm-lab/venv/bin/python experiments/stage1_adaptive_plasticity.py --seeds 0,1,2 --epochs 100
-~/llm-lab/venv/bin/python experiments/stage2_learned_rule.py          --seeds 0,1,2 --epochs 100
-~/llm-lab/venv/bin/python experiments/stage3_learning_rule_development.py --seeds 0,1,2 --epochs 100
-~/llm-lab/venv/bin/python experiments/dna_lifetimes.py                --seeds 0,1,2 --epochs 100
+# 5) 正式实验（按需跑；多数已有结果在服务器 results/ 与 docs/experiments.md）
+~/llm-lab/venv/bin/python experiments/stage4_formal.py --seeds 0,1,2 --epochs 100
+~/llm-lab/venv/bin/python experiments/stage5_progressive_curriculum.py --seeds 0,1,2 --epochs 100
+~/llm-lab/venv/bin/python experiments/stage55e_wfast_p0.py --seeds 0..11 --d-steps 40
+~/llm-lab/venv/bin/python experiments/stage6_longitudinal.py --seeds 0..9
+~/llm-lab/venv/bin/python experiments/stage7_cross_domain.py --seed 0  # 单个 seed
+bash experiments/stage7_run_all.sh                                       # 20 seeds
+~/llm-lab/venv/bin/python experiments/stage8_physics.py --seeds 0..19 --train-chars 100000 --val-chars 10000
 
-# 结果在 results/<stage>/ 下：results.json + PNG
+# 结果在 results/<stage>/ 下：results.json / seed JSON + PNG
 ```
 
-## 实验结果
+## 实验结果（截至 2026-09-08）
 
-论文初稿见 [`paper/DLA_paper_draft.md`](paper/DLA_paper_draft.md)（可投稿英文草稿）。完整数字与解释见 [`docs/experiments.md`](docs/experiments.md)。一句话版本：
-Stage 1 可塑性有效（遗忘减半）、Stage 2 学到的规则显著优于固定 Hebbian、
-Stage 3 adaptive φ 提高稳定性但 Λ_t 假设需递进课程重测、DNA 四体轨迹分化；
-Stage 4 pilot 在 6.59M nanoGPT 上实现 **B 域 +13.5% 适应增益 + 慢记忆层零遗忘**。
+论文初稿见 [`paper/DLA_paper_draft.md`](paper/DLA_paper_draft.md)；完整数字与解释见 [`docs/experiments.md`](docs/experiments.md) 与 [`paper/overnight_report.md`](paper/overnight_report.md)。
+
+| 阶段 | 结论 |
+|---|---|
+| Stage 1 | DLA 遗忘约减半（0.099 vs 静态 0.181），样本效率最好 |
+| Stage 2 | 学到的规则 F_phi 显著优于固定 Hebbian（post acc 0.827 vs 0.729） |
+| Stage 3 | adaptive φ 提高稳定性，但“Λ_t 随人生上升”未获支持 |
+| Stage 4 Formal | DLA 匹配调好参的 AdamW（B 域 gain +14% vs +13%），**慢记忆层零遗忘**（forgetting −0.4%） |
+| Stage 5 | 难度归一化后 DLA 对递进课程不崩坏（LE 0.79→0.70→0.69） |
+| Stage 5.5 | 9 维 tempo φ 不是 history effect 的 carrier |
+| Stage 5.5b | History effect 可重复；meta φ 的发展收益不显著 |
+| Stage 5.5c/d | Body 分解：W_fast 是主要 carrier；φ/P/Q/W_slow 贡献小 |
+| Stage 5.5e P0 | **n=12：HE body 换入 EH W_fast 会显著破坏未来学习**（d≈−0.80，p=0.019） |
+| Stage 6 | 同难度 4 任务纵向：弱方向（7/10），不显著 |
+| Stage 7 | 跨领域 10 任务、20 seeds：**B 不成立**（回归斜率≈0，p=0.82） |
+| Stage 8 | 物理近迁移 20 seeds：**无正向效应**（d=−0.17） |
+| Effective Rank | EH/HE 的 W_fast 有效秩无显著差异；MLP 层最接近显著（p=0.064） |
 
 ## 实验假设（与三阶段对应）
 
@@ -185,15 +214,16 @@ Transformer 权重上分居“慢/快”两层。实验脚本 `stage4_transforme
 
 ## 边界（诚实声明）
 
-- v0.2 的 Neural Core 是 MLP，任务族是合成 Gaussian / XOR；这是**研究原型**，
-  用来验证“学习规则是发育状态”这一机制，不是大模型。
-- 遗忘度量使用 W_slow-only 的 consolidated accuracy（快速权重已衰减），这是
-  对“长期知识”的最严格度量。
-- `Λ_t` 目前是行为操作化（样本效率的倒数），不是独立于任务的定义；更理论化的
-  `Λ = f(plasticity, memory, strategy, metacognition, transfer)` 度量是下一步。
-- 后续路线（Stage 4）：把 DLA 挂到 Transformer / nanoGPT 上，研究 continual
-  pretraining、domain adaptation、forgetting 与 relearning——即
-  “Backbone + Developmental Learning”。
+- 小规模机制研究：Neural Core 是 6.59M 中文 nanoGPT 或 MLP；不是大模型。
+- **A 命题**（Learning history shapes the future learner）已有较强证据，
+  特别是 W_fast 的“破坏性因果效应”（n=12，p=0.019）。
+- **B 命题**（越学越快 / 学习效率随经历上升）目前**未获支持**：
+  Stage 5 递进课程、Stage 6 同难度纵向、Stage 7 跨领域 10 任务、Stage 8
+  物理近迁移均未出现显著正向趋势。
+- φ（9 个 tempo）不是 history effect 的稳定 carrier；有效秩统计也不能解释
+  W_fast 效应。
+- 睡眠巩固写入 W_slow 的量仍很小；Fast/Slow 分离目前主要靠隔离而非强巩固。
+- `Λ_t` 是行为操作化（样本效率倒数），不是独立理论定义。
 
 ## 与已有工作的关系
 
