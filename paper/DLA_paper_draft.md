@@ -1,5 +1,7 @@
 # Developmental Learning Architecture: Learning History, Fast-Weight Traces, and Future Adaptation
 
+**First author: 刘阳 (Yang Liu)**
+
 **Draft v0.2 (validation-stage) — workshop/arXiv**
 
 ---
