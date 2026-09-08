@@ -86,14 +86,25 @@ Primary backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab
 ### 5.1 Fast/slow separation protects consolidated memory
 
 DLA matches tuned AdamW on new-domain adaptation (gain +14.0% vs +13.0%) while slow-memory forgetting is ≈0 (−0.4%). This shows the mechanism does not sacrifice memory for plasticity.
+![Figure 2: Fast/slow separation and retention across domains.](figures/A_across_lifetime.png)
+
+![Figure 2b: Adaptation curve on the new domain.](figures/B_adaptation_curve.png)
+
+![Figure 2c: Relearning curve.](figures/A_relearning_curve.png)
+
+
 
 ### 5.2 Learning history changes future adaptation
 
 Across histories, HE learners adapt better to unseen D than EH learners. This is not unique to DLA; but DLA is most robust after a difficult history.
 
+![Figure 3: History effect on unseen D (2x2 development experiment).](figures/2x2_D.png)
+
 ### 5.3 The effect is not carried by the learning-rule parameters φ
 
 Body×φ cross-injection shows that swapping φ between histories changes future adaptation much less than swapping body state. φ is not a stable/dominant carrier in this setting.
+
+![Figure 4: Body × φ causal dissection.](figures/cross_2x2.png)
 
 ### 5.4 W_fast is a causal component
 
@@ -105,6 +116,8 @@ Core result (n=12):
 | HE + EH W_fast | −0.005 |
 
 Paired HE→raw EH: mean −0.019, 95% CI [−0.033, −0.005], Cohen's d ≈ −0.71, sign p=0.019 (10/12 negative). Initial PPL differences are small; the effect appears in the adaptation trajectory.
+
+![Figure 5: P0 future-adaptation trajectories.](figures/p0_trajectory.png)
 
 ### 5.5 Controls: magnitude, randomness, module
 
@@ -139,6 +152,10 @@ Shakespeare char GPT, 2 seeds: HE/HE gain@40 +0.052/+0.042; HE+EH fast +0.004/�
 ### 5.8 Negative result: more experience does not necessarily make learning faster
 
 Stage 5 (difficulty-normalized): flat LE. Stage 6 (matched difficulty): p=0.17. Stage 7 (cross-domain, 20 seeds): p=0.82. Stage 8 (physics near-transfer, 20 seeds): d=−0.17. We therefore do not claim "more experience → faster learning".
+
+![Figure 6a: Negative result — cross-domain longitudinal (Stage 7, 20 seeds).](figures/norm_slope_trend.png)
+
+![Figure 6b: Negative result — physics near-transfer (Stage 8, 20 seeds).](figures/stage8_trend_20.png)
 
 ---
 
