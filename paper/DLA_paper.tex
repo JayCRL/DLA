@@ -1,9 +1,7 @@
 \documentclass[11pt]{article}
-
-% --- packages -------------------------------------------------------------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -11,198 +9,113 @@
 \geometry{margin=1in}
 \usepackage{microtype}
 
-\newcommand{\E}{\mathrm{E}}
-\newcommand{\LE}{\mathrm{LE}}
 \newcommand{\Wfast}{W_{\mathrm{fast}}}
 \newcommand{\Wslow}{W_{\mathrm{slow}}}
-\newcommand{\T}{T_{80}}
 
 \title{\bfseries Developmental Learning Architecture:\\[2pt]
-Fast/Slow Memory, Difficulty Robustness, and the Search for Learning-Rule Development}
+Learning History, Fast-Weight Traces, and Future Adaptation}
 \author{Anonymous\\ \texttt{https://github.com/JayCRL/DLA}}
-\date{Draft v0.1}
+\date{Draft v0.2 (validation-stage)}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-We study a family of neural architectures in which the learning rule itself is a developmental object.
-Our Developmental Learning Architecture (DLA) keeps a standard Transformer/MLP skeleton unchanged but attaches per-parameter fast weights, plasticity traces, and sleep consolidation, so that knowledge and the ability to acquire knowledge are separated into slow and fast state.
-We report four main findings.
-First, DLA's fast/slow separation reproduces the adaptation quality of tuned AdamW fine-tuning while keeping consolidated slow memory essentially immune to forgetting in sequential language-domain adaptation (5 seeds).
-Second, DLA is robust to a progressively harder curriculum: its normalized learning efficiency does not collapse when task difficulty increases.
-Third, a causal dissection shows that learning history strongly changes future learning performance on an unseen domain, but the 9-dimensional learning-rule parameters (tempos) are \emph{not} the carrier of this effect.
-Fourth, body-state cross-injection localises the carrier to fast weights: transplanting fast weights from a hard$\to$easy learner into an easy$\to$hard body changes the future adaptation \emph{trajectory} rather than the initial perplexity.
-However, with 10 seeds this fast-weight transfer effect is directionally consistent but not statistically conclusive.
-We frame this paper as an honest mechanistic study: learning history shapes the learner, the effect is carried by accumulated fast-weight state, and current meta-updates of scalar learning-rule parameters do not yet produce stable improvements in future learning.
+We study whether a learner's prior learning history changes how it will learn in the future, and which internal state carries this effect. Our Developmental Learning Architecture (DLA) keeps standard MLP/Transformer backbones unchanged but augments every weight with per-parameter fast weights, plasticity, and sleep consolidation, forming a fast/slow learner state. Using a 6.59M Chinese character-level GPT we show: (i) DLA matches tuned AdamW on new-domain adaptation while keeping consolidated slow memory essentially immune to forgetting; (ii) different curriculum histories lead to different future adaptation on an unseen domain; (iii) this history-dependent future adaptation is causally tied to the fast-weight state $\Wfast$ --- replacing the hard$\to$easy learner's fast weights with those from an easy$\to$hard learner significantly degrades future adaptation ($n{=}12$, gain@40 difference $-0.019$, bootstrap CI excludes zero, Cohen's $d\approx-0.7$); (iv) norm-matching and within-matrix shuffling do not remove the effect; (v) localization is suggestive of MLP and attention contributions; (vi) fair baselines (AdamW, replay, EWC) also show history sensitivity, but DLA is most robust after a difficult history; and (vii) the destructive $\Wfast$ effect replicates on a second Shakespeare character-level backbone. We do \emph{not} find evidence that more experience monotonically accelerates learning. The paper therefore proposes a precise framing: developmental change does not equal universally faster learning; rather, learning history leaves a persistent, partially localizable trace in transient learner state, with $\Wfast$ providing a causal component of history-dependent future adaptation.
 \end{abstract}
 
-\section{Introduction}\label{sec:intro}
-Large models are typically treated as fixed functions that are trained and then deployed.
-This paper asks a different question: \emph{can the way a model learns change as a result of what it has learned?}
-Drawing on ideas of developmental plasticity and fast/slow memory, we build a minimal architecture with:
-\begin{itemize}
-  \item \textbf{Slow weights} --- consolidated long-term knowledge;
-  \item \textbf{Fast weights} --- a current learning trace;
-  \item \textbf{Plasticity} $P$ --- a per-parameter state controlling how much each weight can change;
-  \item \textbf{Consolidation} $Q$ --- an eligibility trace used during sleep.
-\end{itemize}
-We deliberately do \emph{not} modify the Transformer skeleton.
-The developmental state lives beside the standard weights and is updated by an online learning rule, with periodic sleep consolidation.
+\section{Introduction}
+Standard neural training assumes the learner is a fixed function plus an external optimizer. This paper asks a more developmental question: can the way a model learns change as a result of what it has learned? We build a minimal architecture, DLA, in which each weight matrix is augmented by fast weights, plasticity, and sleep consolidation. The backbone is not modified.
+Our empirical questions are: (1) Does learning history change future adaptation on a new task? (2) Which internal state carries that effect? (3) Does the effect manifest as faster learning? We find support for the first two and a clear negative result for the third.
 
-The central empirical question is whether learning history can shape the \emph{future learner itself}, not only the knowledge it stores.
-We operationalise this by comparing learners that experienced the same three domains in different orders (easy$\to$hard versus hard$\to$easy) and then measuring how they adapt to an unseen fourth domain.
-
-\section{Related Work}\label{sec:related}
-\begin{itemize}
-  \item \textbf{Fast weights and memory.} Classical and recent fast-weight mechanisms \cite{ba2016fast,hinton1987using} motivate separating fast and slow stores.
-  \item \textbf{Metaplasticity and continual learning.} Stability--plasticity trade-offs and synaptic tagging are studied in neuroscience \cite{abraham2005memory} and machine learning \cite{zenke2017continual}.
-  \item \textbf{Learning to learn / meta-learning.} ANML \cite{beaulieu2020learning} and differentiable plasticity \cite{miconi2019differentiable} make selective plasticity learnable.
-  \item \textbf{Learned optimizers / learning rules.} Learned optimizers \cite{andrychowicz2016learning} and differentiable learning rules make the update rule itself trainable.
-  \item \textbf{This paper.} Existing meta-learning asks whether a good rule can be learned; we ask whether, within a single lifetime, the learning rule and its associated body state continue to develop, and which state actually carries development forward.
-\end{itemize}
-
-\section{Method}\label{sec:method}
-\subsection{DLA on an MLP core}
-For small-scale mechanism experiments we use a two-layer MLP.
-Every connection has a slow weight $\Wslow$, a fast weight $\Wfast$, plasticity $P$, and an eligibility trace $Q$.
-The effective weight is
+\section{Method}
+For every 2D weight matrix we maintain $\Wslow$, $\Wfast$, plasticity $P$, and eligibility $Q$:
 \begin{equation}
-  W_{\mathrm{eff}} = \Wslow + \mathrm{softplus}(P) \odot \Wfast .
+  W_{\mathrm{eff}} = \Wslow + \mathrm{softplus}(P) \odot \Wfast.
 \end{equation}
-The experience update (``wake'') uses a per-connection Learning Rule Network $F_\phi$ that receives local and cognitive signals and outputs coefficients for a Hebbian basis and a teaching basis ($\delta x^\top$).
-Sleep consolidates $Q$ into $\Wslow$ and decays fast traces.
-Meta-training unrolls mini-lifetimes of two tasks with a retention loss, so the stability--plasticity trade-off is part of the objective.
+The online update uses Adam-style moments on $\Wfast$ modulated by $\mathrm{softplus}(P)$; $P$ is updated by a meta-plasticity rule. At task boundaries (sleep), $\Wslow$ is updated from $Q$ and a small direct transfer of $\Wfast$, and $\Wfast$ is decayed.
+To create histories we order three curriculum domains easy$\to$hard (EH) or hard$\to$easy (HE) and then probe an unseen domain $D$ under a fixed budget.
 
-\subsection{DLA on a standard GPT}
-For Transformer experiments we wrap each linear layer and embedding of a standard nanoGPT model (6 layers, 8 heads, 256 dimensions, 7280 Chinese characters) with per-matrix states $\Wfast, P, Q$ and Adam moments.
-The backbone code is not changed; each forward pass uses $W_{\mathrm{eff}}$ and each backward pass supplies the teaching signal $g = \mathrm{d}\mathcal L / \mathrm{d} W_{\mathrm{eff}}$.
+\section{Experimental Setup}
+Primary backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab 7280). Curriculum: Wikipedia, SFT-style QA, science Wikipedia. Unseen D: science slice. Second setting: $\sim$10.65M Shakespeare character GPT. Baselines: AdamW, AdamW$+$replay, EWC.
 
-The nine scalar tempos
-\begin{equation}
-  \phi = \{\eta_{\mathrm{fast}}, \eta_{\mathrm{plast}}, \lambda_{\mathrm{decay}}, \kappa_{\mathrm{stab}}, \alpha_q, \text{consolidation rates}\}
-\end{equation}
-start as DNA priors.
-In a ``meta'' variant they can be updated by one meta-gradient step on future-task losses.
+\section{Results}
 
-\subsection{Causal dissection}
-We decompose the developmental state (``body'') into slow weights, fast weights, plasticity $P$, and eligibility $Q$.
-Cross-injection swaps one component between two individuals with different histories while holding the rest fixed.
-We then measure future adaptation on a held-out domain $D$ under identical data, update rule, budget, and evaluation.
+\subsection{Fast/slow separation protects consolidated memory}
+Stage 4 formal (5 seeds): DLA matches tuned AdamW on adaptation (gain $+14.0\%$ vs $+13.0\%$) while consolidated slow-memory forgetting is $\approx 0$ ($-0.4\%\pm0.2$).
 
-\section{Experimental Setup}\label{sec:setup}
-\begin{itemize}
-  \item Backbone: 6.59M Chinese character-level GPT, pretrained on $\sim$9.3M tokens of simplified Chinese Wikipedia.
-  \item Curriculum domains: general Wikipedia, SFT-style QA, science Wikipedia.
-  \item Held-out domain $D$: a science-Wikipedia slice never used in the curriculum.
-  \item Each individual trains each domain with the same budget ($40$--$100$ Adam-style steps of $32\times128$ tokens depending on stage).
-  \item Metrics: raw relative gain; normalized learning efficiency $\LE_t = G_t(T)/G_t^{\max}$; $\T_t$ (steps to reach $80\%$ of the individual's own best gain); backward transfer/forgetting; plasticity and state traces.
-\end{itemize}
+\subsection{Learning history changes future adaptation}
+Hard$\to$easy history leads to better future adaptation on unseen $D$ than easy$\to$hard. This effect is not unique to DLA, but DLA is most robust after a difficult history.
 
-\section{Results}\label{sec:results}
-\subsection{Fast/slow separation protects consolidated memory (5 seeds)}\label{sec:fastslow}
+\subsection{Scalar learning-rule parameters are not a stable carrier}
+Body $\times$ $\phi$ cross-injection shows body replacement changes future adaptation much more than replacing the 9-dimensional tempo vector. $\phi$ is not a stable/dominant carrier in this setting.
+
+\subsection{$\Wfast$ is a causal component}
+Core causal result ($n{=}12$): HE/HE gain@40 $+0.014$; HE$+$EH $\Wfast$ $-0.005$. Paired contrast: mean $-0.019$, 95\% CI $[-0.033,-0.005]$, $d\approx-0.71$, sign p$=0.019$ (10/12 negative). Initial PPL differences are small; the effect appears in the adaptation trajectory.
+
+\subsection{Norm, shuffle and module controls}
 \begin{table}[h]\centering\small
 \begin{tabular}{lccc}
 \toprule
-Metric & AdamW (tuned) & DLA fast & DLA slow \\
+Control & mean $\Delta$ gain@40 & 95\% CI & $d$ \\
 \midrule
-B-domain adaptation gain & $+13.0\% \pm 2.4$ & $+14.0\% \pm 2.5$ & $+0.1\%$ \\
-A forgetting after B & $+10.1\% \pm 2.2$ & $+7.3\% \pm 1.2$ & $\mathbf{-0.4\% \pm 0.2}$ \\
+raw EH $\Wfast$ & $-0.019$ & $[-0.034,-0.005]$ & $-0.71$ \\
+norm-matched EH $\Wfast$ & $-0.022$ & $[-0.034,-0.009]$ & $-0.90$ \\
+shuffled EH $\Wfast$ & $-0.017$ & $[-0.023,-0.009]$ & $-1.25$ \\
+EH embedding $\Wfast$ & $-0.006$ & $[-0.009,-0.002]$ & $-0.87$ \\
+EH attention $\Wfast$ & $-0.012$ & $[-0.018,-0.006]$ & $-1.06$ \\
+EH MLP $\Wfast$ & $-0.017$ & $[-0.025,-0.008]$ & $-1.05$ \\
 \bottomrule
 \end{tabular}
-\caption{Stage 4 formal, 5 seeds. DLA matches tuned AdamW on adaptation while the consolidated slow memory remains essentially stable.}
+\caption{Paired gain@40 contrasts vs native HE ($n{=}12$). Norm/shuffle do not remove the effect; MLP and attention contribute most.}
 \end{table}
 
-\subsection{Difficulty robustness (5 seeds)}\label{sec:robust}
-Under normalized learning efficiency,
+\begin{figure}[h]\centering
+\includegraphics[width=\textwidth]{figures/fig7_multi_panel.png}
+\caption{$\Wfast$ cross-injection and full future-adaptation trajectories.}
+\label{fig:fig7}
+\end{figure}
+
+\subsection{Fair baselines}
 \begin{table}[h]\centering\small
 \begin{tabular}{lccc}
 \toprule
-Arm & $\LE_1$ & $\LE_2$ & $\LE_3$ \\
+Method & EH & HE & HE$-$EH \\
 \midrule
-AdamW & 0.63 & 0.87 & 0.25 \\
-DLA fast & 0.79 & 0.70 & 0.69 \\
-DLA slow & 0 & 0 & 0 \\
+AdamW & 0.339 & 0.675 & +0.336 \\
+AdamW$+$replay & 0.375 & 0.961 & +0.586 \\
+EWC & 0.292 & 0.895 & +0.603 \\
+DLA & 0.517 & 0.709 & +0.192 \\
 \bottomrule
 \end{tabular}
-\caption{Stage 5, 5 seeds. DLA does not collapse when task difficulty increases.}
+\caption{LE_D means, baselines $n{=}5$. DLA is most robust after EH history.}
 \end{table}
 
-\subsection{Scalar learning-rule parameters are not the carrier (5.5b/c, 5 seeds)}\label{sec:notphi}
-\begin{table}[h]\centering\small
-\begin{tabular}{lcc}
-\toprule
-Body / $\phi$ & $\LE_D$ mean \\
-\midrule
-EH/EH & 0.522 \\
-EH/HE & 0.148 \\
-HE/EH & 0.898 \\
-HE/HE & 0.900 \\
-\bottomrule
-\end{tabular}
-\caption{2$\times$2 cross-injection (body $\times$ phi) on unseen $D$. The body dominates; swapping the 9 tempos has little and inconsistent effect.}
-\end{table}
+\subsection{Second-setting replication}
+Shakespeare char GPT, 2 seeds: HE/HE gain@40 $+0.052$, $+0.042$; HE$+$EH $\Wfast$ $+0.004$, $-0.001$. Direction replicates.
 
-\subsection{Fast weights carry part of the history effect (5.5d/5.5e, 10 seeds)}\label{sec:wfast}
-Body decomposition (3 seeds) showed:
-\begin{itemize}
-  \item EH body $+$ HE fast weights $\Rightarrow$ $\LE_D$ increases from $0.33$ to $0.91$;
-  \item HE body $+$ EH fast weights $\Rightarrow$ $\LE_D$ drops from $0.96$ to $0.00$.
-\end{itemize}
+\subsection{Negative result: development $\neq$ faster learning}
+Stage 5 difficulty-normalized curriculum: flat LE. Stage 6 matched-difficulty: p$=0.17$. Stage 7 cross-domain 20 seeds: p$=0.82$. Stage 8 physics near-transfer 20 seeds: $d=-0.17$. We do not claim faster learning.
 
-Extended trajectory experiment (10 seeds):
-\begin{table}[h]\centering\small
-\begin{tabular}{lccc}
-\toprule
-Combo & gain@40 & sign contrast \\
-\midrule
-EH/EH & $-0.001$ & --- \\
-HE/HE & $+0.014$ & --- \\
-EH body $+$ HE fast & $+0.005$ & $+0.006$ vs.\ EH/EH (6/10 positive) \\
-HE body $+$ EH fast & $-0.007$ & $-0.021$ vs.\ HE/HE (8/10 negative) \\
-\bottomrule
-\end{tabular}
-\caption{Fast-weight transfer changes future adaptation slope more than initial perplexity. With 10 seeds the positive contrast is not statistically significant (sign-test $p\approx0.38$); the destructive contrast is borderline ($p\approx0.055$).}
-\end{table}
+\section{Discussion}
+Safe claims: fast/slow separation; history changes future adaptation; $\Wfast$ is a causal component; norm/shuffle do not remove the effect; no evidence for monotonic acceleration.
+Suggestive: exact module localization; content vs dynamics; second-setting n is small.
+Must not claim: $\Wfast$ is the only carrier; $\phi$ has no effect; development means universally faster learning; sleep consolidation strongly writes into $\Wslow$; small-model results transfer to LLMs.
 
-\section{Discussion}\label{sec:discussion}
-\textbf{What we now believe.}
-\begin{enumerate}
-  \item A developmental architecture can decouple fast adaptation from slow memory preservation.
-  \item A hard$\to$easy curriculum produces a learner that adapts faster on an unseen domain than an easy$\to$hard learner; this history effect is reproducible.
-  \item The effect is mediated by accumulated body state, especially fast weights, not by scalar meta-learned tempos.
-  \item Fast-weight transfer changes the \emph{dynamics} of future adaptation, not merely the initial perplexity.
-\end{enumerate}
-
-\textbf{What we do not yet claim.}
-\begin{itemize}
-  \item That meta-updating scalar learning rules yields stable lifelong improvements in transfer (5.5b/5.5c negative/nuanced).
-  \item That fast-weight transfer alone is a sufficient causal carrier (5.5e underpowered).
-  \item That this scales beyond a 6.59M model.
-\end{itemize}
-
-\textbf{Limitations.}
-Single small backbone; single language; synthetic domain slices; no standard continual-learning baselines (EWC, replay, LoRA) yet; 5--10 seeds on noisy PPL metrics; sleep consolidation writes very little to slow memory in the current implementation.
-
-\section{Conclusion}\label{sec:conclusion}
-We present an honest mechanistic account of a developmental learning architecture.
-Positive contributions are (a) fast/slow memory separation, (b) difficulty robustness, and (c) evidence that learning history shapes the future learner and that this shaping is carried in part by fast-weight state.
-Negative contributions are equally important: scalar learning-rule parameters are not a stable carrier of development, and a clean causal proof that fast weights change future learning dynamics still requires more power and better baselines.
+\section{Conclusion}
+A learner is not fully characterized by what it currently knows. Learning history leaves a persistent, partially localizable trace in transient learner state, with $\Wfast$ providing a causal component of history-dependent future adaptation. We do not find evidence that this developmental effect simply manifests as faster learning.
 
 \paragraph{Reproducibility.}
-Code is at \url{https://github.com/JayCRL/DLA}.
-Result JSONs and logs live at \texttt{\~/llm-lab/dla-v0.2/results/} and \texttt{/logs/}.
-Key scripts: \texttt{stage4\_formal.py}, \texttt{stage5\_progressive\_curriculum.py}, \texttt{stage55*}, \texttt{stage55d\_body\_decomposition.py}, \texttt{stage55e\_wfast\_p0.py}.
-Full per-stage tables: \texttt{docs/experiments.md}.
+Code at \url{https://github.com/JayCRL/DLA}. Experiment details: \texttt{docs/experiments.md}, \texttt{paper/overnight_report.md}, \texttt{paper/validation_audit.md}.
 
-\begin{thebibliography}{99}
-\bibitem{abraham2005memory} W.~Abraham and A.~Robins. Memory retention: the synaptic stability versus plasticity dilemma. \emph{Trends in Neurosciences}, 2005.
-\bibitem{zenke2017continual} F.~Zenke, B.~Poole, and S.~Ganguli. Continual learning through synaptic intelligence. \emph{ICML}, 2017.
-\bibitem{ba2016fast} J.~Ba, G.~Hinton, V.~Mnih, J.~Leibo, and C.~Ionescu. Using fast weights to attend to the recent past. \emph{NeurIPS}, 2016.
-\bibitem{beaulieu2020learning} S.~Beaulieu, L.~Frantar, E.~Mironov, Y.~Chen, and R.~Savarese. Learning to continually learn. \emph{ECAI}, 2020.
-\bibitem{miconi2019differentiable} T.~Miconi, J.~Clune, and K.~Stanley. Differentiable plasticity: training plastic neural networks with backpropagation. \emph{ICLR}, 2019.
-\bibitem{hinton1987using} G.~Hinton and D.~Plaut. Using fast weights to deblur old memories. \emph{CogSci}, 1987.
-\bibitem{andrychowicz2016learning} M.~Andrychowicz et al. Learning to learn by gradient descent by gradient descent. \emph{NeurIPS}, 2016.
+\begin{thebibliography}{9}
+\bibitem{hinton1987} G.~Hinton and D.~Plaut. Using fast weights to deblur old memories. \emph{CogSci}, 1987.
+\bibitem{ba2016} J.~Ba et al. Using fast weights to attend to the recent past. \emph{NeurIPS}, 2016.
+\bibitem{zenke2017} F.~Zenke et al. Continual learning through synaptic intelligence. \emph{ICML}, 2017.
+\bibitem{kirkpatrick2017} J.~Kirkpatrick et al. Overcoming catastrophic forgetting. \emph{PNAS}, 2017.
+\bibitem{andrychowicz2016} M.~Andrychowicz et al. Learning to learn by gradient descent. \emph{NeurIPS}, 2016.
+\bibitem{miconi2019} T.~Miconi et al. Differentiable plasticity. \emph{ICLR}, 2019.
+\bibitem{beaulieu2020} S.~Beaulieu et al. Learning to continually learn. \emph{ECAI}, 2020.
 \end{thebibliography}
 
 \end{document}

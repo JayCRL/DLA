@@ -122,6 +122,9 @@ n=12 gain@40 paired contrasts (vs HE/HE):
 
 Norm-matching does not rescue the effect; global magnitude is not the explanation. Shuffle also does not rescue the effect, so a simple random-parameter control is not sufficient. Module localization is suggestive of MLP and attention contributions; embedding contributes less.
 
+![Figure 7: W_fast cross-injection and full future-adaptation trajectories. A: norm/shuffle controls. B: module-localized transfer. C: paired gain@40 effects. D: example trajectories.](figures/fig7_multi_panel.png)
+
+
 ### 5.6 Fair baselines
 
 n=5 (LE_D means):

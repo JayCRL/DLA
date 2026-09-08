@@ -44,6 +44,10 @@ def build_pdf(md_path: Path, pdf_path: Path) -> None:
     html = markdown.markdown(text, extensions=["tables", "sane_lists"])
     # fpdf2's tiny HTML parser does not understand <hr>; remove horizontal rules.
     html = re.sub(r"<hr\s*/?>", "", html)
+    # Replace symbols that fpdf2's HTML renderer may mishandle with ASCII forms.
+    for a, b in [("→", "->"), ("←", "<-"), ("≈", "~"), ("±", "+/-"), ("×", "x"),
+                 ("−", "-"), ("Δ", "delta"), ("φ", "phi"), ("α", "alpha"), ("Λ", "Lambda")]:
+        html = html.replace(a, b)
     html = image_paths_absolute(html, md_path.parent)
 
     pdf = FPDF(format="A4", unit="mm")
