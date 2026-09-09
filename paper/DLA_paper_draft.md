@@ -44,15 +44,61 @@ The learner we use is not new to this paper, and we deliberately build on the fa
 These earlier findings are what make `W_fast`, `Q` and the slow store a *causally instrumented* setting rather than a toy: the question below—whether selectivity can emerge with no selection objective—is asked about states whose causal roles are already mapped.
 
 
-## 2. Related work (positioning)
+## 2. Foundations we build on — and where we depart
 
-- **Selectivity by design.** Continual-learning methods select what to protect or replay (Kirkpatrick et al., 2017; Zenke et al., 2017; Robins, 1995; De Lange et al., 2021); plasticity methods gate learning per parameter, often meta-learned (Miconi et al., 2019; Beaulieu et al., 2020); plasticity-loss research shows unmaintained plasticity degrades (Dohare et al., 2024; Lyle et al., 2022; Nikishin et al., 2022). All of these *inject* a selection signal. Our contribution is complementary: we hold selection absent and test whether it emerges with causal force.
-- **Task/curriculum ordering** changes continual-learning outcomes and consolidation of seen tasks (Bell & Lawrence, 2022; Li & Hiratani, 2025; Poirier & Silver, 2005; Wang et al., 2022). We measure a related but distinct object: ordering's effect on *future adaptation to a never-seen domain*, and on the allocation of that effect within the learner.
-- **Fast/slow and CLS.** Complementary learning systems motivate fast/slow stores and consolidation (McClelland et al., 1995; Kumaran et al., 2016); fast-weight models (Hinton & Plaut, 1987; Ba et al., 2016) and their modern linear-attention / in-context-learning / neural-memory relatives (Schlag et al., 2021; von Oswald et al., 2023; Behrouz et al., 2025) provide the architecture family; additive PEFT (Houlsby et al., 2019; Hu et al., 2021; He et al., 2022) provides the frozen-base + additive form. Prior work uses these for memory or efficiency; we use the minimal form to test *whether selection objectives are even necessary for selective behavior*.
-- **Continual learning & parameter-efficient fine-tuning as the applied setting.** In continual learning the crux is precisely *what to protect, replay or select* (baselines AdamW / replay / EWC in §4 use this literature's toolbox; Kirkpatrick et al., 2017; Zenke et al., 2017; Robins, 1995; De Lange et al., 2021). Additive frozen-base methods—adapters and LoRA (Houlsby et al., 2019; Hu et al., 2021), in their unified view (He et al., 2022)—are the practical family whose update form matches our `W_eff = W_slow + …·W_fast`, and they are exactly the setting where *where an additive update is written* could matter. Our question transfers directly: if allocation-level selectivity emerges without a selection signal here, the same question should be asked of these systems rather than assuming selection must be added.
-- **Meta-learning & meta-plasticity** learn rules over episodes (Andrychowicz et al., 2016; Beaulieu et al., 2020); here the rule is fixed and unselective, and we ask what the *same* individual's dynamics alone produce.
+This paper is written on top of four strands of prior work (each maps to a claim
+we make), and its contribution is the gap at their intersection: **does the
+selectivity that continual-learning, plasticity and consolidation research usually
+*injects* actually have to be injected?**
 
----
+**(1) Theoretical root: why fast/slow stores and consolidation exist.** Complementary
+learning systems theory explains memory/learning trade-offs by a fast, instance-based
+store and a slow, generalising store with offline consolidation (McClelland et al.,
+1995; Kumaran et al., 2016). DLA is a minimal weight-space instantiation of that split
+(§3.1), and our result speaks back to CLS: consolidation that is functionally
+*selective in its allocation* can arise without any gating/replay mechanism.
+
+**(2) Structural twin: frozen-base additive updates.** Our effective weight
+`W_eff = W_slow + softplus(P)·W_fast` is the same additive decomposition used by
+parameter-efficient transfer — adapters (Houlsby et al., 2019) and LoRA (Hu et al.,
+2021), unified in (He et al., 2022) (§3.1). DLA differs in that the additive pathway
+is a shared, within-lifetime developmental state rather than a per-task fine-tune.
+Because of this structural twin, our central question — *whether "where the additive
+update lands" self-organizes and matters* — transfers directly to the LoRA/adapter
+setting in continual fine-tuning.
+
+**(3) Plasticity motivation.** Plasticity is a fragile resource that ordinary
+continual training consumes (loss of plasticity; Dohare et al., 2024; Lyle et al.,
+2022; Nikishin et al., 2022). DLA's per-parameter `P` is one response to that
+literature. Our finding offers a complementary view: keeping *beneficial structure in
+what is written to the slow store* may not require maintaining an explicit gate at all
+(§4.3–4.4).
+
+**(4) The nearest prior: task/curriculum ordering — where we explicitly differ.** The
+order in which tasks are learned changes continual-learning outcomes, forgetting and
+consolidation of *seen* tasks (Bell & Lawrence, 2022; Li & Hiratani, 2025; Poirier &
+Silver, 2005; survey: Wang et al., 2022). We ask a related but distinct question
+(§1.1, §4.1): does order change *future adaptation to a never-seen domain*, and where
+inside the learner does the effect live? The difference is not cosmetic: because the
+test domain is never seen by either history, content-memory explanations of the order
+effect are excluded by design, which is what lets us localize the effect to `W_fast`
+and then to the *allocation* of the fast→slow write.
+
+**(5) Selection-by-design, and fast/slow as an engineering device.** Continual-learning
+methods protect/replay/select explicitly (Kirkpatrick et al., 2017; Zenke et al., 2017;
+Robins, 1995; De Lange et al., 2021); plasticity methods gate per parameter, often
+meta-learned (Miconi et al., 2019; Beaulieu et al., 2020); fast/slow weight co-design
+appears as an optimization/RLHF engineering device (Ba et al., 2016; Qi et al., 2024)
+and in modern memory architectures (Schlag et al., 2021; von Oswald et al., 2023;
+Behrouz et al., 2025). These strands *inject* selection or use fast/slow for memory or
+efficiency; we instead hold selection absent and use the minimal fast/slow form as an
+instrument (within-individual development; cf. Andrychowicz et al., 2016).
+
+> Position in one sentence: existing work tells us history/order matters (4) and
+> gives us the right architecture family (1, 2) and the warning that plasticity is
+> fragile (3); we ask what happens when the selection machinery these strands normally
+> provide is *not* provided — and find that selectivity still emerges, at the level of
+> write allocation, with causal force.
 
 ## 3. System and definitions
 
@@ -63,6 +109,18 @@ We keep a standard Transformer backbone unchanged. Every wrapped weight matrix c
 ```
 W_eff  = W_slow + softplus(P) * W_fast
 ```
+
+This additive decomposition is the structural twin of frozen-base parameter-efficient
+methods — adapters (Houlsby et al., 2019) and LoRA (Hu et al., 2021; unified view:
+He et al., 2022) — with one difference that matters: here the additive pathway is a
+*within-lifetime developmental state* shared across tasks and updated by the learner's
+own dynamics, not a separately fine-tuned module. `P` is the per-parameter plasticity
+whose fragility under continual training is documented by loss-of-plasticity work
+(Dohare et al., 2024; Lyle et al., 2022; Nikishin et al., 2022). The fast/slow split
+itself follows complementary learning systems theory (McClelland et al., 1995; Kumaran
+et al., 2016), and fast/slow co-design has engineering precedent in optimization and
+RLHF (Qi et al., 2024) and modern memory architectures (Ba et al., 2016; Behrouz et
+al., 2025).
 
 Wake step (per batch): backprop gives `g = dL/dW_eff`; Adam moments `m,v` are updated; the fast trace moves by
 
@@ -110,6 +168,16 @@ Backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab 7280) p
 ### 4.1 History lives in the fast trace (carrier, causal)
 
 Replacing a hard→easy learner's `W_fast` with an easy→hard learner's significantly degrades future adaptation on D: paired gain@40 Δ≈−0.019, 95% CI [−0.033,−0.005], sign p=0.019 (10/12 negative, n=12). Norm-matching does not rescue it (d≈−0.90), within-matrix shuffling does not remove it (d≈−1.25), and module-localized swaps implicate MLP (d≈−1.05) and attention (d≈−1.06) more than embedding (d≈−0.87). The direction replicates on the Shakespeare backbone (n=2). Slow weights, plasticity and rule parameters transfer little alone (component decomposition). *Level: causal (single small backbone, n=12, controls + partial replication).*
+
+**Relation to task/curriculum-order results.** This mirrors, but differs from, the
+task-order results of continual learning (Bell & Lawrence, 2022; Li & Hiratani, 2025;
+Poirier & Silver, 2005): those measure how order changes *performance or forgetting on
+the seen curriculum*. Here the probe domain D is never seen by either history, so the
+effect must ride on the learner's internal state rather than on stored content about D
+— which is what allows the further steps below (carrier localization, then allocation
+shuffle). Where those works propose curricula as a *control* over outcomes, our claim
+is narrower and more mechanistic: the order effect is a *state effect*, and that state
+effect is itself selective in where it consolidates.
 
 ### 4.2 The directional trace is self-organized (no alignment objective exists)
 
