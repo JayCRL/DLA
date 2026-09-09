@@ -56,8 +56,13 @@ class Args:
 
 
 @torch.no_grad()
-def variant_sleep(model, state, variant):
-    """Copy of dla_sleep with the write pathway selected by `variant`."""
+def variant_sleep(model, state, variant, perm_seed=0):
+    """Copy of dla_sleep with the write pathway selected by `variant`.
+
+    shufwrite == direct (gamma*W_fast) with the same per-key norm, but the
+    coordinates of the write are randomly permuted within each matrix before
+    being added to W_slow: identical total energy, destroyed allocation.
+    """
     tv = model.tempos.values()
     for key, mod in model.key_modules.items():
         s = state.store[key]
@@ -65,6 +70,12 @@ def variant_sleep(model, state, variant):
             add = tv["consolidate_beta"] * s["q"]
         elif variant == "direct":
             add = tv["consolidate_fast_direct"] * s["w_fast"]
+        elif variant == "shufwrite":
+            wf = s["w_fast"]
+            flat = wf.reshape(-1)
+            gen = torch.Generator().manual_seed(perm_seed * 7919 + abs(hash(key)) % 1000003)
+            perm = torch.randperm(flat.numel(), generator=gen)
+            add = tv["consolidate_fast_direct"] * flat[perm].reshape(wf.shape)
         elif variant == "nocons":
             add = None
         else:  # full == original
@@ -105,10 +116,10 @@ def run_history_variant(seed, order_name, phases, eb, d_train, args, device,
         if variant in ("full", "qonly"):
             qmag = math.sqrt(sum(float((tv["consolidate_beta"] * s_["q"]).pow(2).sum())
                                  for s_ in state.store.values()))
-        if variant in ("full", "direct"):
+        if variant in ("full", "direct", "shufwrite"):
             wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
                                  for s_ in state.store.values()))
-        variant_sleep(model, state, variant)
+        variant_sleep(model, state, variant, perm_seed=seed * 1000 + t_idx)
         cons_q_total += qmag
         cons_w_total += wmag
         per_sleep.append({"stage": t_idx, "Q_write": qmag, "direct_write": wmag})
@@ -122,7 +133,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--order", type=str, choices=("EH", "HE"), required=True)
-    ap.add_argument("--variant", type=str, choices=("qonly", "direct", "nocons", "full"), required=True)
+    ap.add_argument("--variant", type=str,
+                    choices=("qonly", "direct", "shufwrite", "nocons", "full"), required=True)
     ap.add_argument("--out", default="results/audit")
     ap.add_argument("--keep-body", action="store_true")
     args = ap.parse_args()
