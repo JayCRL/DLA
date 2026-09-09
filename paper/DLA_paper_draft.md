@@ -34,11 +34,22 @@ In a minimal DLA (Section 3), two different curriculum histories produce differe
 
 ---
 
+### 1.4 This is built on—not separate from—our prior fast/slow results
+
+The learner we use is not new to this paper, and we deliberately build on the fast/slow results established earlier in the project rather than re-deriving them:
+- **Fast/slow separation protects consolidated memory**: in the same protocol, DLA matches a tuned AdamW on new-domain adaptation while slow-memory forgetting is ≈0 (−0.4%), i.e. the fast/slow split does not trade memory for plasticity.
+- **`W_fast` is a causal carrier of history-dependent future adaptation**: replacing a hard→easy learner's fast weights with an easy→hard learner's degrades future adaptation on a never-seen domain (n=12, norm/shuffle/module controls, direction replicated on a second backbone).
+- **Rule parameters `φ` and the success-gated eligibility trace `Q` do not carry that effect**; and standard continual learners (AdamW, replay, EWC) in the same curriculum protocol are also history-sensitive, so history sensitivity is not unique to DLA—DLA is most robust after a difficult history.
+
+These earlier findings are what make `W_fast`, `Q` and the slow store a *causally instrumented* setting rather than a toy: the question below—whether selectivity can emerge with no selection objective—is asked about states whose causal roles are already mapped.
+
+
 ## 2. Related work (positioning)
 
 - **Selectivity by design.** Continual-learning methods select what to protect or replay (Kirkpatrick et al., 2017; Zenke et al., 2017; Robins, 1995; De Lange et al., 2021); plasticity methods gate learning per parameter, often meta-learned (Miconi et al., 2019; Beaulieu et al., 2020); plasticity-loss research shows unmaintained plasticity degrades (Dohare et al., 2024; Lyle et al., 2022; Nikishin et al., 2022). All of these *inject* a selection signal. Our contribution is complementary: we hold selection absent and test whether it emerges with causal force.
 - **Task/curriculum ordering** changes continual-learning outcomes and consolidation of seen tasks (Bell & Lawrence, 2022; Li & Hiratani, 2025; Poirier & Silver, 2005; Wang et al., 2022). We measure a related but distinct object: ordering's effect on *future adaptation to a never-seen domain*, and on the allocation of that effect within the learner.
 - **Fast/slow and CLS.** Complementary learning systems motivate fast/slow stores and consolidation (McClelland et al., 1995; Kumaran et al., 2016); fast-weight models (Hinton & Plaut, 1987; Ba et al., 2016) and their modern linear-attention / in-context-learning / neural-memory relatives (Schlag et al., 2021; von Oswald et al., 2023; Behrouz et al., 2025) provide the architecture family; additive PEFT (Houlsby et al., 2019; Hu et al., 2021; He et al., 2022) provides the frozen-base + additive form. Prior work uses these for memory or efficiency; we use the minimal form to test *whether selection objectives are even necessary for selective behavior*.
+- **Continual learning & parameter-efficient fine-tuning as the applied setting.** In continual learning the crux is precisely *what to protect, replay or select* (baselines AdamW / replay / EWC in §4 use this literature's toolbox; Kirkpatrick et al., 2017; Zenke et al., 2017; Robins, 1995; De Lange et al., 2021). Additive frozen-base methods—adapters and LoRA (Houlsby et al., 2019; Hu et al., 2021), in their unified view (He et al., 2022)—are the practical family whose update form matches our `W_eff = W_slow + …·W_fast`, and they are exactly the setting where *where an additive update is written* could matter. Our question transfers directly: if allocation-level selectivity emerges without a selection signal here, the same question should be asked of these systems rather than assuming selection must be added.
 - **Meta-learning & meta-plasticity** learn rules over episodes (Andrychowicz et al., 2016; Beaulieu et al., 2020); here the rule is fixed and unselective, and we ask what the *same* individual's dynamics alone produce.
 
 ---
