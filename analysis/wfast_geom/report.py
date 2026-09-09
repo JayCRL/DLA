@@ -251,9 +251,14 @@ def main():
       "on D. Prediction: HE gain decreases monotonically as α moves toward EH (α>0) and recovers on the "
       "negative side. ~60 probes ≈ 30–45 min on 5 workers — not run yet (pending user confirmation).")
     A("")
-    A("## 7. Caveats")
+    A("## 7. Caveats & robustness (P1c)")
     A("")
-    A("- n=12, exploratory; multiple correlations and PC selection were not family-wise corrected.")
+    A("- n=12, exploratory.")
+    A("- **Leave-one-seed-out:** the headline signal is stable — tr_HE/HE_cos0→gain@40 "
+      "r∈[+0.81,+0.91] across all 12 exclusions; g0-norm→gain@40 r∈[+0.54,+0.71]; the EH-arm cos0 "
+      "relations also keep sign (r≈−0.5) under LOO.")
+    A("- **FDR (Benjamini-Hochberg over the 16-test table):** only cos0(HE)→gain@40 survives q<0.1 "
+      "(q≈0.003). g0-norm→gain@40 and cos0→LE_D are suggestive (q≥0.1); all other rows are null.")
     A("- Replays reproduce archived curves to mean max |Δppl|≈0.24 (~0.6% relative) — near-identical, "
       "not bit-exact (threaded float reductions); trajectory gradients are used for geometry only.")
     A("- g0 norms are ≈0.5 (post-clip, gated) and near-constant; the cos0 predictor is a direction, not "
@@ -263,7 +268,7 @@ def main():
     A("## 8. Files")
     A("")
     A("- geometry: `geometry_summary.json` ; replays: `replays/seeds/*.json` ; p1: `p1_correlations.json` ; "
-      "p1b: `p1b_grad0_null.json` ; p2: `p2_pca.json`")
+      "p1b: `p1b_grad0_null.json` ; p1c: `p1c_robustness.json` ; p2: `p2_pca.json`")
     A("- figures: `report/fig1_geometry_nulls.png`, `report/fig2_trajectory_alignment.png`, `report/fig3_pca.png`")
 
     with open(os.path.join(B, "report", "interim_report.md"), "w") as f:

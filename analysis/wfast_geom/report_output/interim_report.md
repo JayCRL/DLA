@@ -94,14 +94,16 @@ Variance ratios (centered ΔW_fast, 12×D via Gram): PC1 0.205, PC2 0.113, PC3 0
 3. **Shared directions exist but are diffuse.** PC1 explains ≈20% of Δ variance (top-3 ≈41%), yet HE-gradient projections onto PC1–PC3 predict HE outcome (r≈−0.83/−0.72/−0.67; perm p≈0.001/0.007/0.019) and the Δ-score on PC1 predicts the HE−EH gain contrast (r≈−0.80, p≈0.001). PCA sign is arbitrary; the predictive content is |r| + permutation p.
 4. **P3 counterfactual is justified by these first-round findings** (per-seed Δ-direction alignment and PC1–3 structure both predict adaptation). Recommended design: per-seed W_fast interpolation W_fast' = W_fast(HE) + α·Δ̂_i for α∈{−1, 0, +0.5, +1} (mirror on EH bodies), probed on D. Prediction: HE gain decreases monotonically as α moves toward EH (α>0) and recovers on the negative side. ~60 probes ≈ 30–45 min on 5 workers — not run yet (pending user confirmation).
 
-## 7. Caveats
+## 7. Caveats & robustness (P1c)
 
-- n=12, exploratory; multiple correlations and PC selection were not family-wise corrected.
+- n=12, exploratory.
+- **Leave-one-seed-out:** the headline signal is stable — tr_HE/HE_cos0→gain@40 r∈[+0.81,+0.91] across all 12 exclusions; g0-norm→gain@40 r∈[+0.54,+0.71]; the EH-arm cos0 relations also keep sign (r≈−0.5) under LOO.
+- **FDR (Benjamini-Hochberg over the 16-test table):** only cos0(HE)→gain@40 survives q<0.1 (q≈0.003). g0-norm→gain@40 and cos0→LE_D are suggestive (q≥0.1); all other rows are null.
 - Replays reproduce archived curves to mean max |Δppl|≈0.24 (~0.6% relative) — near-identical, not bit-exact (threaded float reductions); trajectory gradients are used for geometry only.
 - g0 norms are ≈0.5 (post-clip, gated) and near-constant; the cos0 predictor is a direction, not a magnitude, effect.
 - Cross-setting replication and larger n remain open.
 
 ## 8. Files
 
-- geometry: `geometry_summary.json` ; replays: `replays/seeds/*.json` ; p1: `p1_correlations.json` ; p1b: `p1b_grad0_null.json` ; p2: `p2_pca.json`
+- geometry: `geometry_summary.json` ; replays: `replays/seeds/*.json` ; p1: `p1_correlations.json` ; p1b: `p1b_grad0_null.json` ; p1c: `p1c_robustness.json` ; p2: `p2_pca.json`
 - figures: `report/fig1_geometry_nulls.png`, `report/fig2_trajectory_alignment.png`, `report/fig3_pca.png`
