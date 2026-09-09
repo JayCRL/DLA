@@ -1,7 +1,7 @@
 # DLA v0.2 — Developmental Learning Architecture
 
 > 研究对象不是“再加一个 fast weight”，而是：**学习历史在哪里留下痕迹、这个痕迹由什么构成、又由什么不构成。**
-> 版本状态：论文 Draft v0.3（mechanism-audit，2026-09-10）。
+> 论文主线：**Emergent Selective Learning in Fast/Slow Learners**（Draft v0.4）——没有显式选择目标时，分配级选择性如何涌现且因果必要。
 
 ---
 
@@ -24,7 +24,7 @@ W_slow += beta*Q + gamma*W_fast      # Q 通路（success 门控） + DIRECT 通
 W_fast *= 0.5 ; Q *= 0.7 ; reset m/v
 ```
 
-研究主线：`Learning History → Learner State（Body） → Future Adaptation`，且**每条主张都标注证据级别**（causal / controlled / correlational / negative），论文 §6 给出 Statement×Evidence 总表。
+研究主线：`Learning History → Learner State（Body） → Future Adaptation`，最新论文以 **“涌现选择性学习（allocation-level selectivity）”为核心论点**；每条主张标注证据级别（causal / controlled / correlational / negative），论文 §5 给出 Statement×Evidence 总表。
 
 ---
 
@@ -44,7 +44,7 @@ W_fast *= 0.5 ; Q *= 0.7 ; reset m/v
 7. **“经验越多 → 学得越快”（B 命题）不成立**：Stage 5–8 多协议阴性（p=0.17 / 0.82 / d=−0.17）。
 
 ### 一句话核心结论
-> 没有任何显式对齐/选择目标时，历史通过 `W_fast` 留下**涌现的方向性痕迹**，任务边界把它**自组织地选择性写回慢权**（写在哪些坐标是因果必要的）；而代码里唯一的显式“选择”（success 门控 Q）数值与因果双重惰性。
+> 没有任何显式选择目标时，历史通过 `W_fast` 留下涌现方向性痕迹，任务边界用**标量均匀规则**把它写回慢权——但这个无选择规则的**坐标分配是因果必要的**（能量匹配 shuffle，n=12，t≈4.9）= **涌现的分配级选择性学习**；代码里唯一的显式“选择”（success 门控 Q）数值与因果双重惰性。
 
 ---
 
