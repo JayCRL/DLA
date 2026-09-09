@@ -2,13 +2,13 @@
 
 **First author: Yang Liu**
 
-**Draft v0.2 (validation-stage) — workshop/arXiv**
+**Draft v0.3 (mechanism-audit) — workshop/arXiv**
 
 ---
 
 ## Abstract
 
-A conventional neural learner is treated as a fixed function trained once by an external optimizer. This paper studies a more developmental question: does a learner's prior learning history change how it will learn in the future, and which internal state carries this effect? We propose a Developmental Learning Architecture (DLA) that keeps standard MLP/Transformer backbones unchanged but augments each weight with per-parameter fast weights, plasticity, and sleep consolidation. In a 6.59M Chinese character GPT we find that different curriculum histories lead to different future adaptation on an unseen domain, and that this effect is causally tied to the fast-weight state `W_fast`: replacing a hard→easy learner's fast weights with an easy→hard learner's significantly degrades future adaptation (n=12, gain@40 difference −0.019, bootstrap CI excludes zero, Cohen's d≈−0.7). Norm-matching and shuffling do not remove the effect, so it is not explained by weight magnitude or random parameter noise. The effect replicates on a second Shakespeare character-level backbone. We do not find evidence that more experience monotonically accelerates learning: multiple controlled longitudinal studies return null results. The conclusion is that learning history leaves a persistent, partially localizable trace in transient learner state, with `W_fast` providing a causal component of history-dependent future adaptation.
+A conventional neural learner is treated as a fixed function trained once by an external optimizer. This paper studies a more developmental question: does a learner's prior learning history change how it will learn in the future, and *which part of the learner* carries that change? We use DLA, an architecture that keeps a standard Transformer backbone unchanged but augments every weight with a fast trace `W_fast`, a per-parameter plasticity `P`, and sleep-boundary consolidation, so the learner's own state (not its architecture or its task list) is the object of study. On a 6.59M Chinese character GPT we establish three things. (i) *Where history lives:* replacing a hard→easy learner's `W_fast` with an easy→hard learner's significantly degrades future adaptation on an unseen domain (n=12, gain@40 difference ≈−0.019, CI excludes zero, sign p=0.019, 10/12 negative); norm-matched, shuffled and module-localized controls show the effect is not magnitude, randomness, or a single embedding/attention/MLP module. (ii) *What the mechanism is not:* an explicit code audit shows DLA contains no alignment objective and no parameter-level selection — its `success` signal is a global scalar, and the success-gated eligibility trace `Q` is numerically (~0.4% of the write energy) and causally inert. (iii) *What the mechanism is:* the history effect is carried by (a) the self-organized directional trace that `W_fast` integrates from its Adam-shaped gradients, whose per-seed alignment with the future gradient predicts adaptation (r=0.87; survives norm-confound controls and module-localizes to the same MLP/attention modules implicated causally), and (b) the direct fast→slow write at task boundaries, whose **coordinate allocation is functionally necessary**: keeping the write energy identical but shuffling which coordinates receive it removes the effect (n=12, paired t≈4.9), i.e. the system exhibits self-organized, allocation-level selectivity *without any selection objective*. We find no evidence that more experience monotonically accelerates learning (multiple controlled longitudinal null results).
 
 ---
 
@@ -24,9 +24,9 @@ We ask a problem that sits before "continual learning" and "meta-learning" — y
 
 ### 1.2 Why it matters
 
-If learning history only changes stored knowledge, the learner remains a static function with a growing database. If learning history also changes the learner state, then a small model could, in principle, become a better learner through experience—without changing its architecture. This developmental framing has a deep biological precedent: complementary learning systems (CLS) theory explains memory/learning trade-offs by the interaction of a fast hippocampal system and a slow neocortical system, consolidated over time (McClelland, McNaughton & O'Reilly, 1995; Kumaran, Hassabis & McClelland, 2016). Recent empirical results further show that plasticity itself is a fragile resource that ordinary training can consume (Dohare et al., 2024; Lyle, Rowland & Dabney, 2022; Nikishin et al., 2022), so "what kind of learner a model is" is not fixed by its architecture alone. This is the key motivation for "growing models" and for understanding whether development is a meaningful object in machine learning.
+If learning history only changes stored knowledge, the learner remains a static function with a growing database. If learning history also changes the learner state, then a small model could, in principle, become a better learner through experience—without changing its architecture. This developmental framing has a deep biological precedent: complementary learning systems (CLS) theory explains memory/learning trade-offs by the interaction of a fast hippocampal system and a slow neocortical system, consolidated over time (McClelland, McNaughton & O'Reilly, 1995; Kumaran, Hassabis & McClelland, 2016). Recent empirical results further show that plasticity itself is a fragile resource that ordinary training can consume (Dohare et al., 2024; Lyle, Rowland & Dabney, 2022; Nikishin et al., 2022), so "what kind of learner a model is" is not fixed by its architecture alone.
 
-The practical significance is twofold. First, it tells us which parts of a model to preserve or transfer between learning phases. Second, it gives a falsifiable framework for claims such as "more experience makes models learn faster" — a claim we test and do not find support for.
+The practical significance is twofold. First, it tells us which parts of a model to preserve or transfer between learning phases. Second, it gives a falsifiable framework for claims such as "more experience makes models learn faster" — a claim we test and do not find support for. Throughout, we treat every mechanistic claim as a diagnosis: we state at which level it is established (causal, controlled, correlational, or absent) rather than over-claiming a mechanism.
 
 ---
 
@@ -48,10 +48,10 @@ The practical significance is twofold. First, it tells us which parts of a model
 
 We do not modify the Transformer skeleton. Instead, each weight matrix is accompanied by:
 
-- `W_slow`: long-term consolidated knowledge
+- `W_slow`: long-term consolidated knowledge (the base weights)
 - `W_fast`: a fast learning trace
 - `P`: per-parameter plasticity
-- `Q`: sleep eligibility trace
+- `Q`: a sleep eligibility trace
 
 Effective weights:
 
@@ -59,44 +59,61 @@ Effective weights:
 W_eff = W_slow + softplus(P) * W_fast
 ```
 
-Structurally, this additive form resembles parameter-efficient transfer methods that freeze a base network and attach small trainable additive weights—adapters (Houlsby et al., 2019), LoRA (Hu et al., 2021), and the unified additive-PEFT view (He et al., 2022). DLA differs in three ways that matter for development: (i) the additive pathway is a *within-lifetime developmental state* updated online by the learner's own wake/sleep dynamics, not a separately fine-tuned module; (ii) it is shared across tasks and persists (subject to decay and consolidation) rather than being re-initialised per task; and (iii) its contribution is gated per parameter by a learned plasticity `softplus(P)`. The fast/slow decomposition itself follows complementary learning systems theory (McClelland et al., 1995; Kumaran et al., 2016).
+Structurally, this additive form resembles parameter-efficient transfer methods that freeze a base network and attach small trainable additive weights—adapters (Houlsby et al., 2019), LoRA (Hu et al., 2021), and the unified additive-PEFT view (He et al., 2022). DLA differs in three ways that matter for development: (i) the additive pathway is a *within-lifetime developmental state* updated online by the learner's own wake/sleep dynamics, not a separately fine-tuned module; (ii) it is shared across tasks and persists (subject to decay and consolidation) rather than being re-initialised per task; and (iii) its contribution is gated per parameter by a learned plasticity `softplus(P)`. The fast/slow decomposition follows complementary learning systems theory (McClelland et al., 1995; Kumaran et al., 2016).
 
-### 3.2 Wake and sleep
+### 3.2 Wake and sleep (exact update rules used in this paper)
 
-During learning, `W_fast` is updated with Adam-style moments, gated by `softplus(P)`. At task boundaries (sleep), part of `W_fast` is consolidated into `W_slow` through `Q`, and `W_fast` is decayed. This is the fast/slow separation: it follows the CLS prescription that fast, recent traces be gradually transferred into a slow, generalising store (McClelland et al., 1995; Kumaran et al., 2016), but is implemented as internal weight state with no external replay buffer. Fast/slow weight co-design has engineering precedent in optimisation and RLHF (Qi et al., 2024) and in neural-memory architectures (Behrouz et al., 2025); here it is studied as a developmental mechanism whose causal carrier we test.
+**Wake step** (per batch, per parameter matrix):
+```
+g        = dL/dW_eff                    (backprop)
+m <- b1 m + (1-b1) g ; v <- b2 v + (1-b2) g*g     (Adam moments)
+adam     = m_hat / (sqrt(v_hat) + eps)
+dw       = -eta_fast * softplus(P) * adam - fast_decay * W_fast
+W_fast  += dw
+dp       = eta_plast * progress * relevance - stability*(P - P0)
+success  = clamp((loss_ema - loss)/(loss_ema+1e-4), 0, 1)   # GLOBAL scalar
+Q        = (1 - alpha_q) Q + alpha_q * (dw * success)
+```
+`success` is one scalar shared by every parameter: the only "selection signal" in the code is step-level and global; there is no per-parameter or per-subspace term in Q.
+
+**Sleep (task boundary)** — two write pathways into `W_slow`:
+```
+W_slow += beta * Q  +  gamma * W_fast     # Q pathway  +  DIRECT fast->slow
+W_fast *= consolidate_fast_decay
+Q      *= consolidate_q_decay
+reset Adam moments
+```
+with `beta ≈ 1.0`, `gamma ≈ 0.15`, decay 0.5/0.7 (config values used at probe time; probes run with default rule parameters). The second term is an explicit **unselected bypass**: `W_fast` is copied into `W_slow` at a uniform coefficient regardless of any gate.
+
 **Algorithm 1: DLA wake–sleep cycle**
-
 ```
 1: for task t in curriculum do
 2:   for step in 1..T do
 3:     compute g = dL/dW_eff
 4:     update W_fast with Adam(g), gated by softplus(P)
-5:     update P from progress/relevance
+5:     update P from progress/relevance; Q += dw * success (global scalar)
 6:   end for
 7:   consolidate: W_slow += beta*Q + gamma*W_fast
-8:   decay: W_fast *= c, Q *= d
+8:   decay: W_fast *= c, Q *= d ; reset moments
 9: end for
 ```
-
-
 
 ### 3.3 Experimental design to isolate development
 
 To test whether history changes the future learner, we:
-
-1. Build two histories with the same three domains but different order:
-   - easy→hard (EH)
-   - hard→easy (HE)
+1. Build two histories with the same three domains but different order: easy→hard (EH) and hard→easy (HE).
 2. Probe each individual on a never-seen domain `D`.
 3. Perform body/component cross-injection to see which state component transfers the history effect.
 4. Run norm-matched, shuffled, and module-localized controls to rule out magnitude/randomness.
 5. Compare with standard baselines (AdamW, replay, EWC).
+6. Run consolidation-pathway ablations (Q-only / direct-only / none) and an energy-matched **allocation shuffle** to ask whether consolidation—and, if so, *where* it writes—matters.
+7. Audit the code statically for the presence of explicit alignment or selection objectives.
 
 ---
 
 ## 4. Experimental setup
 
-Primary backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab 7280), pretrained on Chinese Wikipedia. Curriculum domains: Wikipedia, SFT-style QA, science Wikipedia; unseen domain D is a science slice. Second setting: ~10.65M Shakespeare character GPT (vocab 65). Metrics: gain@40, LE_D, T80, paired bootstrap CI, sign test.
+Primary backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab 7280), pretrained on Chinese Wikipedia. Curriculum domains: Wikipedia, SFT-style QA, science Wikipedia; unseen domain D is a science slice. Second setting: ~10.65M Shakespeare character GPT (vocab 65). Metrics: gain@40, LE_D, T80, paired t / bootstrap CI, sign test. All within-seed, within-arm contrasts are paired; raw EH/HE differences are reported with their own variance and are not assumed stable across seeds.
 
 **Table 1: Common experimental hyperparameters.**
 
@@ -108,9 +125,10 @@ Primary backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab
 | AdamW learning rate (baselines/DLA base) | 1e−4 |
 | EWC lambda | 1e3 |
 | Replay buffer capacity | 48 batches |
-| Seeds (primary setting) | 12 |
+| Seeds (primary setting, causal/ablation) | 12 (0–11) |
 | Seeds (baselines) | 5 |
 | Seeds (second setting) | 2 |
+| Consolidation coefficients (beta, gamma, decays) | ≈1.0, 0.15, 0.5, 0.7 |
 
 ---
 
@@ -118,18 +136,17 @@ Primary backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab
 
 ### 5.1 Fast/slow separation protects consolidated memory
 
-DLA matches tuned AdamW on new-domain adaptation (gain +14.0% vs +13.0%) while slow-memory forgetting is ≈0 (−0.4%). This shows the mechanism does not sacrifice memory for plasticity.
+DLA matches tuned AdamW on new-domain adaptation (gain +14.0% vs +13.0%) while slow-memory forgetting is ≈0 (−0.4%). The mechanism does not sacrifice memory for plasticity.
+
 ![Figure 1a: Fast/slow separation and retention across domains.](figures/A_across_lifetime.png)
 
 ![Figure 1b: Adaptation curve on the new domain.](figures/B_adaptation_curve.png)
 
 ![Figure 1c: Relearning curve.](figures/A_relearning_curve.png)
 
-
-
 ### 5.2 Learning history changes future adaptation
 
-Across histories, HE learners adapt better to unseen D than EH learners. That later adaptation depends on the *order* of earlier tasks mirrors continual-learning and curriculum results measured on seen tasks (Bell & Lawrence, 2022; Li & Hiratani, 2025; Poirier & Silver, 2005). The distinctive feature here is that D was never seen in either history, so the order effect must act through the learner's internal state rather than through stored content about D. This is not unique to DLA; but DLA is most robust after a difficult history.
+Across histories, HE learners adapt better to unseen D than EH learners on average, mirroring continual-learning and curriculum order effects measured on seen tasks (Bell & Lawrence, 2022; Li & Hiratani, 2025; Poirier & Silver, 2005). The distinctive feature is that D was never seen in either history, so the order effect must act through the learner's internal state rather than stored content about D. The raw EH/HE gap is **not stable across seeds** (n=12 paired HE−EH dz≈0.6; several seeds reverse), so every strong claim below uses *within-seed, within-arm* contrasts (swap, ablation, shuffle), not the raw gap.
 
 ![Figure 2: History effect on unseen D (2x2 development experiment).](figures/2x2_D.png)
 
@@ -139,7 +156,7 @@ Body×φ cross-injection shows that swapping φ between histories changes future
 
 ![Figure 3: Body × φ causal dissection.](figures/cross_2x2.png)
 
-### 5.4 W_fast is a causal component
+### 5.4 W_fast is a causal component (carrier localization)
 
 Core result (n=12):
 
@@ -148,7 +165,7 @@ Core result (n=12):
 | HE/HE | +0.014 |
 | HE + EH W_fast | −0.005 |
 
-Paired HE→raw EH: mean −0.019, 95% CI [−0.033, −0.005], Cohen's d ≈ −0.71, sign p=0.019 (10/12 negative). Initial PPL differences are small; the effect appears in the adaptation trajectory.
+Paired contrast: mean −0.019, 95% CI [−0.033, −0.005], Cohen's d ≈ −0.7, sign p=0.019 (10/12 negative). Initial PPL differences are small; the effect appears in the adaptation trajectory.
 
 ![Figure 4: P0 future-adaptation trajectories.](figures/p0_trajectory.png)
 
@@ -182,11 +199,11 @@ DLA is the most robust after an easy→hard history; standard learners show larg
 
 ### 5.7 Second-setting replication
 
-Shakespeare char GPT, 2 seeds: HE/HE gain@40 +0.052/+0.042; HE+EH fast +0.004/−0.001. The destructive effect replicates in direction.
+Shakespeare char GPT, 2 seeds: HE/HE gain@40 +0.052/+0.042; HE+EH fast +0.004/−0.001. The destructive effect replicates in direction (n=2, exploratory).
 
 ### 5.8 Negative result: more experience does not necessarily make learning faster
 
-Stage 5 (difficulty-normalized): flat LE. Stage 6 (matched difficulty): p=0.17. Stage 7 (cross-domain, 20 seeds): p=0.82. Stage 8 (physics near-transfer, 20 seeds): d=−0.17. We therefore do not claim "more experience → faster learning". This null is consistent with a growing plasticity literature: more training does not monotonically make a network more learnable, early experience can dominate later learning (primacy bias; Nikishin et al., 2022), and both capacity and plasticity can be consumed by ordinary updates (Lyle et al., 2022; Dohare et al., 2024).
+Stage 5 (difficulty-normalized): flat LE. Stage 6 (matched difficulty): p=0.17. Stage 7 (cross-domain, 20 seeds): p=0.82. Stage 8 (physics near-transfer, 20 seeds): d=−0.17. We do not claim "more experience → faster learning". This null is consistent with a growing plasticity literature (Nikishin et al., 2022; Lyle et al., 2022; Dohare et al., 2024).
 
 ![Figure 7a: Negative result — cross-domain longitudinal (Stage 7, 20 seeds).](figures/norm_slope_trend.png)
 
@@ -194,27 +211,86 @@ Stage 5 (difficulty-normalized): flat LE. Stage 6 (matched difficulty): p=0.17. 
 
 ---
 
-## 6. Limitations
+## 6. Mechanism audit: what the effect is, and what it is not
 
-- Second-setting n=2; baselines n=5.
-- Single small backbones; no large-scale validation.
-- Sleep consolidation writes only a small amount into `W_slow`; fast/slow separation is mostly isolation.
-- No pre-registration; we report n=10→n=12 transparently.
-- We cannot yet claim W_fast is the only carrier or that module localization is definitive.
+### 6.1 There is no explicit alignment or selection mechanism in the code
+
+A static audit of the full wake/sleep/meta path (`dla/transformer_dla.py`: `dla_step`, `dla_sleep`, `meta_unroll_loss`) shows:
+- **No alignment objective.** No term compares a gradient to a history direction; no cosine/normalized-dot exists anywhere in the Transformer-DLA path.
+- **No parameter-level selection.** `success` is a single scalar from EMA losses (same coefficient for every parameter); `Q = EMA(dw · success)` is therefore a *step-level global gating*, not parameter- or subspace-level selection. The only per-parameter signal (`relevance`) feeds `P`, a positive coordinate rescale, never `Q`.
+- The directional content that exists is **emergent**: `W_fast` is a leaky integrator (decay 0.02/step ⇒ ≈50-step horizon ≈ one stage) of the Adam-shaped gradient `-eta·softplus(P)·adam`, so the "direction of history" is an accumulated, normalised recent-gradient trajectory — not an imposed target.
+
+### 6.2 The directional character is measurable, module-aligned, and not a norm artifact (correlational)
+
+From 48 deterministic replays of the stored D-probe and the 24 saved bodies (seeds 0–11):
+- The per-seed alignment `cos(g0(HE), ΔW_fast)` of the initial D-gradient with the same seed's history contrast predicts HE adaptation: r=0.87, permutation p≈0.000, leave-one-seed-out r∈[0.81,0.91], and it is the only effect in the correlation table surviving Benjamini–Hochberg FDR (q≈0.003).
+- Controlling for `‖ΔW‖`, relative norm, `cos(EH,HE)`, and gradient norm leaves partial r≈0.77 — not a simple magnitude confound. True same-seed pairing (r≈0.86) beats cross-seed pairing (0.66) and shuffled Δ (0.30).
+- Module alignment mirrors the causal module controls: MLP r≈0.87, attention r≈0.83, embedding r≈0.68.
+- **Macroscopic geometry is not the carrier**: `‖ΔW_fast‖` and `cos(EH,HE)` are indistinguishable from same-history cross-seed noise (3.34 vs 3.21–3.26; 0.579 vs 0.60–0.61), and PCA shows no dominant shared direction (PC1 ≈ 20% variance).
+- *Caveat:* this whole block is correlational; we do not claim directional alignment is causal (no direction manipulation in this paper).
+
+### 6.3 Consolidation acts through the direct fast→slow write, not through Q
+
+Measured on the saved bodies: mean `‖Q‖ ≈ 0.002` vs `‖W_fast‖ ≈ 3.6`; estimated Q→W_slow write is ≈0.4% of the direct write per sleep. During the D-probe `run_transfer` never calls sleep, so Q cannot act on the measured outcome except via earlier W_slow writes.
+
+**Consolidation ablation (n=12, HE arm, gain@40):**
+
+| variant | mean gain@40 | paired t vs full | paired t vs direct |
+|---|---|---|---|
+| full (archive) | +0.0143 | — | — |
+| direct (γ·W_fast only) | +0.0148 | +0.59 | — |
+| nocons (no write) | +0.0036 | −5.53 | +5.30 |
+| qonly (β·Q only, n=4) | +0.0094 | — | ≈ nocons |
+
+`direct ≈ full`; removing consolidation (`nocons`) significantly drops the HE arm; Q-only (n=4) behaves like no-consolidation ⇒ the success-gated Q channel has no independent causal contribution.
+
+### 6.4 The coordinate allocation of the direct write is necessary (self-organized selective allocation)
+
+Energy-matched control: `shufwrite` keeps every per-sleep write energy identical to `direct` but randomly permutes, within each matrix, which coordinates receive the increment (only the allocation is destroyed).
+
+**HE arm, n=12:** `shufwrite` mean +0.0042 vs `direct` +0.0148 → paired t=4.86; `shufwrite` ≈ `nocons` (t=−0.38) ≪ `direct` (t=4.86).
+
+![Figure 8: Consolidation ablation & allocation shuffle (HE arm, n=12).](figures/fig_audit_consolidation.png)
+
+Because the increment is just `γ·W_fast` with a uniform scalar coefficient, "where it writes" is entirely determined by the self-organized structure of `W_fast`. Destroying that structure with an energy-matched shuffle removes the benefit ⇒ the system shows **selectivity of allocation without any selection objective**: a form of emergent, allocation-level selective consolidation.
+
+### 6.5 Statement-level summary
+
+| Claim | Implemented in code? | Observed? | Causal evidence? | Status |
+|---|---|---|---|---|
+| History effect localized to `W_fast` (carrier) | — | yes | **strong** (swap, n=12, controls, 2nd setting) | established |
+| Directional alignment as explicit operator/loss | no | — | — | absent |
+| Emergent directional character (predictive, module-aligned) | — | yes (r=0.87) | correlational only | supported as *character*, not mechanism |
+| Selective consolidation via success-gated Q | step-level scalar only | Q≈0.002; qonly≈nocons | inert | refuted in this setting |
+| Direct fast→slow write carries effect | yes (γ·W_fast) | yes | strong (n=12, t≈5.3) | established |
+| Allocation of the direct write is necessary | emergent from W_fast | yes | strong (energy-matched shuffle, t≈4.9) | established |
+| More experience → faster learning | — | null (stages 5–8) | — | not supported |
 
 ---
 
-## 7. Conclusion and significance
+## 7. Limitations
 
-The learner is not fully characterized by what it currently knows. Learning history leaves a persistent, partially localizable trace in transient learner state, with `W_fast` providing a causal component of history-dependent future adaptation. This result gives a concrete mechanism for "development" in neural networks and clarifies a frequent but unsupported claim: developmental change does not equal universally faster learning.
+- Second-setting n=2; baselines n=5; all causal/ablation claims are from one 6.59M Chinese character GPT.
+- Directional-alignment evidence is correlational (no direction manipulation).
+- Retention (protection of earlier-task memory) is not measured in the same protocol as future adaptation (probes never sleep); the two halves of consolidation are separate in this paper.
+- The raw EH/HE adaptation gap is seed-noisy; strong claims rest on within-seed paired contrasts.
+- No pre-registration; we report n=10→n=12 and every null transparently.
+- Sleep consolidation writes only a small amount into `W_slow` per boundary; the effect we attribute to the direct write is therefore about *where* the (small) write lands, not its bulk.
+
+---
+
+## 8. Conclusion and significance
+
+Without any explicit alignment or selection objective, a learner's history still leaves a persistent, causal trace in its fast weights: replacing that trace changes how the learner will adapt to something it has never seen. Mechanistically, the trace is a self-organized directional structure (`W_fast` as a leaky integrator of its Adam-shaped gradients) whose per-seed alignment with the future task predicts adaptation and localizes to the same modules that are causally implicated; at task boundaries, the fast→slow direct write — not the success-gated eligibility trace — transfers part of that structure into the slow store, and *which coordinates* receive the write is functionally necessary (energy-matched shuffle control). The success-gated "selective consolidation" the architecture nominally contains is numerically and causally inert. We therefore reframe the contribution: not "fast/slow weights as a new mechanism", but a controlled, honest decomposition of *where* developmental change lives in a learner, *what* it consists of (emergent directional structure + allocation-selective writeback), and *what it does not consist of* (explicit alignment, parameter-level selection, or universally faster learning).
 
 ---
 
 ## Reproducibility
 
 Code: https://github.com/JayCRL/DLA
-Experiment details: `docs/experiments.md`, `paper/overnight_report.md`, `paper/validation_audit.md`
-Scripts: `stage4_formal.py`, `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `validation_second_setting.py`, `stage6_longitudinal.py`, `stage7_cross_domain.py`, `stage8_physics.py`.
+Experiment details: `docs/experiments.md`, `paper/overnight_report.md`, `paper/validation_audit.md`.
+Scripts: `stage4_formal.py`, `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `validation_second_setting.py`, `stage6_longitudinal.py`, `stage7_cross_domain.py`, `stage8_physics.py`; mechanism audit: `analysis/wfast_geom/` (`geom.py`, `replay.py`, `p1*.py`, `p2.py`, `p4_consolidation_geom.py`, `audit_cheap.py`, `audit_b3.py`, reports under `analysis/wfast_geom/report_output/`).
+Per-seed data, scripts and commit hashes for every claim are recorded in the repository; the mechanism-audit runs used a parity-validated harness on an Apple M2 (CPU), identical protocol to the archived server runs (mean |Δppl| ≈ 0.24 vs archive).
 
 ---
 
