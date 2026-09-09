@@ -50,36 +50,55 @@ class Args:
     train_chars = 300_000
     val_chars = 40_000
     eta_fast = 6e-4
+    gamma_scale = 1.0
     meta_lr = 0.1
     meta_batch = 4
     meta_unroll_len = 2
 
 
 @torch.no_grad()
-def variant_sleep(model, state, variant, perm_seed=0):
+def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0):
     """Copy of dla_sleep with the write pathway selected by `variant`.
 
-    shufwrite == direct (gamma*W_fast) with the same per-key norm, but the
-    coordinates of the write are randomly permuted within each matrix before
-    being added to W_slow: identical total energy, destroyed allocation.
+    shufwrite : direct (gamma*W_fast) energy, coordinates randomly permuted.
+    uniformwrite : same per-key energy, spread uniformly over coordinates
+                   (|wf|-independent placement).
+    topwrite : same total energy, concentrated on the top-20% |wf| coordinates.
+    nosleep is handled by the caller (sleep not invoked at all).
     """
     tv = model.tempos.values()
+    gam = tv["consolidate_fast_direct"] * gamma_scale
     for key, mod in model.key_modules.items():
         s = state.store[key]
+        wf = s["w_fast"]
         if variant == "qonly":
             add = tv["consolidate_beta"] * s["q"]
         elif variant == "direct":
-            add = tv["consolidate_fast_direct"] * s["w_fast"]
+            add = gam * wf
         elif variant == "shufwrite":
-            wf = s["w_fast"]
             flat = wf.reshape(-1)
             gen = torch.Generator().manual_seed(perm_seed * 7919 + abs(hash(key)) % 1000003)
             perm = torch.randperm(flat.numel(), generator=gen)
-            add = tv["consolidate_fast_direct"] * flat[perm].reshape(wf.shape)
+            add = gam * flat[perm].reshape(wf.shape)
+        elif variant == "uniformwrite":
+            n = wf.numel()
+            c = gam * wf.norm() / math.sqrt(n) if n > 0 else 0.0
+            add = torch.full_like(wf, c)
+        elif variant == "topwrite":
+            n = wf.numel()
+            n_keep = max(1, int(round(0.2 * n)))
+            k = int(round(0.8 * n))  # threshold index
+            flat_abs = wf.reshape(-1).abs()
+            thr = flat_abs.topk(k, largest=True).values.min() if n > 0 else 0.0
+            mask = wf.abs() >= thr
+            keep = mask.sum().item()
+            c = gam * wf.norm() / math.sqrt(keep) if keep > 0 else 0.0
+            add = torch.where(mask, torch.full_like(wf, c), torch.zeros_like(wf))
+            del flat_abs
         elif variant == "nocons":
             add = None
         else:  # full == original
-            add = tv["consolidate_beta"] * s["q"] + tv["consolidate_fast_direct"] * s["w_fast"]
+            add = tv["consolidate_beta"] * s["q"] + gam * wf
         if add is not None:
             mod.weight.add_(add)
         s["w_fast"].mul_(tv["consolidate_fast_decay"])
@@ -116,10 +135,13 @@ def run_history_variant(seed, order_name, phases, eb, d_train, args, device,
         if variant in ("full", "qonly"):
             qmag = math.sqrt(sum(float((tv["consolidate_beta"] * s_["q"]).pow(2).sum())
                                  for s_ in state.store.values()))
-        if variant in ("full", "direct", "shufwrite"):
-            wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+        if variant in ("full", "direct", "shufwrite", "uniformwrite", "topwrite"):
+            gs = getattr(args, "gamma_scale", 1.0)
+            wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * gs * s_["w_fast"]).pow(2).sum())
                                  for s_ in state.store.values()))
-        variant_sleep(model, state, variant, perm_seed=seed * 1000 + t_idx)
+        if variant != "nosleep":
+            variant_sleep(model, state, variant, perm_seed=seed * 1000 + t_idx,
+                          gamma_scale=getattr(args, "gamma_scale", 1.0))
         cons_q_total += qmag
         cons_w_total += wmag
         per_sleep.append({"stage": t_idx, "Q_write": qmag, "direct_write": wmag})
@@ -134,14 +156,17 @@ def main():
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--order", type=str, choices=("EH", "HE"), required=True)
     ap.add_argument("--variant", type=str,
-                    choices=("qonly", "direct", "shufwrite", "nocons", "full"), required=True)
+                    choices=("qonly", "direct", "shufwrite", "uniformwrite", "topwrite",
+                             "nocons", "nosleep", "full"), required=True)
     ap.add_argument("--out", default="results/audit")
     ap.add_argument("--keep-body", action="store_true")
+    ap.add_argument("--gamma", type=float, default=1.0)
     args = ap.parse_args()
     order = "easy_hard" if args.order == "EH" else "hard_easy"
     seed = args.seed
     a = Args()
     a.max_steps = a.d_steps  # probe protocol (mirror stage55e probe_trajectory)
+    a.gamma_scale = args.gamma
     device = "cpu"
     import os as _os
     torch.set_num_threads(int(_os.environ.get("TORCH_THREADS", "4")))
@@ -170,11 +195,19 @@ def main():
     qn = math.sqrt(sum(float(state.store[k]["q"].pow(2).sum()) for k in state.store))
     wn = math.sqrt(sum(float(state.store[k]["w_fast"].pow(2).sum()) for k in state.store))
     sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+    # ---- same-protocol retention: end-of-history ppl on the seen curriculum domains
+    ret = {}
+    for dom in eb:
+        if dom == "D":
+            continue
+        ret[dom] = s55.eval_ppl(model, eb[dom], state=state)
     model.train()
     rng = random.Random(800000 + seed)
     d = s55.run_transfer(model, d_train, eb, a, rng, device, state=state, dla=True)
     cs = s55.curve_stats(d["curve"], a.d_steps)
     rec = {"seed": seed, "order": args.order, "variant": args.variant, "pre": d["pre"],
+           "birth_ppl": {k: float(v) for k, v in pre_all.items()},
+           "ret_ppl": {k: float(v) for k, v in ret.items()},
            "post_ppl": d["curve"][-1]["ppl"], "gain40": d["curve"][-1]["gain"],
            "LE_D": cs["LE"], "T80_D": cs["T80"],
            "Q_norm": qn, "Wfast_norm": wn, "Wslow_norm": sn,
