@@ -78,7 +78,12 @@ def variant_sleep(model, state, variant):
 
 def run_history_variant(seed, order_name, phases, eb, d_train, args, device,
                         body_dir, variant, meta=False):
-    """Mirror of stage55c.run_meta_history with a sleep variant (phi meta-updates ON)."""
+    """Mirror of stage55c.run_meta_history with a sleep variant (phi meta-updates ON).
+    Also accumulates the actual per-sleep write magnitudes ||beta*Q|| (Q pathway)
+    and ||gamma*W_fast|| (direct pathway) that are applied."""
+    cons_q_total = 0.0
+    cons_w_total = 0.0
+    per_sleep = []
     train_rng = random.Random(600000 + seed * 10 + (0 if order_name == "easy_hard" else 1))
     meta_rng = random.Random(610000 + seed * 10 + (0 if order_name == "easy_hard" else 1))
     cfg = TransformerDLAConfig(eta_fast=args.eta_fast)
@@ -95,11 +100,22 @@ def run_history_variant(seed, order_name, phases, eb, d_train, args, device,
         for _step in range(1, args.cur_steps + 1):
             x, y = s55.get_batch(train_ids, args.block, args.batch, train_rng, device)
             model.dla_step(x, y, state)
+        tv = model.tempos.values()
+        qmag = wmag = 0.0
+        if variant in ("full", "qonly"):
+            qmag = math.sqrt(sum(float((tv["consolidate_beta"] * s_["q"]).pow(2).sum())
+                                 for s_ in state.store.values()))
+        if variant in ("full", "direct"):
+            wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+                                 for s_ in state.store.values()))
         variant_sleep(model, state, variant)
+        cons_q_total += qmag
+        cons_w_total += wmag
+        per_sleep.append({"stage": t_idx, "Q_write": qmag, "direct_write": wmag})
         trace.append({"stage": t_idx, "phi": model.tempos.snapshot()})
     path = os.path.join(body_dir, f"seed{seed}_{order_name}_meta.pt")
     s55c.save_body(path, model, state)
-    return path, trace
+    return path, trace, cons_q_total, cons_w_total, per_sleep
 
 
 def main():
@@ -133,7 +149,8 @@ def main():
 
     body_dir = os.path.join(args.out, args.variant)
     os.makedirs(body_dir, exist_ok=True)
-    path, trace = run_history_variant(seed, order, ph, eb, d_train, a, device, body_dir, args.variant, meta=True)
+    path, trace, cons_q, cons_w, per_sleep = run_history_variant(
+        seed, order, ph, eb, d_train, a, device, body_dir, args.variant, meta=True)
 
     # ---- probe on D (identical to Stage 5.5e native probe) ----
     model, state = s55c.load_body(path, a, device)
@@ -146,8 +163,11 @@ def main():
     d = s55.run_transfer(model, d_train, eb, a, rng, device, state=state, dla=True)
     cs = s55.curve_stats(d["curve"], a.d_steps)
     rec = {"seed": seed, "order": args.order, "variant": args.variant, "pre": d["pre"],
-           "gain40": d["curve"][-1]["gain"], "LE_D": cs["LE"], "T80_D": cs["T80"],
-           "Q_norm": qn, "Wfast_norm": wn, "Wslow_norm": sn}
+           "post_ppl": d["curve"][-1]["ppl"], "gain40": d["curve"][-1]["gain"],
+           "LE_D": cs["LE"], "T80_D": cs["T80"],
+           "Q_norm": qn, "Wfast_norm": wn, "Wslow_norm": sn,
+           "cons_write_Q_total": cons_q, "cons_write_direct_total": cons_w,
+           "cons_per_sleep": per_sleep}
     rec_dir = os.path.join(args.out, args.variant)
     os.makedirs(rec_dir, exist_ok=True)
     with open(os.path.join(rec_dir, f"probe_seed{seed}_{args.order}.json"), "w") as f:
