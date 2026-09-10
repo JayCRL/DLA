@@ -35,8 +35,10 @@ def build_pdf(md_path: Path, pdf_path: Path) -> None:
         tmp = Path(tmp)
         html_path = tmp / "paper.html"
         # pandoc standalone HTML; copy figures next to it so Chrome can load them.
+        # --mathml emits native <math> elements: Chrome >= 109 renders them with no
+        # LaTeX toolchain, no MathJax/KaTeX assets, no network and no JS timing issues.
         run(["pandoc", str(md_path), "-f", "markdown", "-t", "html5", "-s",
-             "-o", str(html_path), "--metadata", "title=DLA Draft"])
+             "-o", str(html_path), "--mathml", "--metadata", "title=DLA Draft"])
         fig_src = md_path.parent / "figures"
         if fig_src.exists():
             shutil.copytree(fig_src, tmp / "figures")

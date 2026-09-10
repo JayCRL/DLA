@@ -13,44 +13,48 @@ second backbone n=9).
 
 | symbol | meaning |
 |---|---|
-| `W_slow ∈ R^d` | slow weights (one wrapped matrix; `d` coordinates; we write per-matrix and concatenate over the 26 wrapped matrices) |
-| `W_fast ∈ R^d` | fast trace (`store[key]["w_fast"]`) |
-| `P ∈ R^d` | per-parameter plasticity (`store[key]["p"]`), gate `φ(P) = softplus(P) > 0` |
-| `Q ∈ R^d` | success-gated eligibility trace |
-| `m, v ∈ R^d` | Adam moments of the fast update |
-| `g_t = ∇_{W_eff} L_t` | teaching gradient of the current batch |
-| `λ, η, γ, β, δ, ρ` | fast decay, fast step, direct-write coeff, Q-write coeff, sleep decay of `W_fast`, sleep decay of `Q` |
-| `W_eff` | effective weight actually used by the forward pass: `W_eff = W_slow + φ(P) ⊙ W_fast` |
-| `G(Φ)` | adaptation functional of a learner state `Φ = (W_slow, W_fast, P, Q, m, v)`: `G = gain@40 = (PPL_pre − PPL_40)/PPL_pre` on the unseen domain `D` |
+| $W_{\mathrm{slow}} \in \mathbb{R}^d$ | slow weights (one wrapped matrix; $d$ coordinates; we write per-matrix and concatenate over the 26 wrapped matrices) |
+| $W_{\mathrm{fast}} \in \mathbb{R}^d$ | fast trace (`store[key]["w_fast"]`) |
+| $P \in \mathbb{R}^d$ | per-parameter plasticity (`store[key]["p"]`), gate $\varphi(P) = \mathrm{softplus}(P) > 0$ |
+| $Q \in \mathbb{R}^d$ | success-gated eligibility trace |
+| $m, v \in \mathbb{R}^d$ | Adam moments of the fast update |
+| $g_t = \nabla_{W_{\mathrm{eff}}} L_t$ | teaching gradient of the current batch |
+| $\lambda, \eta, \gamma, \beta, \delta, \rho$ | fast decay, fast step, direct-write coeff, Q-write coeff, sleep decay of $W_{\mathrm{fast}}$, sleep decay of $Q$ |
+| $W_{\mathrm{eff}}$ | effective weight actually used by the forward pass: $W_{\mathrm{eff}} = W_{\mathrm{slow}} + \varphi(P) \odot W_{\mathrm{fast}}$ |
+| $G(\Phi)$ | adaptation functional of a learner state $\Phi = (W_{\mathrm{slow}}, W_{\mathrm{fast}}, P, Q, m, v)$: $G = \text{gain@40} = (\mathrm{PPL}_{\mathrm{pre}} - \mathrm{PPL}_{40})/\mathrm{PPL}_{\mathrm{pre}}$ on the unseen domain $D$ |
 
-Code constants: `λ = 0.02`, `η = 6e-4`, `β ≈ 1.0`, `γ ≈ 0.15`, `δ = 0.5`, `ρ = 0.7`,
-Adam `β1=0.9, β2=0.95`, `ε=1e-8`, `α_q = 0.3`. Probes run with these defaults
+Code constants: $\lambda = 0.02$, $\eta = 6\times10^{-4}$, $\beta \approx 1.0$, $\gamma \approx 0.15$, $\delta = 0.5$, $\rho = 0.7$,
+Adam $\beta_1=0.9,\ \beta_2=0.95$, $\epsilon=10^{-8}$, $\alpha_q = 0.3$. Probes run with these defaults
 (`load_body` rebuilds `tempos`), so all numbers below use them.
 
 ---
 
 ## 1. Link 1 — gradient leaky integration (exact identity, code-level)
 
-**Wake step** (per batch, per coordinate `i`):
+**Wake step** (per batch, per coordinate $i$):
 
-```
-g_t        = ∇_{W_eff} L_t
-m_t        = β1 m_{t-1} + (1-β1) g_t
-v_t        = β2 v_{t-1} + (1-β2) g_t ⊙ g_t
-â_t        = m̂_t / (√v̂_t + ε)             (m̂, v̂ bias-corrected)
-W_fast,t+1 = (1-λ) W_fast,t − η φ(P_t) ⊙ â_t
-```
+$$
+\begin{aligned}
+g_t &= \nabla_{W_{\mathrm{eff}}} L_t\\
+m_t &= \beta_1 m_{t-1} + (1-\beta_1) g_t\\
+v_t &= \beta_2 v_{t-1} + (1-\beta_2) g_t \odot g_t\\
+\hat{a}_t &= \hat{m}_t/(\sqrt{\hat{v}_t}+\epsilon)\qquad(\hat{m},\hat{v}\ \text{bias-corrected})\\
+W_{\mathrm{fast},t+1} &= (1-\lambda) W_{\mathrm{fast},t} - \eta\,\varphi(P_t)\odot \hat{a}_t
+\end{aligned}
+$$
 
-**Closed form.** Unrolling over a lifetime of `T` steps with start `0`:
+**Closed form.** Unrolling over a lifetime of $T$ steps with start `0`:
 
-```
-W_fast,T = −η Σ_{k=0}^{T-1} (1-λ)^{T-1-k} · φ(P_k) ⊙ â_k
-         = −η Σ_k κ(T,k) · â_k^φ ,        κ(T,k) = (1-λ)^{T-1-k}
-```
+$$
+\begin{aligned}
+W_{\mathrm{fast},T} &= -\eta \sum_{k=0}^{T-1}(1-\lambda)^{T-1-k}\,\varphi(P_k)\odot \hat{a}_k\\
+&= -\eta \sum_{k} \kappa(T,k)\,\hat{a}^{\varphi}_k,\qquad \kappa(T,k) = (1-\lambda)^{T-1-k}
+\end{aligned}
+$$
 
-So `W_fast` is the **gated-Adam gradient field integrated with an exponential kernel**;
-the kernel's time constant is `1/λ = 50` steps ≈ one 40-step curriculum stage
-(hence "one-stage memory"). `â` is a *coordinate-normalised* EMA of `g`, so the integral
+So $W_{\mathrm{fast}}$ is the **gated-Adam gradient field integrated with an exponential kernel**;
+the kernel's time constant is $1/\lambda = 50$ steps ≈ one 40-step curriculum stage
+(hence "one-stage memory"). $\hat{a}$ is a *coordinate-normalised* EMA of $g$, so the integral
 keeps the **sign pattern and relative-magnitude structure** of recent gradients while
 being invariant to per-coordinate scale.
 
@@ -63,9 +67,9 @@ the stored D-probes: 48/48 runs, mean max |Δppl| ≈ 0.24 vs archive).
 
 **History contrast.** For the same seed, define
 
-```
-Δ_hist = W_fast^HE − W_fast^EH = −η Σ_k κ(T,k) [ â_k^φ(HE) − â_k^φ(EH) ]
-```
+$$
+\Delta_{\mathrm{hist}} = W_{\mathrm{fast}}^{\mathrm{HE}} - W_{\mathrm{fast}}^{\mathrm{EH}} = -\eta \sum_k \kappa(T,k)\left[\hat{a}^{\varphi}_k(\mathrm{HE}) - \hat{a}^{\varphi}_k(\mathrm{EH})\right]
+$$
 
 i.e. the history difference *is* a difference of two exponentially weighted gradient-trajectory
 integrals — no explicit alignment term appears anywhere in the code (static audit: no
@@ -75,16 +79,16 @@ cosine/dot objective exists in the Transformer-DLA path).
 
 | quantity | value | reading |
 |---|---|---|
-| `‖Δ_hist‖` | 3.34 ± 0.24 | — |
-| same-history cross-seed `‖W_fast,i − W_fast,j‖` | 3.21–3.26 | **history contrast ≈ seed noise in norm** |
-| `cos(W_fast^EH, W_fast^HE)` | 0.579 | same-history cross-seed cos 0.60–0.61 → **not separable globally** |
+| $\|\Delta_{\mathrm{hist}}\|$ | 3.34 ± 0.24 | — |
+| same-history cross-seed $\|W_{\mathrm{fast},i} - W_{\mathrm{fast},j}\|$ | 3.21–3.26 | **history contrast ≈ seed noise in norm** |
+| $\cos(W_{\mathrm{fast}}^{\mathrm{EH}}, W_{\mathrm{fast}}^{\mathrm{HE}})$ | 0.579 | same-history cross-seed cos 0.60–0.61 → **not separable globally** |
 | PCA of {Δ_hist} | PC1 ≈ 20% var, top-3 ≈ 41% | no dominant shared mode |
-| module energy share of `Δ_hist` | emb 49% / attn 15% / mlp 36% | norm-heavy ≠ causal (controls: MLP+attn destructive) |
+| module energy share of $\Delta_{\mathrm{hist}}$ | emb 49% / attn 15% / mlp 36% | norm-heavy ≠ causal (controls: MLP+attn destructive) |
 
 So "structure" must be read as **fine-grained, per-seed, allocation-level**, not as a
 global direction or a large-norm difference.
 
-**Directional character (correlational).** With `g_0` the first D-probe gradient
+**Directional character (correlational).** With $g_0$ the first D-probe gradient
 (Adam-shaped, gated):
 
 ```
@@ -94,8 +98,8 @@ partial r after controlling ‖Δ‖, rel-norm, cos(EH,HE), ‖g_0‖ = +0.77
 module split: MLP 0.87, attention 0.83, embedding 0.68
 ```
 
-`|ρ|` itself is tiny (≈0.02, vs shuffle-null 0.0003, cross-seed-null 0.004): the
-*ordering* of seeds by `ρ` predicts adaptation, but the alignment is not a large
+$|\rho|$ itself is tiny (≈0.02, vs shuffle-null 0.0003, cross-seed-null 0.004): the
+*ordering* of seeds by $\rho$ predicts adaptation, but the alignment is not a large
 geometric overlap. **Status: correlational only — no direction-manipulation experiment.**
 
 ---
@@ -104,66 +108,69 @@ geometric overlap. **Status: correlational only — no direction-manipulation ex
 
 **Sleep operator.** At each task boundary:
 
-```
-W_slow ← W_slow + β Q + γ W_fast        (Q-pathway  +  DIRECT pathway)
-W_fast ← δ W_fast ;  Q ← ρ Q ;  m, v ← 0
-```
+$$
+W_{\mathrm{slow}} \leftarrow W_{\mathrm{slow}} + \beta Q + \gamma W_{\mathrm{fast}}\qquad\text{(Q-pathway} + \text{DIRECT pathway)}
+$$
 
-Define the **allocation field** of a write: `A = β Q + γ W_fast`. For the direct term,
-coordinate-wise `A_i = γ · W_fast,i` with a *single scalar* `γ`: the rule is
-unselective, so **allocation is entirely inherited from `W_fast`**.
+$$
+W_{\mathrm{fast}} \leftarrow \delta\,W_{\mathrm{fast}};\qquad Q \leftarrow \rho\,Q;\qquad m,v \leftarrow 0
+$$
 
-Two facts make Q inert in this setting: `success` is a global scalar (`q_inc = dw·success`
+Define the **allocation field** of a write: $A = \beta Q + \gamma W_{\mathrm{fast}}$. For the direct term,
+coordinate-wise $A_i = \gamma \cdot W_{\mathrm{fast},i}$ with a *single scalar* $\gamma$: the rule is
+unselective, so **allocation is entirely inherited from $W_{\mathrm{fast}}$**.
+
+Two facts make Q inert in this setting: `success` is a global scalar ($q_{\mathrm{inc}} = dw\cdot\mathrm{success}$
 applies the same coefficient to every coordinate), and the numbers are tiny —
-`‖Q‖ ≈ 0.002` vs `‖W_fast‖ ≈ 3.6`; estimated Q-write ≈ 0.4% of the direct write per sleep.
+$\|Q\| \approx 0.002$ vs $\|W_{\mathrm{fast}}\| \approx 3.6$; estimated Q-write ≈ 0.4% of the direct write per sleep.
 Predictably, the Q-only individual behaves like no-consolidation (`qonly ≈ nocons`).
 
-**Interventions on the state transition** (`Φ ↦ I·Φ`, all else fixed):
+**Interventions on the state transition** ($\Phi \mapsto I\cdot\Phi$, all else fixed):
 
 | intervention | operator | estimand τ = E[G(I·Φ)] − E[G(Φ_ref)] | measured |
 |---|---|---|---|
-| carrier swap | `W_fast ← W_fast^{EH}` in the HE body | τ_swap (HE ref) | −0.019, CI [−0.033,−0.005], d≈−0.7, 10/12 (n=12); second backbone −0.067, t=−7.13 (n=9) |
-| no write | `A = 0` | τ_nocons (direct ref) | −0.0113, t=−7.36 |
-| Q only | `A = βQ` | τ_qonly | ≈ τ_nocons (Q inert) |
-| **energy-matched shuffle** | `A' = Π_π A`, so `‖A'‖ = ‖A‖` exactly, pairing destroyed | τ_shuf (direct ref) | **−0.0115, t=−5.45** |
-| uniform placement | `A'_i = γ‖W_fast‖/√d` | τ_unif | −0.0105, t=−5.16 |
-| top-20% concentration | energy on the largest `|W_fast,i|` | τ_top | −0.0089, t=−4.18 |
+| carrier swap | $W_{\mathrm{fast}} \leftarrow W_{\mathrm{fast}}^{\mathrm{EH}}$ in the HE body | τ_swap (HE ref) | −0.019, CI [−0.033,−0.005], d≈−0.7, 10/12 (n=12); second backbone −0.067, t=−7.13 (n=9) |
+| no write | $A = 0$ | τ_nocons (direct ref) | −0.0113, t=−7.36 |
+| Q only | $A = \beta Q$ | τ_qonly | ≈ τ_nocons (Q inert) |
+| **energy-matched shuffle** | $A' = \Pi_{\pi} A$, so $\|A'\| = \|A\|$ exactly, pairing destroyed | τ_shuf (direct ref) | **−0.0115, t=−5.45** |
+| uniform placement | $A'_i = \gamma\|W_{\mathrm{fast}}\|/\sqrt{d}$ | τ_unif | −0.0105, t=−5.16 |
+| top-20% concentration | energy on the largest $|W_{\mathrm{fast},i}|$ | τ_top | −0.0089, t=−4.18 |
 | boundary off (`nosleep`) | skip sleep entirely (no write, no decay, no reset) | τ_nosleep (direct ref) | **+0.0163, t=+6.06** on adaptation; retention worse (see §4) |
 
 **Selectivity criterion.** A write rule is *allocation-selective* iff destroying the
 coordinate pairing at fixed energy changes the outcome:
 
-```
-τ_shuf < 0  with  ‖A'‖ = ‖A‖   ⇒  the coordinate placement of the write is functionally necessary
-```
+$$
+\tau_{\mathrm{shuf}} < 0 \quad\text{with}\quad \|A'\| = \|A\|\quad\Rightarrow\quad \text{the coordinate placement of the write is functionally necessary}
+$$
 
 This holds (t=−5.45, n=12) and is *not* explained by energy concentration, since
 uniform placement and top-20% concentration are both as harmful as shuffling. What
-matters is the **coordinate-matched (magnitude *and* sign) write** `A_i = γW_fast,i`.
+matters is the **coordinate-matched (magnitude *and* sign) write** $A_i = \gamma W_{\mathrm{fast},i}$.
 
-**Why it works — first-order account.** For a small write `A` onto `W_slow`, the change
+**Why it works — first-order account.** For a small write $A$ onto $W_{\mathrm{slow}}$, the change
 of the future-task loss at the start of adaptation is
 
-```
-ΔL_D ≈ ⟨ ∇_{W_slow} L_D , A ⟩ + O(‖A‖²)
-```
+$$
+\Delta L_D \approx \langle \nabla_{W_{\mathrm{slow}}} L_D,\, A\rangle + O(\|A\|^2)
+$$
 
 so a write helps exactly to the extent that it is **aligned with the future-loss gradient
-field in coordinate space**. Content-matched `A ∝ W_fast` inherits partial alignment
-through Link 1 (`W_fast` integrates the same gradient field, with gate `φ(P)`); an
-energy-matched shuffle `ΠA` randomises that pairing, and `E⟨∇L_D, ΠA⟩ ≈ 0` unless the
+field in coordinate space**. Content-matched $A \propto W_{\mathrm{fast}}$ inherits partial alignment
+through Link 1 ($W_{\mathrm{fast}}$ integrates the same gradient field, with gate $\varphi(P)$); an
+energy-matched shuffle $\Pi A$ randomises that pairing, and $\mathbb{E}\langle \nabla L_D, \Pi A\rangle \approx 0$ unless the
 field has a large constant component. This is the mathematical content of the shuffle
-control, and it also explains the modest absolute size of the effect (`|ρ| ≈ 0.02`
+control, and it also explains the modest absolute size of the effect ($|\rho| \approx 0.02$
 ⇒ first-order term is small).
 
 ---
 
 ## 4. Link 4 — future adaptation and retention (causal, two-sided)
 
-Same-protocol outcomes (n=12, HE arm; `G` on unseen D and retention as end-of-history
+Same-protocol outcomes (n=12, HE arm; $G$ on unseen D and retention as end-of-history
 ppl on the seen curriculum domains relative to birth):
 
-| learner | forward `G` (gain@40) | retention (rel. forgetting, negative = kept) |
+| learner | forward $G$ (gain@40) | retention (rel. forgetting, negative = kept) |
 |---|---|---|
 | direct | +0.0140 ± 0.0148 | **−0.0192 ± 0.0083** |
 | nocons | +0.0027 ± 0.0103 | −0.0152 ± 0.0111 |
@@ -189,9 +196,9 @@ content-matched write (γ W_fast) → forward adaptation (allocation-selective)
 
 | link | statement | type | status |
 |---|---|---|---|
-| 1 | `W_fast` = gated-Adam gradient field with exponential kernel (τ≈50) | identity (code) | exact |
-| 2a | `Δ_hist` is a difference of two such integrals; no explicit alignment objective exists | static audit | established |
-| 2b | global geometry of `Δ_hist` is not separable from seed noise | measurement + null | established (negative) |
+| 1 | $W_{\mathrm{fast}}$ = gated-Adam gradient field with exponential kernel (τ≈50) | identity (code) | exact |
+| 2a | $\Delta_{\mathrm{hist}}$ is a difference of two such integrals; no explicit alignment objective exists | static audit | established |
+| 2b | global geometry of $\Delta_{\mathrm{hist}}$ is not separable from seed noise | measurement + null | established (negative) |
 | 2c | `cos(g_0, Δ_hist)` orders seeds by adaptation (r=0.87, FDR q=0.003) | correlational | supported, **not causal** |
 | 3 | direct write carries the effect; Q/success-gating inert (global scalar, ‖Q‖≈0.002) | causal (ablation, n=12) | established |
 | 3' | **allocation necessity**: energy-matched shuffle removes the effect | causal (n=12, t=−5.45) | **established (core)** |
@@ -202,6 +209,6 @@ content-matched write (γ W_fast) → forward adaptation (allocation-selective)
 
 1. An explicit alignment objective found in the codebase (breaks "emergent" in 2a).
 2. Energy-matched shuffle losing significance at larger n (breaks 3').
-3. `τ_shuf ≈ τ_unif ≈ τ_top ≈ 0` (would show allocation is irrelevant).
+3. $\tau_{\mathrm{shuf}} \approx \tau_{\mathrm{unif}} \approx \tau_{\mathrm{top}} \approx 0$ (would show allocation is irrelevant).
 4. Direction manipulation (e.g. α·Δ̂ interpolation) not changing adaptation (would confine 2c to correlation).
 5. Retention surviving `nosleep` (would move the boundary claim to the write).
