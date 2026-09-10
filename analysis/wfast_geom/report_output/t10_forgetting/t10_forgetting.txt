@@ -1,0 +1,60 @@
+== Per-task relative forgetting at the end of the 10-task sequence (positive = forgotten, negative = improved) ==
+task  domain                    direct            nocons           nosleep
+t1    wiki_general          +1.9%±17.0        +1.1%±16.5        +2.6%±17.1
+t2    synthetic_qa          -3.7%±10.1        -0.7%±10.1        +2.3%±11.1
+t3    physics                +4.3%±7.1         +4.5%±7.1         +5.8%±7.1
+t4    math                  +7.5%±12.5        +7.3%±12.4        +9.8%±12.9
+t5    computer               -7.4%±7.8         -6.9%±8.4         -5.5%±7.9
+t6    biology                -1.6%±8.1         -1.9%±8.2         -0.1%±8.4
+t7    economics              -5.1%±9.9         -5.2%±9.9         -3.7%±9.8
+t8    law                   -1.6%±10.6        -2.0%±10.5        -0.6%±10.6
+t9    history               +0.0%±11.3        -0.8%±11.1        +0.9%±11.2
+t10   literature             -4.0%±7.5         -4.3%±7.3         -3.4%±7.5
+
+== Paired differences on the same tasks (negative Δ = direct forgets less) ==
+t1   direct-nocons Δ=+0.76% (t=+1.21)   direct-nosleep Δ=-0.64% (t=-2.65)
+t2   direct-nocons Δ=-3.05% (t=-4.56)   direct-nosleep Δ=-6.02% (t=-10.41)
+t3   direct-nocons Δ=-0.21% (t=-1.13)   direct-nosleep Δ=-1.48% (t=-13.64)
+t4   direct-nocons Δ=+0.18% (t=+0.82)   direct-nosleep Δ=-2.30% (t=-4.67)
+t5   direct-nocons Δ=-0.45% (t=-0.65)   direct-nosleep Δ=-1.86% (t=-4.04)
+t6   direct-nocons Δ=+0.31% (t=+0.98)   direct-nosleep Δ=-1.41% (t=-6.35)
+t7   direct-nocons Δ=+0.13% (t=+1.03)   direct-nosleep Δ=-1.37% (t=-8.30)
+t8   direct-nocons Δ=+0.37% (t=+1.80)   direct-nosleep Δ=-0.99% (t=-4.95)
+t9   direct-nocons Δ=+0.80% (t=+4.21)   direct-nosleep Δ=-0.83% (t=-6.02)
+t10  direct-nocons Δ=+0.34% (t=+1.67)   direct-nosleep Δ=-0.57% (t=-4.05)
+
+== Averages over the first k tasks (all measured at end of 10 tasks) ==
+first  1 tasks: direct    +1.9%  nocons    +1.1%  nosleep    +2.6%
+first  2 tasks: direct    -0.9%  nocons    +0.2%  nosleep    +2.4%
+first  3 tasks: direct    +0.8%  nocons    +1.7%  nosleep    +3.5%
+first  4 tasks: direct    +2.5%  nocons    +3.1%  nosleep    +5.1%
+first  5 tasks: direct    +0.5%  nocons    +1.1%  nosleep    +3.0%
+first  6 tasks: direct    +0.2%  nocons    +0.6%  nosleep    +2.5%
+first  7 tasks: direct    -0.6%  nocons    -0.2%  nosleep    +1.6%
+first  8 tasks: direct    -0.7%  nocons    -0.5%  nosleep    +1.3%
+first  9 tasks: direct    -0.6%  nocons    -0.5%  nosleep    +1.3%
+first 10 tasks: direct    -1.0%  nocons    -0.9%  nosleep    +0.8%
+
+== Cross-sectional view: forgetting of a task vs how many tasks came AFTER it ==
+task t1 (9 subsequent tasks): direct +1.9% | nocons +1.1% | nosleep +2.6%
+task t2 (8 subsequent tasks): direct -3.7% | nocons -0.7% | nosleep +2.3%
+task t3 (7 subsequent tasks): direct +4.3% | nocons +4.5% | nosleep +5.8%
+task t4 (6 subsequent tasks): direct +7.5% | nocons +7.3% | nosleep +9.8%
+task t5 (5 subsequent tasks): direct -7.4% | nocons -6.9% | nosleep -5.5%
+task t6 (4 subsequent tasks): direct -1.6% | nocons -1.9% | nosleep -0.1%
+task t7 (3 subsequent tasks): direct -5.1% | nocons -5.2% | nosleep -3.7%
+task t8 (2 subsequent tasks): direct -1.6% | nocons -2.0% | nosleep -0.6%
+task t9 (1 subsequent tasks): direct +0.0% | nocons -0.8% | nosleep +0.9%
+task t10 (0 subsequent tasks): direct -4.0% | nocons -4.3% | nosleep -3.4%
+
+== MISSING DATA (not estimated) ==
+- audit_t10.py recorded end_ppl only after ALL 10 tasks; there are no retention checkpoints after k<10 tasks, so the longitudinal curve 'forgetting vs number of tasks already learned' cannot be computed from existing data.
+- post_ppl and end_ppl were evaluated with different eval RNG seeds (730000+seed+t vs 740000+seed+t), so each per-task forgetting value carries eval-subsample noise; magnitudes <1-2% should be read with that in mind.
+
+saved figure -> /Users/wust_lh/Desktop/dla-v0.2/analysis/wfast_geom/report_output/t10_forgetting/t10_forgetting.png
+saved /Users/wust_lh/Desktop/dla-v0.2/analysis/wfast_geom/report_output/t10_forgetting/t10_forgetting.json + .csv
+
+HEADLINE (mean over all 10 tasks, end of sequence):
+  direct  -0.96% ± 10.86
+  nocons  -0.88% ± 10.71
+  nosleep +0.79% ± 11.02
