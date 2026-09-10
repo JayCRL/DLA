@@ -1,0 +1,170 @@
+\begin{thebibliography}{24}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Ba et~al.(2016)Ba, Hinton, Mnih, Leibo, and Ionescu]{ba2016using}
+Jimmy Ba, Geoffrey~E Hinton, Volodymyr Mnih, Joel~Z Leibo, and Catalin Ionescu.
+\newblock Using fast weights to attend to the recent past.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2016.
+
+\bibitem[Beaulieu et~al.(2020)Beaulieu, Frantar, Mironov, Chen, and
+  Savarese]{beaulieu2020learning}
+Shawn Beaulieu, Lukas Frantar, Eduard Mironov, Yang Chen, and Silvio Savarese.
+\newblock Learning to continually learn.
+\newblock In \emph{European Conference on Artificial Intelligence (ECAI)},
+  2020.
+
+\bibitem[Behrouz et~al.(2025)Behrouz, Zhong, and Mirrokni]{behrouz2025titans}
+Ali Behrouz, Peilin Zhong, and Vahab Mirrokni.
+\newblock Titans: Learning to memorize at test time.
+\newblock \emph{arXiv preprint arXiv:2501.00663}, 2025.
+
+\bibitem[Bell \& Lawrence(2022)Bell and Lawrence]{bell2022effect}
+Samuel~J Bell and Neil~D Lawrence.
+\newblock The effect of task ordering in continual learning.
+\newblock \emph{arXiv preprint arXiv:2205.13323}, 2022.
+
+\bibitem[De~Lange et~al.(2021)De~Lange, Aljundi, Masana, Parisot, Jia,
+  Leonardis, Slabaugh, and Tuytelaars]{delange2021continual}
+Matthias De~Lange, Rahaf Aljundi, Marc Masana, Sarah Parisot, Xu~Jia,
+  Ale{\v{s}} Leonardis, Gregory Slabaugh, and Tinne Tuytelaars.
+\newblock A continual learning survey: Defying forgetting in classification
+  tasks.
+\newblock \emph{IEEE Transactions on Pattern Analysis and Machine
+  Intelligence}, 43\penalty0 (10):\penalty0 3366--3385, 2021.
+
+\bibitem[Dohare et~al.(2024)Dohare, Hernandez-Garcia, Lan, Rahman, Mahmood, and
+  Sutton]{dohare2024loss}
+Shibhansh Dohare, J~Fernando Hernandez-Garcia, Qingfeng Lan, Parash Rahman,
+  A~Rupam Mahmood, and Richard~S Sutton.
+\newblock Loss of plasticity in deep continual learning.
+\newblock \emph{Nature}, 632\penalty0 (8026):\penalty0 768--774, 2024.
+
+\bibitem[He et~al.(2022)He, Zhou, Ma, Berg-Kirkpatrick, and
+  Neubig]{he2022towards}
+Junxian He, Chunting Zhou, Xuezhe Ma, Taylor Berg-Kirkpatrick, and Graham
+  Neubig.
+\newblock Towards a unified view of parameter-efficient transfer learning.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2022.
+
+\bibitem[Hinton \& Plaut(1987)Hinton and Plaut]{hinton1987using}
+Geoffrey~E Hinton and David~C Plaut.
+\newblock Using fast weights to deblur old memories.
+\newblock In \emph{Proceedings of the Annual Conference of the Cognitive
+  Science Society}, 1987.
+
+\bibitem[Houlsby et~al.(2019)Houlsby, Giurgiu, Jastrzebski, Morrone,
+  De~Laroussilhe, Gesmundo, Attariyan, and Gelly]{houlsby2019parameter}
+Neil Houlsby, Andrei Giurgiu, Stanislaw Jastrzebski, Bruna Morrone, Quentin
+  De~Laroussilhe, Andrea Gesmundo, Mona Attariyan, and Sylvain Gelly.
+\newblock Parameter-efficient transfer learning for nlp.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, pp.\
+  2790--2799, 2019.
+
+\bibitem[Hu et~al.(2022)Hu, Shen, Wallis, Allen-Zhu, Li, Wang, Wang, and
+  Chen]{hu2022lora}
+Edward~J Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean
+  Wang, Lu~Wang, and Weizhu Chen.
+\newblock Lora: Low-rank adaptation of large language models.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2022.
+
+\bibitem[Kirkpatrick et~al.(2017)Kirkpatrick, Pascanu, Rabinowitz, Veness,
+  Desjardins, Rusu, Milan, Quan, Ramalho, Grabska-Barwinska,
+  et~al.]{kirkpatrick2017overcoming}
+James Kirkpatrick, Razvan Pascanu, Neil Rabinowitz, Joel Veness, Guillaume
+  Desjardins, Andrei~A Rusu, Kieran Milan, John Quan, Tiago Ramalho, Agnieszka
+  Grabska-Barwinska, et~al.
+\newblock Overcoming catastrophic forgetting in neural networks.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 114\penalty0
+  (13):\penalty0 3521--3526, 2017.
+
+\bibitem[Kumaran et~al.(2016)Kumaran, Hassabis, and
+  McClelland]{kumaran2016what}
+Dharshan Kumaran, Demis Hassabis, and James~L McClelland.
+\newblock What learning systems do intelligent agents need? complementary
+  learning systems theory updated.
+\newblock \emph{Trends in Cognitive Sciences}, 20\penalty0 (7):\penalty0
+  512--534, 2016.
+
+\bibitem[Li \& Hiratani(2025)Li and Hiratani]{li2025optimal}
+Zihao Li and Naoki Hiratani.
+\newblock Optimal task order for continual learning of multiple tasks.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2025.
+
+\bibitem[Lyle et~al.(2022)Lyle, Rowland, and Dabney]{lyle2022understanding}
+Clare Lyle, Mark Rowland, and Will Dabney.
+\newblock Understanding and preventing capacity loss in reinforcement learning.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2022.
+
+\bibitem[McClelland et~al.(1995)McClelland, McNaughton, and
+  O'Reilly]{mcclelland1995why}
+James~L McClelland, Bruce~L McNaughton, and Randall~C O'Reilly.
+\newblock Why there are complementary learning systems in the hippocampus and
+  neocortex: Insights from the successes and failures of connectionist models
+  of learning and memory.
+\newblock \emph{Psychological Review}, 102\penalty0 (3):\penalty0 419--457,
+  1995.
+
+\bibitem[Miconi et~al.(2019)Miconi, Clune, and
+  Stanley]{miconi2019differentiable}
+Thomas Miconi, Jeff Clune, and Kenneth~O Stanley.
+\newblock Differentiable plasticity: Training plastic neural networks with
+  backpropagation.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2019.
+
+\bibitem[Nikishin et~al.(2022)Nikishin, Schwarzer, D'Oro, Bacon, and
+  Courville]{nikishin2022primacy}
+Evgenii Nikishin, Max Schwarzer, Pierluca D'Oro, Pierre-Luc Bacon, and Aaron
+  Courville.
+\newblock The primacy bias in deep reinforcement learning.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2022.
+
+\bibitem[Poirier \& Silver(2005)Poirier and Silver]{poirier2005effect}
+Raphael Poirier and Daniel~L Silver.
+\newblock Effect of curriculum on the consolidation of neural network task
+  knowledge.
+\newblock In \emph{International Joint Conference on Neural Networks (IJCNN)},
+  2005.
+
+\bibitem[Qi et~al.(2024)Qi, Li, Li, Gao, Zhang, and Zhou]{qi2024online}
+Biqing Qi, Peng Li, Fei Li, Junqi Gao, Kaiyan Zhang, and Bowen Zhou.
+\newblock Online dpo: Online direct preference optimization with fast-slow
+  chasing.
+\newblock \emph{arXiv preprint arXiv:2406.05534}, 2024.
+
+\bibitem[Robins(1995)]{robins1995catastrophic}
+Anthony Robins.
+\newblock Catastrophic forgetting, rehearsal and pseudorehearsal.
+\newblock \emph{Connection Science}, 7\penalty0 (2):\penalty0 123--146, 1995.
+
+\bibitem[Schlag et~al.(2021)Schlag, Irie, and Schmidhuber]{schlag2021linear}
+Imanol Schlag, Kazuki Irie, and J{\"u}rgen Schmidhuber.
+\newblock Linear transformers are secretly fast weight programmers.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, pp.\
+  9355--9366, 2021.
+
+\bibitem[von Oswald et~al.(2023)von Oswald, Niklasson, Randazzo, Sacramento,
+  Mordvintsev, Zhmoginov, and Vladymyrov]{vonoswald2023transformers}
+Johannes von Oswald, Eyvind Niklasson, Edoardo Randazzo, Jo{\~a}o Sacramento,
+  Alexander Mordvintsev, Andrey Zhmoginov, and Max Vladymyrov.
+\newblock Transformers learn in-context by gradient descent.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, pp.\
+  35151--35174, 2023.
+
+\bibitem[Wang et~al.(2022)Wang, Chen, and Zhu]{wang2022survey}
+Xin Wang, Yudong Chen, and Wenwu Zhu.
+\newblock A survey on curriculum learning.
+\newblock \emph{IEEE Transactions on Pattern Analysis and Machine
+  Intelligence}, 44\penalty0 (9):\penalty0 4555--4576, 2022.
+
+\bibitem[Zenke et~al.(2017)Zenke, Poole, and Ganguli]{zenke2017continual}
+Friedemann Zenke, Ben Poole, and Surya Ganguli.
+\newblock Continual learning through synaptic intelligence.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2017.
+
+\end{thebibliography}
