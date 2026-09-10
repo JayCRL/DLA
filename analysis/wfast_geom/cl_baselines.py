@@ -112,7 +112,7 @@ def eval_ppl(model, state, ids, block, batch, nb, seed, device):
 class Trainer:
     """One method's training loop over a task sequence."""
 
-    def __init__(self, model, method, args, device, lam=None):
+    def __init__(self, model, method, args, device, lam=None, lr=None):
         self.model, self.method, self.args, self.device = model, method, args, device
         # lam is the penalty strength for ewc/si.  It MUST be calibrated: the penalty
         # is sum(F * (theta-theta*)^2), which at 124M with an unnormalised Fisher and
@@ -121,6 +121,10 @@ class Trainer:
         # is below fp32 resolution (1.2e-7) -- so EWC and SI were bit-identical to
         # plain AdamW.  That is not a weak baseline, it is a baseline that never ran.
         self.lam = lam
+        # Fine-tuning baselines need their own lr sweep: their Pareto point is set by
+        # lr, and comparing DLA's single operating point against one arbitrary lr
+        # would be an unfair baseline.  The comparison that matters is FRONTS.
+        self.lr = lr if lr is not None else args.lr
         self.params = [p for n, p in model.named_parameters()
                        if not n.startswith("tempos.")]
         self.names = [n for n, _ in model.named_parameters()
@@ -130,7 +134,7 @@ class Trainer:
         for p in model.parameters():
             p.requires_grad_(True)
         self.state = model.make_state(device) if method == "dla" else None
-        self.opt = (torch.optim.AdamW(self.params, lr=args.lr, weight_decay=0.0)
+        self.opt = (torch.optim.AdamW(self.params, lr=self.lr, weight_decay=0.0)
                     if method != "dla" else None)
         self.anchor, self.fisher, self.omega = None, None, None
         self.replay = None
@@ -255,22 +259,36 @@ def main():
            "note": "EWC/SI use online (single running anchor) variants", "methods": {}}
 
     # `ewc@1e5` runs EWC at lambda=1e5; a bare `ewc` uses --ewc-lambda.
+    # `ewc@1e5` (or `ewc@lam=1e5`) sets lambda; `adamw@lr=3e-4` sets the learning rate.
     specs = []
     for m in [x.strip() for x in a.methods.split(",") if x.strip()]:
+        base, lam, lr = m, None, None
         if "@" in m:
-            base, lam = m.split("@", 1)
-            lam = float(lam)
-            specs.append((base, lam, f"{base}@{lam:g}"))
-        else:
-            base = m
+            base, suf = m.split("@", 1)
+            if "=" in suf:
+                k, v = suf.split("=", 1)
+                if k in ("lr", "learning_rate"):
+                    lr = float(v)
+                elif k in ("lam", "lambda"):
+                    lam = float(v)
+                else:
+                    raise SystemExit(f"unknown spec key {k!r} in {m!r}")
+            else:
+                lam = float(suf)
+        if lam is None and lr is None:
             lam = a.ewc_lambda if base == "ewc" else (a.si_lambda if base == "si" else None)
-            specs.append((base, lam, base))
+        tag = []
+        if lam is not None:
+            tag.append(f"lam{lam:g}")
+        if lr is not None:
+            tag.append(f"lr{lr:g}")
+        specs.append((base, lam, lr, base + ("@" + ",".join(tag) if tag else "")))
 
-    for method, lam, label in specs:
+    for method, lam, lr, label in specs:
         model.load_state_dict(base_sd, strict=False)
         model.set_dla_state(None)
         torch.cuda.empty_cache()
-        tr = Trainer(model, method, a, a.device, lam=lam)
+        tr = Trainer(model, method, a, a.device, lam=lam, lr=lr)
 
         after, forward, ratios = [], [], []
         for t, (name, tr_ids, ev_ids) in enumerate(tasks):
@@ -303,7 +321,7 @@ def main():
              "forward_mean": float(np.mean(forward)),
              "retention_mean": float(np.mean([p / e for p, e in zip(after, end)])),
              "forgetting_mean": float(np.mean(forget)),
-             "lambda": lam, "penalty_ratio": ratios,
+             "lambda": lam, "lr": tr.lr, "penalty_ratio": ratios,
              "penalty_ratio_max": float(max(rv)) if rv else None}
         out["methods"][label] = m
         # An inert penalty is the failure mode that made the first EWC/SI run a
