@@ -112,8 +112,15 @@ def eval_ppl(model, state, ids, block, batch, nb, seed, device):
 class Trainer:
     """One method's training loop over a task sequence."""
 
-    def __init__(self, model, method, args, device):
+    def __init__(self, model, method, args, device, lam=None):
         self.model, self.method, self.args, self.device = model, method, args, device
+        # lam is the penalty strength for ewc/si.  It MUST be calibrated: the penalty
+        # is sum(F * (theta-theta*)^2), which at 124M with an unnormalised Fisher and
+        # lam=100 came out ~1e-5 against a loss of ~3.5.  Adam then perturbs the
+        # parameters by ~3e-10 against weights of ~0.02, i.e. 1.5e-8 relative, which
+        # is below fp32 resolution (1.2e-7) -- so EWC and SI were bit-identical to
+        # plain AdamW.  That is not a weak baseline, it is a baseline that never ran.
+        self.lam = lam
         self.params = [p for n, p in model.named_parameters()
                        if not n.startswith("tempos.")]
         self.names = [n for n, _ in model.named_parameters()
@@ -129,24 +136,32 @@ class Trainer:
         self.replay = None
 
     def step(self, x, y):
+        """Returns penalty/loss for ewc/si (None otherwise) so it can be audited."""
         if self.method == "dla":
             self.model.set_dla_state(self.state)
             self.model.dla_step(x, y, self.state)
-            return
+            return None
         self.opt.zero_grad(set_to_none=True)
         self.model.set_dla_state(None)
         _, loss = self.model(x, y)
-        if self.method == "ewc" and self.fisher is not None:
-            pen = sum((self.fisher[n] * (p.detach().float() - self.anchor[n].float()) ** 2).sum()
-                      for n, p in self.model.named_parameters() if n in self.fisher)
-            loss = loss + self.args.ewc_lambda * pen
-        elif self.method == "si" and self.omega is not None:
-            pen = sum((self.omega[n] * (p.detach().float() - self.anchor[n].float()) ** 2).sum()
-                      for n, p in self.model.named_parameters() if n in self.omega)
-            loss = loss + self.args.si_lambda * pen
+        ratio = None
+        w = self.fisher if self.method == "ewc" else self.omega
+        if w is not None:
+            # p must NOT be detached: the penalty has to stay in the autograd graph,
+            # otherwise backward() ignores it entirely and EWC/SI silently reduce to
+            # plain AdamW.  (The earlier p.detach() did exactly that, which is why the
+            # two "baselines" came out bit-identical to AdamW even once lambda was
+            # raised enough to make pen/loss reach 5e2.)  The importance weights are
+            # constants, so they are detached instead.
+            pen = sum((w[n].detach() * (p.float() - self.anchor[n].float()) ** 2).sum()
+                      for n, p in self.model.named_parameters() if n in w)
+            base = float(loss)
+            loss = loss + self.lam * pen
+            ratio = float(self.lam * pen) / base if base > 0 else 0.0
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.params, 1.0)
         self.opt.step()
+        return ratio
 
     def snapshot(self):
         return {n: p.detach().clone().to(torch.bfloat16)
@@ -177,8 +192,12 @@ class Trainer:
                         for n, p in self.model.named_parameters():
                             if n in fr and p.grad is not None:
                                 fr[n] += p.grad.detach().float() ** 2
+                    # MEAN over the 8 batches, not the sum: an unnormalised Fisher
+                    # makes the penalty scale with the number of estimation batches
+                    # and silently shrinks lambda by that factor.
+                    nb = 8.0
                     for n in fr:
-                        self.fisher[n] = 0.5 * self.fisher[n] + 0.5 * fr[n] / 8.0
+                        self.fisher[n] = 0.5 * self.fisher[n] + 0.5 * fr[n] / nb
                 else:  # si: accumulate |dtheta| as the importance proxy
                     for n, p in self.model.named_parameters():
                         if n in self.omega:
@@ -211,8 +230,11 @@ def main():
     ap.add_argument("--batch", type=int, default=4)
     ap.add_argument("--eval-batches", type=int, default=8)
     ap.add_argument("--lr", type=float, default=1e-4)
-    ap.add_argument("--ewc-lambda", type=float, default=100.0)
-    ap.add_argument("--si-lambda", type=float, default=1.0)
+    ap.add_argument("--ewc-lambda", type=float, default=1e5)
+    ap.add_argument("--si-lambda", type=float, default=1e6)
+    ap.add_argument("--min-penalty-ratio", type=float, default=0.01,
+                    help="acceptance floor for ewc/si penalty/loss; below this the "
+                         "constraint is numerically inert and the run is flagged")
     ap.add_argument("--replay-size", type=int, default=20_000)
     ap.add_argument("--tokens-per-task", type=int, default=120_000)
     ap.add_argument("--eval-tokens", type=int, default=20_000)
@@ -232,40 +254,67 @@ def main():
     out = {"seed": a.seed, "model": a.model, "steps_per_task": a.steps,
            "note": "EWC/SI use online (single running anchor) variants", "methods": {}}
 
-    for method in [m.strip() for m in a.methods.split(",") if m.strip()]:
+    # `ewc@1e5` runs EWC at lambda=1e5; a bare `ewc` uses --ewc-lambda.
+    specs = []
+    for m in [x.strip() for x in a.methods.split(",") if x.strip()]:
+        if "@" in m:
+            base, lam = m.split("@", 1)
+            lam = float(lam)
+            specs.append((base, lam, f"{base}@{lam:g}"))
+        else:
+            base = m
+            lam = a.ewc_lambda if base == "ewc" else (a.si_lambda if base == "si" else None)
+            specs.append((base, lam, base))
+
+    for method, lam, label in specs:
         model.load_state_dict(base_sd, strict=False)
         model.set_dla_state(None)
         torch.cuda.empty_cache()
-        tr = Trainer(model, method, a, a.device)
+        tr = Trainer(model, method, a, a.device, lam=lam)
 
-        after, forward = [], []
+        after, forward, ratios = [], [], []
         for t, (name, tr_ids, ev_ids) in enumerate(tasks):
             rng = torch.Generator().manual_seed(90000 + a.seed * 100 + t)
             pre = eval_ppl(model, tr.state, ev_ids, a.block, a.batch, a.eval_batches,
                            700000 + t, a.device)
+            last_ratio = None
             for k, (x, y) in enumerate(batches(tr_ids, a.block, a.batch, rng, a.steps,
                                                a.device)):
                 x, y = tr.maybe_replay(x, y, k, t, rng)
-                tr.step(x, y)
+                r = tr.step(x, y)
+                if r is not None:
+                    last_ratio = r
+            ratios.append(last_ratio)
             tr.end_task(tr_ids, rng)
             post = eval_ppl(model, tr.state, ev_ids, a.block, a.batch, a.eval_batches,
                             700000 + t, a.device)
             after.append(post)
             forward.append((pre - post) / pre)
-            print(f"[cl] {method:7s} task{t+1:2d} {name:22s} pre={pre:8.2f} "
-                  f"post={post:8.2f} gain={forward[-1]:+.4f}", flush=True)
+            extra = "" if last_ratio is None else f" pen/loss={last_ratio:.3e}"
+            print(f"[cl] {label:12s} task{t+1:2d} {name:22s} pre={pre:8.2f} "
+                  f"post={post:8.2f} gain={forward[-1]:+.4f}{extra}", flush=True)
 
         end = [eval_ppl(model, tr.state, ev_ids, a.block, a.batch, a.eval_batches,
                         700000 + t, a.device)
                for t, (_, _, ev_ids) in enumerate(tasks)]
         forget = [(e - p) / p for e, p in zip(end, after)]
+        rv = [r for r in ratios if r is not None]
         m = {"forward": forward, "after": after, "end": end, "forgetting": forget,
              "forward_mean": float(np.mean(forward)),
              "retention_mean": float(np.mean([p / e for p, e in zip(after, end)])),
-             "forgetting_mean": float(np.mean(forget))}
-        out["methods"][method] = m
-        print(f"[cl] === {method:7s} forward={m['forward_mean']:+.4f} "
-              f"retention={m['retention_mean']:.4f} forgetting={m['forgetting_mean']:+.4f}",
+             "forgetting_mean": float(np.mean(forget)),
+             "lambda": lam, "penalty_ratio": ratios,
+             "penalty_ratio_max": float(max(rv)) if rv else None}
+        out["methods"][label] = m
+        # An inert penalty is the failure mode that made the first EWC/SI run a
+        # silent duplicate of AdamW, so it is a hard acceptance check, not a note.
+        flag = ""
+        if rv and m["penalty_ratio_max"] is not None:
+            flag = ("  OK" if m["penalty_ratio_max"] >= a.min_penalty_ratio
+                    else f"  ** INERT (max pen/loss={m['penalty_ratio_max']:.2e} < "
+                         f"{a.min_penalty_ratio:g}) -- raise lambda **")
+        print(f"[cl] === {label:12s} forward={m['forward_mean']:+.4f} "
+              f"retention={m['retention_mean']:.4f} forgetting={m['forgetting_mean']:+.4f}{flag}",
               flush=True)
         del tr
         model.set_dla_state(None)
