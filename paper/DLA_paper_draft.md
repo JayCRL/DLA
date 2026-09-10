@@ -2,13 +2,15 @@
 
 **Allocation-level selectivity of consolidation, without any selection objective**
 
-**Yang Liu** · Draft v0.4 (emergent-selective-learning thesis) — workshop/arXiv
+**Yang Liu** · Draft v0.5 (emergent selective learning + continual-learning application) — workshop/arXiv
 
 ---
 
 ## Abstract
 
-Selective learning—retaining some changes while discarding others—is usually treated as something an algorithm must explicitly implement (loss weighting, parameter gates, per-item replay). We ask whether it can instead *emerge* from an unselective learning rule, and whether the emergent selectivity is functionally real. We study a minimal "fast/slow" learner on a fixed Transformer backbone: a fast weight `W_fast` integrates the learner's own gradient history (Adam-shaped, leaky), and at task boundaries an *unselective* rule copies a scaled `W_fast` into the slow weights at a uniform scalar coefficient—no per-parameter gate, no success signal, no alignment objective. On a 6.59M Chinese character GPT with two curriculum histories (easy→hard vs hard→easy) probed on a never-seen domain, we find: (1) history-dependent future adaptation is causally tied to the fast-weight trace (swap control, n=12); (2) the mechanism that transfers part of that trace into slow weights is the *direct* fast→slow write, not the architecture's explicitly-designed success-gated eligibility trace `Q`, which is numerically (~0.4% of write energy) and causally inert; and (3) the direct write's **coordinate allocation is functionally necessary**: keeping every write's energy identical but randomly permuting which coordinates receive it removes the entire effect (n=12, paired t≈4.9; shuffled allocation ≈ no consolidation). Because the write is `γ·W_fast` with a single scalar coefficient, "where it writes" is fully self-organized from the fast trace's own structure. We conclude that a minimal, unselective rule can exhibit *emergent, allocation-level selective learning*, that this selectivity carries causal weight for future adaptation, and that it coexists with an explicit but non-functional "selective" mechanism in the same system. We report all claims with their evidence level and provide energy-matched controls throughout.
+Selective learning—retaining some changes while discarding others—is usually treated as something an algorithm must explicitly implement (loss weighting, parameter gates, per-item replay). We ask whether it can instead *emerge* from an unselective learning rule, and whether the emergent selectivity is functionally real. We study a minimal "fast/slow" learner on a fixed Transformer backbone: a fast weight `W_fast` integrates the learner's own gradient history (Adam-shaped, leaky), and at task boundaries an *unselective* rule copies a scaled `W_fast` into the slow weights at a uniform scalar coefficient—no per-parameter gate, no success signal, no alignment objective. On a 6.59M Chinese character GPT with two curriculum histories (easy→hard vs hard→easy) probed on a never-seen domain, we find: (1) history-dependent future adaptation is causally tied to the fast-weight trace (swap control, n=12); (2) the mechanism that transfers part of that trace into slow weights is the *direct* fast→slow write, not the architecture's explicitly-designed success-gated eligibility trace `Q`, which is numerically (~0.4% of write energy) and causally inert; and (3) the direct write's **coordinate allocation is functionally necessary**: keeping every write's energy identical but randomly permuting which coordinates receive it removes the entire effect (n=12, paired t≈4.9; shuffled allocation ≈ no consolidation). Because the write is `γ·W_fast` with a single scalar coefficient, "where it writes" is fully self-organized from the fast trace's own structure. We conclude that a minimal, unselective rule can exhibit *emergent, allocation-level selective learning*, that this selectivity carries causal weight for future adaptation, and that it coexists with an explicit but non-functional "selective" mechanism in the same system. In the same protocol, consolidation is not only a forward device: the sleep boundary itself protects earlier-task knowledge (no-sleep loses it, n=12, paired t≈10) and the direct write gives the best retention among consolidation variants. On a ten-task cross-domain curriculum (n=8), direct consolidation retains the earliest tasks best (paired t≈−3.6 vs no-write; −10 vs no-sleep) while keeping forward learning at least as fast — an unselective fast→slow write behaves as a working continual-learning primitive, with no replay, gating, or importance machinery.
+
+We report all claims with their evidence level and provide energy-matched controls throughout.
 
 ---
 
@@ -215,13 +217,50 @@ Interpretation: the write rule is scalar-uniform and unselective *by rule*, yet 
 
 ---
 
+### 4.6 Same-protocol retention and the sleep boundary (B1/B4)
+
+End-of-history ppl on the three seen curriculum domains, relative to birth ppl
+(more negative = better retained; n=12, HE arm):
+
+| variant | rel. forgetting mean±sd | paired vs direct (t) |
+|---|---|---|
+| direct | −0.0192 ± 0.0083 | — |
+| nocons | −0.0152 ± 0.0111 | +2.03 (trend: direct ≥ nocons) |
+| nosleep | −0.0049 ± 0.0079 | **+10.26** |
+
+In the same runs the no-sleep individual is highest on the unseen-D probe
+(+0.0303 vs direct +0.0140, t=+6.1) but is far worse at retention — i.e. the sleep
+boundary (decay + moment reset) buys old-task memory at a modest forward cost, and
+the direct write is the only consolidation variant that keeps the forward benefit on
+top of it (uniformwrite/topwrite/shufwrite all ≈ nocons, t≈−4 to −5.5).
+
+### 4.7 Ten-task continual learning: emergent selective consolidation as a CL primitive (A2/B2)
+
+One individual per seed learns 10 cross-domain tasks sequentially (n=8). Forward =
+normalised first-10-step loss slope; retention = end-of-history ppl on the two
+earliest tasks.
+
+| variant | forward (norm_slope10) | retention of t1–t2 (end ppl) |
+|---|---|---|
+| direct | −0.00110 ± 0.00125 | **38.27 ± 5.74** |
+| nocons | −0.00100 ± 0.00129 | 39.03 ± 6.01 |
+| nosleep | −0.00090 ± 0.00125 | 39.51 ± 6.07 |
+
+Paired: retention direct vs nocons t=−3.60, direct vs nosleep t=−10.27; forward
+direct vs nocons t=−1.64 (not slower), direct vs nosleep t=−3.93 (faster). No forward
+plasticity collapse across the 10 tasks in any variant. Reading: a self-organized,
+unselective fast→slow write yields a genuine continual-learning primitive — protected
+memory plus maintained (not slower) forward adaptation, no replay buffer, importance
+gate or penalty term; its coordinate allocation carries the forward benefit (§4.4) and
+the sleep boundary carries the retention benefit (§4.6).
+
 ## 5. Discussion
 
 **What we mean by "emergent selective learning".** Not "the learner chooses experiences" and not "the learner computes importance". Rather: a scalar-uniform consolidation rule, applied to a structured fast trace, produces per-coordinate differential retention that is *causally required* for the history effect. Selectivity here is a property of the interaction between an unselective rule and a self-organized state, measurable only through interventions that destroy allocation (energy-matched shuffle).
 
 **What the finding does and does not imply for design.** If allocation-selectivity emerges for free in minimal fast/slow learners, then "selectivity" need not be an added mechanism — and adding a *global* scalar gate (like `success`) does not create it. Obtaining *parameter-level or experience-level* selectivity would require genuinely new per-parameter/per-item signals and a channel with the same causal weight as the direct write (which currently dwarfs `Q` by ~250×). This is directly relevant to plasticity-maintenance work (Dohare et al., 2024; Lyle et al., 2022; Nikishin et al., 2022) and to the design of "growing" learners.
 
-**Limits.** One 6.59M backbone (n=12); raw EH/HE gap is seed-noisy (strong claims are within-seed paired); the directional-alignment result is correlational; retention of earlier-task memory is not measured in the same protocol (probes never sleep); qonly was run at n=4; second-setting replication is n=2 and directional only.
+**Limits.** One 6.59M backbone (n=12); raw EH/HE gap is seed-noisy (strong claims are within-seed paired); the directional-alignment result is correlational; retention is now measured in the same protocol (end-of-history ppl; 10-task sequences): the sleep boundary protects earlier tasks and direct write gives the best retention (n=8–12, one backbone, no tuned baselines in the ten-task run); qonly was run at n=4; second-setting replication is n=2 and directional only.
 
 **Statement-level summary.**
 
@@ -233,6 +272,8 @@ Interpretation: the write rule is scalar-uniform and unselective *by rule*, yet 
 | Designed selection via success-gated `Q` | global scalar only | Q≈0.002; qonly≈nocons | inert | refuted here |
 | Direct fast→slow write carries the effect | yes (unselective scalar) | yes | n=12, t≈5.3 | established |
 | **Allocation of the write is necessary** | emergent from `W_fast` | yes | n=12 energy-matched shuffle, t≈4.9 | **established (core)** |
+| Sleep boundary (decay+reset) protects earlier tasks | no-write keeps boundary | yes | n=12 retention, t≈10 vs nosleep | established |
+| Direct write best retention among sleeping variants | emergent from W_fast | yes | n=12 & n=8 (10-task) | established |
 | More experience → faster learning | — | null | — | not supported |
 
 ---
@@ -245,7 +286,7 @@ Selectivity can emerge where none is designed. In a minimal fast/slow learner wi
 
 ## Reproducibility
 
-Code: https://github.com/JayCRL/DLA (paper + audit tooling under `analysis/wfast_geom/`, reports under `report_output/`). Protocol, hyperparameters, per-seed data and commit hashes are recorded for every claim. Mechanism-audit runs used a parity-validated harness (Apple M2 CPU; mean |Δppl| ≈ 0.24 vs archived server runs). Scripts: `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `stage6/7/8`, `analysis/wfast_geom/{geom,replay,p1,p1b,p1c,p2,p4_consolidation_geom,audit_cheap,audit_b3}.py`.
+Code: https://github.com/JayCRL/DLA (paper + audit tooling under `analysis/wfast_geom/`, reports under `report_output/`). Protocol, hyperparameters, per-seed data and commit hashes are recorded for every claim. Mechanism-audit runs used a parity-validated harness (Apple M2 CPU; mean |Δppl| ≈ 0.24 vs archived server runs). Scripts: `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `stage6/7/8`, `analysis/wfast_geom/{geom,replay,p1,p1b,p1c,p2,p4_consolidation_geom,audit_cheap,audit_b3,audit_t10,unified_summary}.py`.
 
 ---
 
