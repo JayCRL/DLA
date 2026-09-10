@@ -106,9 +106,12 @@ def load_hf_into_gpt(model_name: str, device: str = "cpu"):
     return base, cfg
 
 
-def build(model_name: str, state_dtype: str, device: str):
+def build(model_name: str, state_dtype: str, device: str, eta_fast: float | None = None):
     base, cfg = load_hf_into_gpt(model_name, device="cpu")
-    model = DLA_GPT(cfg, TransformerDLAConfig(state_dtype=state_dtype))
+    dla_cfg = TransformerDLAConfig(state_dtype=state_dtype)
+    if eta_fast is not None:
+        dla_cfg.eta_fast = eta_fast
+    model = DLA_GPT(cfg, dla_cfg)
     missing, unexpected = model.load_state_dict(base.state_dict(), strict=False)
     missing = [k for k in missing if not k.startswith("tempos.")]
     assert not missing, f"missing: {missing[:5]}"
@@ -176,13 +179,24 @@ def train_history(model, state, ids, device, steps, block, batch, seed):
     return state
 
 
-def run_probe(model, state, ids, device, steps, block, batch, seed,
+def run_probe(model, state, d_train, d_eval, device, steps, block, batch, seed,
               eval_every=2, eval_batches=2):
-    """40-step D-probe over ``ids``, mirroring audit_second.run_d_probe.
+    """40-step D-probe, mirroring stage55.run_transfer.
 
-    Returns (pre, curve, gain40) where gain40 is the RELATIVE improvement
-    (pre - final) / pre, matching the protocol used for the 6.59M/10.65M
-    backbones so the numbers are directly comparable across scales.
+    Train and evaluation data are DELIBERATELY separate: the probe steps are
+    taken on ``d_train`` and perplexity is measured on the held-out ``d_eval``.
+    This mirrors ``run_transfer`` in experiments/stage55_learning_rule_development.py
+    (``get_batch(d_train, ...)`` for the step, ``eval_ppl(model, eb["D"])`` for the
+    measurement).
+
+    Using the same slice for both (as an earlier version of this script did) measures
+    pure memorisation: a strong backbone drives train-set ppl to ~5 within 40 steps,
+    gain@40 saturates at 0.98-0.99 for every arm, and the history contrast collapses
+    into the difference of two near-1.0 numbers.  Held-out evaluation restores the
+    headroom the protocol is supposed to have.
+
+    Returns (pre, curve, gain40) with gain40 the RELATIVE improvement
+    (pre - final) / pre, matching the 6.59M/10.65M protocol.
 
     NOTE: no ``@torch.no_grad()`` on the step loop -- ``dla_step`` needs grad to
     build the graph that produces the W_fast update.  The state stays attached
@@ -190,16 +204,16 @@ def run_probe(model, state, ids, device, steps, block, batch, seed,
     """
     model.set_dla_state(state)
     with torch.no_grad():
-        pre = eval_ppl(model, ids, device, block, eval_batches, seed=seed)
+        pre = eval_ppl(model, d_eval, device, block, eval_batches, seed=seed)
     rng = torch.Generator().manual_seed(2_000_000 + seed)
     curve = []
     for t in range(steps):
-        x, y = make_batch(ids, block, batch, rng)
+        x, y = make_batch(d_train, block, batch, rng)
         x, y = x.to(device), y.to(device)
         model.dla_step(x, y, state)
         if (t + 1) % eval_every == 0 or (t + 1) == steps:
             with torch.no_grad():
-                ppl = eval_ppl(model, ids, device, block, eval_batches,
+                ppl = eval_ppl(model, d_eval, device, block, eval_batches,
                                seed=900000 + seed)
             curve.append({"step": t + 1, "ppl": ppl, "gain": (pre - ppl) / pre})
     gain40 = curve[-1]["gain"]
@@ -236,14 +250,22 @@ def main():
     ap.add_argument("--model", default="gpt2-large", choices=list(MODELS))
     ap.add_argument("--corpus", default=None, help="utf-8 text or whitespace ints")
     ap.add_argument("--state-dtype", default="bf16", choices=["fp32", "bf16", "fp16"])
+    ap.add_argument("--eta-fast", type=float, default=None,
+                    help="override DLA fast-learning rate (stability calibration)")
     ap.add_argument("--history-steps", type=int, default=40)
     ap.add_argument("--probe-steps", type=int, default=40)
     ap.add_argument("--block", type=int, default=128)
     ap.add_argument("--batch", type=int, default=4)
     ap.add_argument("--chunk", type=int, default=4000, help="tokens per history chunk")
+    ap.add_argument("--d-train", type=int, default=None,
+                    help="probe train tokens (default: same as --chunk)")
+    ap.add_argument("--d-eval", type=int, default=None,
+                    help="probe held-out tokens (default: same as --chunk)")
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--out", default=os.path.expanduser("~/dla_scale"))
     ap.add_argument("--smoke", action="store_true", help="tiny run to validate plumbing")
+    ap.add_argument("--save-wfast", action="store_true",
+                    help="save W_fast snapshots (large; not needed for the EH/HE contrast)")
     a = ap.parse_args()
 
     if a.smoke:
@@ -253,7 +275,7 @@ def main():
     device = a.device
 
     corpus = a.corpus or os.path.expanduser("~/llm-lab/hf_gpt2/shakespeare_bpe.npy")
-    model = build(a.model, a.state_dtype, device)
+    model = build(a.model, a.state_dtype, device, eta_fast=a.eta_fast)
     n_par = sum(p.numel() for p in model.parameters())
     print(f"[scale] backbone={a.model} params={n_par/1e6:.1f}M "
           f"state_dtype={a.state_dtype} device={device}", flush=True)
@@ -261,10 +283,20 @@ def main():
     ids = get_corpus(corpus, model.config.vocab_size)
     print(f"[scale] corpus tokens={len(ids):,}", flush=True)
 
-    # Two history chunks (E=first, H=second) -> EH vs HE ordering by birth PPL.
+    # Chunk layout: E and H are the two history stages; D is the probe domain,
+    # split into a training slice (probe steps) and a HELD-OUT slice (measurement),
+    # mirroring stage55's d_train / eb["D"] separation.
+    n_dtr = a.d_train or a.chunk
+    n_dev = a.d_eval or a.chunk
     e_ids = ids[: a.chunk]
     h_ids = ids[a.chunk: 2 * a.chunk]
-    d_ids = ids[2 * a.chunk: 3 * a.chunk]
+    d_train = ids[2 * a.chunk: 2 * a.chunk + n_dtr]
+    d_eval = ids[2 * a.chunk + n_dtr: 2 * a.chunk + n_dtr + n_dev]
+    if len(d_eval) < n_dev:
+        raise ValueError(
+            f"corpus too short: need {2 * a.chunk + n_dtr + n_dev}, have {len(ids)}")
+    print(f"[scale] chunks: history={a.chunk} D_train={len(d_train)} "
+          f"D_eval={len(d_eval)}", flush=True)
 
     # birth PPL decides which chunk is "easy" vs "hard"
     model.set_dla_state(None)
@@ -283,26 +315,72 @@ def main():
     # process and would silently desynchronise arms across runs.)
     chunk_seed = {"E": 11, "H": 23}
 
-    for arm_name, order in (("EH", "EH"), ("HE", "HE")):
+    # Both arms get the probe with an IDENTICAL probe seed: the comparison must
+    # differ only in the history that produced the state.  Probe steps use
+    # d_train; perplexity is measured on the held-out d_eval.
+    #
+    # Each arm is built, snapshotted and probed ONE AT A TIME and its state is
+    # freed before the next arm is built.  Holding both 5-tensor states at once
+    # costs 2 x 14.5 GB at 1.5B on top of the 5.9 GB backbone and the probe graph,
+    # which overflows a 48 GB card.  The arms share no state (a probe mutates only
+    # its own), so releasing between arms changes the memory profile, not the
+    # numbers.
+    hist_snap = {}
+    probe_kw = dict(seed=800000 + a.seed, eval_batches=8)
+    for arm in ("EH", "HE"):
+        # Release any state the model still references BEFORE allocating the next
+        # one.  ``set_dla_state`` keeps its argument alive, so building the second
+        # state on top of the first momentarily holds TWO 14.5 GB states at 1.5B --
+        # that transient spike is what overflowed a 48 GB card, not steady-state use.
+        model.set_dla_state(None)
+        torch.cuda.empty_cache()
         state = model.make_state(device)
-        for tag in order:
+        for tag in arm:
             train_history(model, state, chunk[tag], device, a.history_steps,
                           a.block, a.batch, seed=a.seed * 1000 + chunk_seed[tag])
-        snap = snapshot_fast(state)
-        torch.save({k: v.cpu() for k, v in snap.items()},
-                   os.path.join(a.out, f"wfast_{a.model}_{arm_name}_s{a.seed}.pt"))
-        # The probe seed is deliberately IDENTICAL across arms: the comparison
-        # must differ only in the history that produced W_fast.
-        pre, curve, gain = run_probe(model, state, d_ids, device, a.probe_steps,
-                                     a.block, a.batch, seed=800000 + a.seed)
-        out["arms"][arm_name] = {"pre": pre, "curve": curve, "gain40": gain,
-                                 "final_ppl": curve[-1]["ppl"]}
-        print(f"[scale] arm={arm_name} pre={pre:.2f} gain40={gain:+.6f} "
-              f"final={curve[-1]['ppl']:.2f}", flush=True)
+        hist_snap[arm] = snapshot_fast(state)
+        # W_fast snapshots are large (1.5 GB at 774M, 3 GB at 1.5B per arm) and
+        # are NOT needed for the EH/HE contrast -- keep them opt-in so a sweep
+        # over scales does not fill the instance disk.
+        if a.save_wfast:
+            torch.save({k: v.cpu() for k, v in hist_snap[arm].items()},
+                       os.path.join(a.out, f"wfast_{a.model}_{arm}_s{a.seed}.pt"))
 
-    eh, he = out["arms"]["EH"]["gain40"], out["arms"]["HE"]["gain40"]
-    out["delta"] = eh - he
-    print(f"[scale] seed={a.seed} Delta(EH-HE)={out['delta']:+.4f}", flush=True)
+        # (a) full history state (W_fast, P and Q as the history left them)
+        pre, curve, gain = run_probe(model, state, d_train, d_eval, device,
+                                     a.probe_steps, a.block, a.batch, **probe_kw)
+        out["arms"][arm] = {"pre": pre, "curve": curve, "gain40": gain,
+                            "final_ppl": curve[-1]["ppl"]}
+        print(f"[scale] arm={arm} pre={pre:.2f} gain40={gain:+.6f} "
+              f"final={curve[-1]['ppl']:.2f}", flush=True)
+        del state
+        model.set_dla_state(None)
+        torch.cuda.empty_cache()
+
+    # (b) W_fast-ISOLATED probe: a fresh state (P back at its prior, Q=0) carrying
+    #     ONLY that history's W_fast.  This is the paper's carrier manipulation --
+    #     it isolates W_fast from every other component the history touched, so a
+    #     non-zero contrast cannot be attributed to P, Q or the Adam moments.
+    for arm in ("EH", "HE"):
+        model.set_dla_state(None)
+        torch.cuda.empty_cache()
+        st = model.make_state(device)
+        inject_fast(st, hist_snap[arm])
+        pre, curve, gain = run_probe(model, st, d_train, d_eval, device,
+                                     a.probe_steps, a.block, a.batch, **probe_kw)
+        out["arms"][arm + "_wfast"] = {"pre": pre, "curve": curve, "gain40": gain,
+                                       "final_ppl": curve[-1]["ppl"]}
+        print(f"[scale] arm={arm}_wfast pre={pre:.2f} gain40={gain:+.6f} "
+              f"final={curve[-1]['ppl']:.2f}", flush=True)
+        del st
+        model.set_dla_state(None)
+        torch.cuda.empty_cache()
+
+    out["delta"] = out["arms"]["EH"]["gain40"] - out["arms"]["HE"]["gain40"]
+    out["delta_wfast"] = (out["arms"]["EH_wfast"]["gain40"]
+                          - out["arms"]["HE_wfast"]["gain40"])
+    print(f"[scale] seed={a.seed} Delta(EH-HE)={out['delta']:+.4f} "
+          f"Delta_wfast={out['delta_wfast']:+.4f}", flush=True)
 
     with open(os.path.join(a.out, f"scale_{a.model}_s{a.seed}.json"), "w") as f:
         json.dump(out, f, indent=1)
