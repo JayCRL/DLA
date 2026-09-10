@@ -50,11 +50,19 @@ from model import GPT, GPTConfig  # noqa: E402
 DLA_GPT = make_dla_gpt_class(GPT)
 
 # HF repo -> nanoGPT GPTConfig.  GPT-2 configs are standard (no RoPE/RMSNorm).
+#
+# vocab_size is set to the TRUE GPT-2 vocabulary (50257), not nanoGPT's default
+# 50304.  The default pads the embedding for matmul efficiency, but lm_head is
+# tied to wte, and GPT-2's logits sit at a large negative offset (max ~-77 on this
+# corpus), so zero padding rows outrank every real token and the model predicts a
+# padding index at every position.  That silently reduced the "pretrained GPT-2
+# backbone" to a correct transformer body with a broken output head.
+VOCAB = 50257
 MODELS = {
-    "gpt2":        GPTConfig(n_layer=12, n_head=12, n_embd=768,  block_size=1024),
-    "gpt2-medium": GPTConfig(n_layer=24, n_head=16, n_embd=1024, block_size=1024),
-    "gpt2-large":  GPTConfig(n_layer=36, n_head=20, n_embd=1280, block_size=1024),
-    "gpt2-xl":     GPTConfig(n_layer=48, n_head=25, n_embd=1600, block_size=1024),
+    "gpt2":        GPTConfig(n_layer=12, n_head=12, n_embd=768,  block_size=1024, vocab_size=VOCAB),
+    "gpt2-medium": GPTConfig(n_layer=24, n_head=16, n_embd=1024, block_size=1024, vocab_size=VOCAB),
+    "gpt2-large":  GPTConfig(n_layer=36, n_head=20, n_embd=1280, block_size=1024, vocab_size=VOCAB),
+    "gpt2-xl":     GPTConfig(n_layer=48, n_head=25, n_embd=1600, block_size=1024, vocab_size=VOCAB),
 }
 
 
@@ -76,8 +84,16 @@ def load_hf_into_gpt(model_name: str, device: str = "cpu"):
     # HF GPT2LMHeadModel and nanoGPT GPT share key names, but two structural
     # differences have to be reconciled:
     #   1. HF stores Conv1D weights as (in, out); nanoGPT uses nn.Linear (out, in)
-    #      -> transpose every 2-D weight whose shape disagrees.
+    #      -> every Conv1D weight must be transposed.
     #   2. nanoGPT pads the vocab (50257 -> 50304) for kernel efficiency.
+    #
+    # The transpose is decided by LAYER TYPE, never by shape.  `attn.c_proj` is
+    # n_embd x n_embd -- square -- so a shape test silently skips it and the whole
+    # attention output projection is applied transposed.  That is not a subtle
+    # numerical difference: it took GPT-2 from ppl 62.8 to ppl 7.5e5 on the same
+    # tokens, i.e. indistinguishable from random.  Embeddings (wte/wpe) are genuine
+    # nn.Embedding in HF and must NOT be transposed.
+    CONV1D_WEIGHTS = ("c_attn.weight", "c_proj.weight", "c_fc.weight")
     base = GPT(cfg)
     target = base.state_dict()
     mapped = {}
@@ -87,10 +103,19 @@ def load_hf_into_gpt(model_name: str, device: str = "cpu"):
         t = target.get(k)
         if t is None:
             continue
+        if k.endswith(CONV1D_WEIGHTS):
+            v = v.t().contiguous()
         if v.shape != t.shape:
-            if v.dim() == 2 and v.shape == t.shape[::-1]:
-                v = v.t().contiguous()
-            elif k == "transformer.wte.weight" and v.shape[1] == t.shape[1]:
+            if k == "transformer.wte.weight" and v.shape[1] == t.shape[1]:
+                # Vocab padding.  Do NOT pad with zeros: GPT-2's logits carry a
+                # large NEGATIVE offset (max ~-77 on this corpus), so a zero row
+                # sits far above every real token and, because lm_head is tied to
+                # wte, the model then predicts the padding index at every position
+                # (ppl -> inf).  The configs now use the true vocab (50257); if a
+                # pad is ever needed again, repeat an existing row's statistics.
+                raise ValueError(
+                    "refusing to zero-pad the vocabulary: it makes the tied lm_head "
+                    "predict padding indices. Use vocab_size=50257 instead.")
                 pad = torch.zeros(t.shape, dtype=v.dtype)
                 pad[: v.shape[0]] = v
                 v = pad
