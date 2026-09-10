@@ -1,5 +1,26 @@
 # Scale probe: raw measured results
 
+> ## ⚠️ THE NUMBERS BELOW ARE INVALID — SUPERSEDED
+>
+> Every result in this file was produced by a build whose **output head was broken**.
+> `GPTConfig` defaulted to `vocab_size=50304` and the loader zero-filled rows
+> 50257..50303; since `lm_head` is tied to `wte`, those zero rows became 47 tokens
+> with logit exactly 0, while GPT-2's logits carry a large *negative* offset (max
+> ~-77 on this corpus). The padding therefore outranked every real token and the
+> model predicted index 50257 at every position.
+>
+> Same 256 tokens: HF reference ppl 76.90 vs this build ppl 7.5e5..inf.
+>
+> What was actually measured was "DLA on a correct transformer body with a broken
+> output head", not a pretrained GPT-2. Re-run after commit `d1afaf2`
+> (true vocab 50257) is in progress; see `docs/scale_results_fixed.md`.
+>
+> Weight transfer was *not* the problem: 148/148 keys matched HF exactly. The
+> Mac-CPU/cloud-GPU parity check agreed to five decimals because both sides ran the
+> same broken model — parity demonstrates reproducibility, never correctness. The
+> HF-vs-loaded perplexity comparison is what caught it.
+
+
 Backbone family: GPT-2 (English), frozen pretrained weights, DLA mounted on every
 Linear. Instance: AutoDL RTX 4090 vGPU-48GB, torch 2.8.0+cu128, bf16 DLA state.
 Corpus: 338,025 GPT-2 BPE tokens of Shakespeare.

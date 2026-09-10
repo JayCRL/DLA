@@ -59,6 +59,10 @@ def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0):
     """
     tv = model.tempos.values()
     gam = tv["consolidate_fast_direct"] * gamma_scale
+    # audit_scale.build makes every backbone weight require grad (the wake rule
+    # consumes backbone grads), so the sleep write must be an explicit no-grad edit.
+    ctx = torch.no_grad()
+    ctx.__enter__()
     for key, mod in model.key_modules.items():
         s = state.store[key]
         wf = s["w_fast"]
@@ -68,9 +72,11 @@ def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0):
             add = gam * wf
         elif variant == "shufwrite":
             flat = wf.reshape(-1)
-            gen = torch.Generator(device=flat.device).manual_seed(
+            # Build the permutation on CPU: torch.randperm wants a CPU generator,
+            # and a CPU-side permutation keeps the shuffle identical across devices.
+            gen = torch.Generator().manual_seed(
                 perm_seed * 7919 + stable_hash(key) % 1000003)
-            perm = torch.randperm(flat.numel(), generator=gen)
+            perm = torch.randperm(flat.numel(), generator=gen).to(flat.device)
             add = gam * flat[perm].reshape(wf.shape)
         elif variant == "uniformwrite":
             n = wf.numel()
@@ -94,6 +100,7 @@ def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0):
             mod.weight.add_(add)
         s["w_fast"].mul_(tv["consolidate_fast_decay"])
         s["q"].mul_(tv["consolidate_q_decay"])
+    ctx.__exit__(None, None, None)
     state.reset_moments()
     return state
 
@@ -125,6 +132,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--model", default="gpt2-large", choices=list(S.MODELS))
+    ap.add_argument("--corpus", default=None)
     ap.add_argument("--variants", default="direct,shufwrite,nocons")
     ap.add_argument("--stages", type=int, default=3)
     ap.add_argument("--chunk", type=int, default=60000,
@@ -144,7 +152,8 @@ def main():
     os.makedirs(a.out, exist_ok=True)
     model = S.build(a.model, a.state_dtype, a.device)
     n_par = sum(p.numel() for p in model.parameters())
-    ids = S.get_corpus(None, model.config.vocab_size)
+    corpus = a.corpus or os.path.expanduser("~/llm-lab/hf_gpt2/shakespeare_bpe.npy")
+    ids = S.get_corpus(corpus, model.config.vocab_size)
 
     stage_len = a.chunk // a.stages
     stages = [ids[i * stage_len:(i + 1) * stage_len] for i in range(a.stages)]
