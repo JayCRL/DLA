@@ -68,6 +68,24 @@ class TransformerDLAConfig:
     initial_loss_ema: float = 4.0
     initial_acc_ema: float = 0.3
 
+    # ---- large-backbone support (Stage 5.5 scale extension) ---------------
+    # On a >500M backbone the DLA state (w_fast/p/q/m/v, each shaped like the
+    # backbone weights) dominates memory: at fp32 it costs 5x the backbone in
+    # bf16.  ``state_dtype="bf16"`` halves that.  fp32 remains the default so
+    # every existing result stays bit-reproducible.
+    state_dtype: str = "fp32"
+    # Backbone grads are consumed inside the step (Adam on W_fast) and never
+    # applied to the backbone; by default they are still materialised by
+    # ``loss.backward()``.  Setting this True instead runs the backward pass so
+    # that only the wrapper params receive grads, letting the caller drop the
+    # accumulated backbone gradient buffer between steps.
+    backbone_no_grad: bool = False
+
+    @property
+    def state_torch_dtype(self):
+        import torch as _t
+        return {"fp32": _t.float32, "bf16": _t.bfloat16, "fp16": _t.float16}[self.state_dtype]
+
     @property
     def p0(self) -> float:
         if self.plasticity_prior <= 0.0:
@@ -235,15 +253,16 @@ def make_dla_gpt_class(GPT):
 
         def make_state(self, device: Optional[torch.device | str] = None) -> DLAState:
             device = device or next(self.parameters()).device
+            dt = self.dla_cfg.state_torch_dtype
             store: Dict[int, Dict[str, torch.Tensor]] = {}
             p0 = self.dla_cfg.p0
             for key, shape in self.state_shapes:
                 store[key] = {
-                    "w_fast": torch.zeros(shape, device=device),
-                    "p": torch.full(shape, p0, device=device),
-                    "q": torch.zeros(shape, device=device),
-                    "m": torch.zeros(shape, device=device),
-                    "v": torch.zeros(shape, device=device),
+                    "w_fast": torch.zeros(shape, device=device, dtype=dt),
+                    "p": torch.full(shape, p0, device=device, dtype=dt),
+                    "q": torch.zeros(shape, device=device, dtype=dt),
+                    "m": torch.zeros(shape, device=device, dtype=dt),
+                    "v": torch.zeros(shape, device=device, dtype=dt),
                 }
             ema = {
                 "loss_ema": torch.tensor(self.dla_cfg.initial_loss_ema, device=device),
