@@ -2,7 +2,7 @@
 
 **Allocation-level selectivity of consolidation, without any selection objective**
 
-**Yang Liu** · Draft v0.6 (emergent selective learning; continual-learning application; second-backbone replication n=9) — workshop/arXiv
+**Yang Liu** · Draft v0.7 (emergent selective learning; formalised mechanism chain; continual-learning application; second-backbone n=9) — workshop/arXiv
 
 ---
 
@@ -165,6 +165,73 @@ Backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab 7280) p
 
 ---
 
+### 3.4 The mechanism chain, formalised
+
+We write the chain "leaky integration → fast-weight structure → selective write-back →
+future adaptation" as equations that match the code exactly (`dla/transformer_dla.py`);
+the evidence level of each arrow is stated in §5 and falsifiers are listed in §5.1.
+
+**Link 1 — leaky gradient integration (identity).** With teaching gradient
+`g_t = ∇_{W_eff} L_t`, Adam field `â_t = m̂_t/(√v̂_t+ε)`, gate `φ(P)=softplus(P)`:
+
+```
+W_fast,t+1 = (1−λ) W_fast,t − η φ(P_t) ⊙ â_t
+⇒ W_fast,T = −η Σ_{k<T} (1−λ)^{T−1−k} φ(P_k) ⊙ â_k = −η Σ_k κ(T,k) â_k^φ ,  κ(T,k)=(1−λ)^{T−1−k}
+```
+
+so the fast trace is the gated-Adam gradient field integrated with an exponential
+kernel of time constant `1/λ = 50` steps (≈ one 40-step curriculum stage). `â` is
+coordinate-normalised, so the integral preserves the sign/relative-magnitude structure
+of recent gradients and is invariant to per-coordinate scale.
+
+**Link 2 — fast-weight structure.** The history contrast between the two curricula is
+itself a difference of two such integrals,
+
+```
+Δ_hist = W_fast^HE − W_fast^EH = −η Σ_k κ(T,k)[â_k^φ(HE) − â_k^φ(EH)]
+```
+
+with no alignment term anywhere in the code. Empirically `‖Δ_hist‖` and
+`cos(W_fast^EH, W_fast^HE)` are indistinguishable from same-history cross-seed noise
+and PCA shows no dominant shared mode (§4.2), so the structure is fine-grained and
+per-seed; the directional statistic `ρ = cos(g_0, Δ_hist)` orders seeds by adaptation
+(r=0.87) but is correlational.
+
+**Link 3 — selective write-back.** The sleep operator writes two pathways,
+
+```
+W_slow ← W_slow + β Q + γ W_fast ,   W_fast ← δ W_fast ,  Q ← ρ Q ,  m,v ← 0
+```
+
+whose allocation field is `A = βQ + γW_fast`. The direct term is *unselective by rule*
+(a single scalar `γ` multiplies every coordinate), so the placement of the write is
+entirely inherited from the self-organized trace: `A_i = γ W_fast,i`. We therefore
+define **allocation selectivity** operationally, by an energy-matched shuffle
+`A' = Π_π A` with `‖A'‖ = ‖A‖` exactly:
+
+```
+selective  ⇔  τ_shuf := E[G(Φ_shuf)] − E[G(Φ_direct)] < 0   at fixed write energy
+```
+
+which holds (τ_shuf = −0.0106, paired t=−4.86, n=12) and is not reproduced by energy
+concentration (`uniformwrite`, `topwrite` both ≈ no-consolidation, §4.4).
+
+**Link 4 — a first-order account of why placement matters.** For a small write `A`
+onto `W_slow`, the change of the future-task loss at the onset of adaptation is
+
+```
+ΔL_D ≈ ⟨ ∇_{W_slow} L_D , A ⟩ + O(‖A‖²)
+```
+
+A write therefore helps exactly to the extent that it is *aligned, coordinate by
+coordinate,* with the future-loss gradient field. Content-matched `A ∝ W_fast`
+inherits partial alignment through Link 1; an energy-matched shuffle randomises the
+pairing, and `E⟨∇L_D, ΠA⟩ ≈ 0` unless the field carries a large constant component.
+This is the mathematical content of the shuffle control, and it also explains the
+modest absolute size of the effect (with `|ρ| ≈ 0.02`, the first-order term is small).
+
+![Figure 9: The mechanism chain, formalised. Each box states the equation that matches the code and the evidence level of that arrow (identity / correlational / causal).](figures/chain_schematic.png)
+
 ## 4. Results
 
 ### 4.1 History lives in the fast trace (carrier, causal)
@@ -207,6 +274,8 @@ HE arm, n=12: `shufwrite` mean +0.0042 vs `direct` +0.0148 → paired **t=4.86**
 ![Figure 8: Consolidation ablation and allocation shuffle (HE arm, n=12).](figures/fig_audit_consolidation.png)
 
 Interpretation: the write rule is scalar-uniform and unselective *by rule*, yet its effect depends entirely on where the self-organized fast trace points it. The system therefore performs **allocation-level selection with no selection objective** — and the selection is not decorative: destroying it removes the effect. *Level: causal (n=12, single setting).*
+
+![Figure 10: Mechanism chain, empirical panels (n=12 HE arm unless noted). Top-left: mean ||g_f|| and cos(g_f, Δ)×100 across the 40 D-probe steps (alignment is small but systematic). Top-right: per-coordinate magnitude distributions of W_fast and of the history contrast (fine-grained, heavy-tailed). Bottom-left: direct vs energy-matched shuffled allocation (identical energy, different placement). Bottom-right: gain@40 for the write-rule family — shuffled/uniform/top-concentrated writes fall to no-consolidation, boundary-off (nosleep) is highest forward but worst on retention.](figures/chain_empirical.png)
 
 ### 4.5 What does not happen (negative results, kept for honesty)
 
@@ -281,6 +350,26 @@ in the primary setting.
 
 **Limits.** One 6.59M backbone (n=12); raw EH/HE gap is seed-noisy (strong claims are within-seed paired); the directional-alignment result is correlational; retention is now measured in the same protocol (end-of-history ppl; 10-task sequences): the sleep boundary protects earlier tasks and direct write gives the best retention (n=8–12, one backbone, no tuned baselines in the ten-task run); qonly was run at n=4; second-backbone replication is now n=9 with a shuffled-injection arm (paired t≈−7.1), but the second backbone is still a small char model with 3-chunk histories, and the selectivity/retention ablations were run on the Chinese backbone only.
 
+**Chain evidence levels and falsifiers.**
+
+| link | statement | type | status |
+|---|---|---|---|
+| 1 | `W_fast` = gated-Adam gradient field with exponential kernel (τ≈50) | identity (code) | exact |
+| 2a | `Δ_hist` is a difference of two such integrals; no explicit alignment objective exists | static audit | established |
+| 2b | global geometry of `Δ_hist` is indistinguishable from seed noise | measurement + null | established (negative) |
+| 2c | `cos(g_0, Δ_hist)` orders seeds by adaptation (r=0.87, FDR q≈0.003) | correlational | supported, not causal |
+| 3 | direct write carries the effect; Q/success-gating inert (global scalar, ‖Q‖≈0.002) | causal (ablation, n=12) | established |
+| 3′ | **allocation necessity**: energy-matched shuffle removes the effect | causal (n=12, t=−4.86) | **established (core)** |
+| 4a | forward adaptation: direct ≈ full; boundary-off costs forward but wins nothing else | causal (n=12) | established |
+| 4b | retention: boundary protects old tasks; the write adds little relative retention | causal (n=12; 10-task n=8) | established |
+
+Falsifiers we would accept: (i) an explicit alignment objective found in the code
+(breaks 2a); (ii) the energy-matched shuffle losing significance at larger n
+(breaks 3′); (iii) `τ_shuf ≈ τ_unif ≈ τ_top ≈ 0` (placement irrelevant);
+(iv) direction manipulation (α·Δ̂ interpolation) failing to change adaptation
+(confines 2c to correlation); (v) retention surviving `nosleep` (moves the boundary
+claim to the write).
+
 **Statement-level summary.**
 
 | Claim | In code by design? | Observed | Causal evidence | Status |
@@ -306,7 +395,7 @@ Selectivity can emerge where none is designed. In a minimal fast/slow learner wi
 
 ## Reproducibility
 
-Code: https://github.com/JayCRL/DLA (paper + audit tooling under `analysis/wfast_geom/`, reports under `report_output/`). Protocol, hyperparameters, per-seed data and commit hashes are recorded for every claim. Mechanism-audit runs used a parity-validated harness (Apple M2 CPU; mean |Δppl| ≈ 0.24 vs archived server runs). Scripts: `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `stage6/7/8`, `analysis/wfast_geom/{geom,replay,p1,p1b,p1c,p2,p4_consolidation_geom,audit_cheap,audit_b3,audit_t10,unified_summary,audit_second}.py`.
+Code: https://github.com/JayCRL/DLA (paper + audit tooling under `analysis/wfast_geom/`, reports under `report_output/`). Protocol, hyperparameters, per-seed data and commit hashes are recorded for every claim. Mechanism-audit runs used a parity-validated harness (Apple M2 CPU; mean |Δppl| ≈ 0.24 vs archived server runs). Scripts: `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `stage6/7/8`, `analysis/wfast_geom/{geom,replay,p1,p1b,p1c,p2,p4_consolidation_geom,audit_cheap,audit_b3,audit_t10,unified_summary,audit_second,mechanism_chain_fig}.py`; formal chain: `docs/mechanism_chain.md`.
 
 ---
 

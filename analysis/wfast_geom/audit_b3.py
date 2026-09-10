@@ -57,7 +57,7 @@ class Args:
 
 
 @torch.no_grad()
-def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0):
+def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0, sleep_decay=None):
     """Copy of dla_sleep with the write pathway selected by `variant`.
 
     shufwrite : direct (gamma*W_fast) energy, coordinates randomly permuted.
@@ -101,7 +101,8 @@ def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0):
             add = tv["consolidate_beta"] * s["q"] + gam * wf
         if add is not None:
             mod.weight.add_(add)
-        s["w_fast"].mul_(tv["consolidate_fast_decay"])
+        d = tv["consolidate_fast_decay"] if sleep_decay is None else sleep_decay
+        s["w_fast"].mul_(d)
         s["q"].mul_(tv["consolidate_q_decay"])
     state.reset_moments()
 
@@ -141,7 +142,8 @@ def run_history_variant(seed, order_name, phases, eb, d_train, args, device,
                                  for s_ in state.store.values()))
         if variant != "nosleep":
             variant_sleep(model, state, variant, perm_seed=seed * 1000 + t_idx,
-                          gamma_scale=getattr(args, "gamma_scale", 1.0))
+                          gamma_scale=getattr(args, "gamma_scale", 1.0),
+                          sleep_decay=getattr(args, "sleep_decay", None))
         cons_q_total += qmag
         cons_w_total += wmag
         per_sleep.append({"stage": t_idx, "Q_write": qmag, "direct_write": wmag})
@@ -161,12 +163,14 @@ def main():
     ap.add_argument("--out", default="results/audit")
     ap.add_argument("--keep-body", action="store_true")
     ap.add_argument("--gamma", type=float, default=1.0)
+    ap.add_argument("--sleep-decay", type=float, default=None)
     args = ap.parse_args()
     order = "easy_hard" if args.order == "EH" else "hard_easy"
     seed = args.seed
     a = Args()
     a.max_steps = a.d_steps  # probe protocol (mirror stage55e probe_trajectory)
     a.gamma_scale = args.gamma
+    a.sleep_decay = args.sleep_decay
     device = "cpu"
     import os as _os
     torch.set_num_threads(int(_os.environ.get("TORCH_THREADS", "4")))
