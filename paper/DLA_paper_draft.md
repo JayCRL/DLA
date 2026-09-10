@@ -2,7 +2,7 @@
 
 **Allocation-level selectivity of consolidation, without any selection objective**
 
-**Yang Liu** · Draft v0.5 (emergent selective learning + continual-learning application) — workshop/arXiv
+**Yang Liu** · Draft v0.6 (emergent selective learning; continual-learning application; second-backbone replication n=9) — workshop/arXiv
 
 ---
 
@@ -254,13 +254,32 @@ memory plus maintained (not slower) forward adaptation, no replay buffer, import
 gate or penalty term; its coordinate allocation carries the forward benefit (§4.4) and
 the sleep boundary carries the retention benefit (§4.6).
 
+### 4.8 Second-backbone replication (Shakespeare char GPT, n=9)
+
+The carrier result replicates on a different backbone/corpus (10.65M Shakespeare
+char GPT, vocab 65; 3-chunk EH/HE histories, unseen-slice probe; span 26k so nine
+disjoint seeds fit). Paired gain@40 contrasts (n=9):
+
+| contrast | mean Δ | sd | t |
+|---|---|---|---|
+| HE + EH `W_fast` (destructive swap) vs HE | **−0.0673** | 0.0283 | **−7.13** |
+| HE + energy-matched shuffled EH `W_fast` vs HE | −0.0721 | 0.0285 | −7.60 |
+| HE + EH `W_fast` vs HE + shuffled EH | +0.0048 | 0.0030 | +4.83 |
+
+HE native +0.0706±0.0294 falls to +0.0033±0.0032 after the swap in every seed.
+So (i) history-dependent future adaptation is carried by `W_fast` on a second
+backbone/corpus at n=9 with a large paired effect, and (ii) the destructive effect
+survives (indeed is marginally stronger under) an energy-matched shuffle of the
+injected fast weights — the same "not magnitude, not exact structure" signature seen
+in the primary setting.
+
 ## 5. Discussion
 
 **What we mean by "emergent selective learning".** Not "the learner chooses experiences" and not "the learner computes importance". Rather: a scalar-uniform consolidation rule, applied to a structured fast trace, produces per-coordinate differential retention that is *causally required* for the history effect. Selectivity here is a property of the interaction between an unselective rule and a self-organized state, measurable only through interventions that destroy allocation (energy-matched shuffle).
 
 **What the finding does and does not imply for design.** If allocation-selectivity emerges for free in minimal fast/slow learners, then "selectivity" need not be an added mechanism — and adding a *global* scalar gate (like `success`) does not create it. Obtaining *parameter-level or experience-level* selectivity would require genuinely new per-parameter/per-item signals and a channel with the same causal weight as the direct write (which currently dwarfs `Q` by ~250×). This is directly relevant to plasticity-maintenance work (Dohare et al., 2024; Lyle et al., 2022; Nikishin et al., 2022) and to the design of "growing" learners.
 
-**Limits.** One 6.59M backbone (n=12); raw EH/HE gap is seed-noisy (strong claims are within-seed paired); the directional-alignment result is correlational; retention is now measured in the same protocol (end-of-history ppl; 10-task sequences): the sleep boundary protects earlier tasks and direct write gives the best retention (n=8–12, one backbone, no tuned baselines in the ten-task run); qonly was run at n=4; second-setting replication is n=2 and directional only.
+**Limits.** One 6.59M backbone (n=12); raw EH/HE gap is seed-noisy (strong claims are within-seed paired); the directional-alignment result is correlational; retention is now measured in the same protocol (end-of-history ppl; 10-task sequences): the sleep boundary protects earlier tasks and direct write gives the best retention (n=8–12, one backbone, no tuned baselines in the ten-task run); qonly was run at n=4; second-backbone replication is now n=9 with a shuffled-injection arm (paired t≈−7.1), but the second backbone is still a small char model with 3-chunk histories, and the selectivity/retention ablations were run on the Chinese backbone only.
 
 **Statement-level summary.**
 
@@ -274,6 +293,7 @@ the sleep boundary carries the retention benefit (§4.6).
 | **Allocation of the write is necessary** | emergent from `W_fast` | yes | n=12 energy-matched shuffle, t≈4.9 | **established (core)** |
 | Sleep boundary (decay+reset) protects earlier tasks | no-write keeps boundary | yes | n=12 retention, t≈10 vs nosleep | established |
 | Direct write best retention among sleeping variants | emergent from W_fast | yes | n=12 & n=8 (10-task) | established |
+| Carrier result replicates on a second backbone | — | yes | n=9 paired t=−7.13 (2nd corpus) | established |
 | More experience → faster learning | — | null | — | not supported |
 
 ---
@@ -286,7 +306,7 @@ Selectivity can emerge where none is designed. In a minimal fast/slow learner wi
 
 ## Reproducibility
 
-Code: https://github.com/JayCRL/DLA (paper + audit tooling under `analysis/wfast_geom/`, reports under `report_output/`). Protocol, hyperparameters, per-seed data and commit hashes are recorded for every claim. Mechanism-audit runs used a parity-validated harness (Apple M2 CPU; mean |Δppl| ≈ 0.24 vs archived server runs). Scripts: `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `stage6/7/8`, `analysis/wfast_geom/{geom,replay,p1,p1b,p1c,p2,p4_consolidation_geom,audit_cheap,audit_b3,audit_t10,unified_summary}.py`.
+Code: https://github.com/JayCRL/DLA (paper + audit tooling under `analysis/wfast_geom/`, reports under `report_output/`). Protocol, hyperparameters, per-seed data and commit hashes are recorded for every claim. Mechanism-audit runs used a parity-validated harness (Apple M2 CPU; mean |Δppl| ≈ 0.24 vs archived server runs). Scripts: `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `stage6/7/8`, `analysis/wfast_geom/{geom,replay,p1,p1b,p1c,p2,p4_consolidation_geom,audit_cheap,audit_b3,audit_t10,unified_summary,audit_second}.py`.
 
 ---
 
