@@ -181,14 +181,32 @@ def main():
               f"gain40={r['gain40']:+.6f} final={r['final_ppl']:8.2f}", flush=True)
 
     arm = out["arms"]
-    if "direct" in arm and "shufwrite" in arm:
-        out["tau_shuf"] = arm["shufwrite"]["gain40"] - arm["direct"]["gain40"]
-        print(f"[alloc] seed={a.seed} tau_shuf (shuf-direct)={out['tau_shuf']:+.4f}",
+    # Emit the contrast on all three metrics.  The relative gain alone is confounded:
+    # the sleep write perturbs W_slow (it adds the RAW W_fast, without the elementwise
+    # softplus(P) scaling the forward pass applies), so the arms do not start the probe
+    # at the same perplexity and a relative gain rewards whichever arm starts worst.
+    # On the 124M run corr(pre imbalance, tau_shuf on gain40) = +0.92 while the same
+    # correlation for final_ppl is +0.16 -- so final_ppl is the metric to trust.
+    # summary_alloc.py does the full three-metric + equal-pre analysis from these fields.
+    for other in ("shufwrite", "nocons"):
+        if "direct" not in arm or other not in arm:
+            continue
+        A, B = arm[other], arm["direct"]
+        out[f"tau_{'shuf' if other == 'shufwrite' else 'nocons'}"] = \
+            A["gain40"] - B["gain40"]
+        out[f"tau_{'shuf' if other == 'shufwrite' else 'nocons'}_ppl"] = \
+            A["final_ppl"] - B["final_ppl"]          # lower is better
+        out[f"tau_{'shuf' if other == 'shufwrite' else 'nocons'}_drop"] = \
+            (B["pre"] - B["final_ppl"]) - (A["pre"] - A["final_ppl"])
+        out[f"tau_{'shuf' if other == 'shufwrite' else 'nocons'}_preimb"] = \
+            A["pre"] - B["pre"]
+        tag = "shuf" if other == "shufwrite" else "nocons"
+        # The equal-pre correction needs a slope pooled across seeds, so it lives in
+        # summary_alloc.py; here we only record the imbalance it will use.
+        print(f"[alloc] seed={a.seed} tau_{tag}: gain40={out['tau_' + tag]:+.4f}  "
+              f"final_ppl={out['tau_' + tag + '_ppl']:+.4f} (lower better)  "
+              f"pre-imbalance={out['tau_' + tag + '_preimb']:+.4f}",
               flush=True)
-    if "direct" in arm and "nocons" in arm:
-        out["tau_nocons"] = arm["nocons"]["gain40"] - arm["direct"]["gain40"]
-        print(f"[alloc] seed={a.seed} tau_nocons (nocons-direct)="
-              f"{out['tau_nocons']:+.4f}", flush=True)
 
     p = os.path.join(a.out, f"alloc_{a.model}_s{a.seed}.json")
     with open(p, "w") as f:
