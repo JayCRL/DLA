@@ -2,13 +2,13 @@
 
 **Allocation-level selectivity of consolidation, without any selection objective**
 
-**Yang Liu** · Draft v0.7 (emergent selective learning; formalised mechanism chain; continual-learning application; second-backbone n=9) — workshop/arXiv
+**Yang Liu** · Draft v0.8 (emergent selective learning; formalised mechanism chain; write-strength robustness; continual-learning application; second-backbone n=9) — workshop/arXiv
 
 ---
 
 ## Abstract
 
-Selective learning—retaining some changes while discarding others—is usually treated as something an algorithm must explicitly implement (loss weighting, parameter gates, per-item replay). We ask whether it can instead *emerge* from an unselective learning rule, and whether the emergent selectivity is functionally real. We study a minimal "fast/slow" learner on a fixed Transformer backbone: a fast weight `W_fast` integrates the learner's own gradient history (Adam-shaped, leaky), and at task boundaries an *unselective* rule copies a scaled `W_fast` into the slow weights at a uniform scalar coefficient—no per-parameter gate, no success signal, no alignment objective. On a 6.59M Chinese character GPT with two curriculum histories (easy→hard vs hard→easy) probed on a never-seen domain, we find: (1) history-dependent future adaptation is causally tied to the fast-weight trace (swap control, n=12); (2) the mechanism that transfers part of that trace into slow weights is the *direct* fast→slow write, not the architecture's explicitly-designed success-gated eligibility trace `Q`, which is numerically (~0.4% of write energy) and causally inert; and (3) the direct write's **coordinate allocation is functionally necessary**: keeping every write's energy identical but randomly permuting which coordinates receive it removes the entire effect (n=12, paired t≈4.9; shuffled allocation ≈ no consolidation). Because the write is `γ·W_fast` with a single scalar coefficient, "where it writes" is fully self-organized from the fast trace's own structure. We conclude that a minimal, unselective rule can exhibit *emergent, allocation-level selective learning*, that this selectivity carries causal weight for future adaptation, and that it coexists with an explicit but non-functional "selective" mechanism in the same system. In the same protocol, consolidation is not only a forward device: the sleep boundary itself protects earlier-task knowledge (no-sleep loses it, n=12, paired t≈10) and the direct write gives the best retention among consolidation variants. On a ten-task cross-domain curriculum (n=8), direct consolidation retains the earliest tasks best (paired t≈−3.6 vs no-write; −10 vs no-sleep) while keeping forward learning at least as fast — an unselective fast→slow write behaves as a working continual-learning primitive, with no replay, gating, or importance machinery.
+Selective learning—retaining some changes while discarding others—is usually treated as something an algorithm must explicitly implement (loss weighting, parameter gates, per-item replay). We ask whether it can instead *emerge* from an unselective learning rule, and whether the emergent selectivity is functionally real. We study a minimal "fast/slow" learner on a fixed Transformer backbone: a fast weight `W_fast` integrates the learner's own gradient history (Adam-shaped, leaky), and at task boundaries an *unselective* rule copies a scaled `W_fast` into the slow weights at a uniform scalar coefficient—no per-parameter gate, no success signal, no alignment objective. On a 6.59M Chinese character GPT with two curriculum histories (easy→hard vs hard→easy) probed on a never-seen domain, we find: (1) history-dependent future adaptation is causally tied to the fast-weight trace (swap control, n=12); (2) the mechanism that transfers part of that trace into slow weights is the *direct* fast→slow write, not the architecture's explicitly-designed success-gated eligibility trace `Q`, which is numerically (~0.4% of write energy) and causally inert; and (3) the direct write's **coordinate allocation is functionally necessary**: keeping every write's energy identical but randomly permuting which coordinates receive it removes the entire effect (n=12, paired t≈5.5; shuffled allocation ≈ no consolidation, and a misallocated write stays on the no-consolidation floor at every write strength we tried, while the benefit is graded rather than knife-edge over a 3× range of write strength). Because the write is `γ·W_fast` with a single scalar coefficient, "where it writes" is fully self-organized from the fast trace's own structure. We conclude that a minimal, unselective rule can exhibit *emergent, allocation-level selective learning*, that this selectivity carries causal weight for future adaptation, and that it coexists with an explicit but non-functional "selective" mechanism in the same system. In the same protocol, consolidation is not only a forward device: the sleep boundary itself protects earlier-task knowledge (no-sleep loses it, n=12, paired t≈10) and the direct write gives the best retention among consolidation variants. On a ten-task cross-domain curriculum (n=8), direct consolidation retains the earliest tasks best (paired t≈−3.6 vs no-write; −10 vs no-sleep) while keeping forward learning at least as fast — an unselective fast→slow write behaves as a working continual-learning primitive, with no replay, gating, or importance machinery.
 
 We report all claims with their evidence level and provide energy-matched controls throughout.
 
@@ -32,7 +32,7 @@ Fast/slow weight architectures (Hinton & Plaut, 1987; Ba et al., 2016) are the s
 
 ### 1.3 The claim in one paragraph
 
-In a minimal DLA (Section 3), two different curriculum histories produce different future adaptation on a never-seen domain, and this effect is carried by the fast-weight trace `W_fast` (Section 5.1). Consolidation into the slow store happens through two pathways: a *designed* one (a success-gated eligibility trace `Q`) and an *unselective* one (direct copy of `W_fast`). The designed pathway is inert; the unselective one carries the effect (Section 5.2). Critically, the unselective pathway is *selective in its allocation*: where it writes is dictated by the self-organized structure of `W_fast`, and destroying that allocation (energy-matched within-matrix shuffle) removes the effect (Section 5.3, n=12, paired t≈4.9). We call this **emergent selective learning**, and we are careful to define its level (allocation of writes, not experience-level or success-gated selection).
+In a minimal DLA (Section 3), two different curriculum histories produce different future adaptation on a never-seen domain, and this effect is carried by the fast-weight trace `W_fast` (Section 5.1). Consolidation into the slow store happens through two pathways: a *designed* one (a success-gated eligibility trace `Q`) and an *unselective* one (direct copy of `W_fast`). The designed pathway is inert; the unselective one carries the effect (Section 5.2). Critically, the unselective pathway is *selective in its allocation*: where it writes is dictated by the self-organized structure of `W_fast`, and destroying that allocation (energy-matched within-matrix shuffle) removes the effect (Section 5.3, n=12, paired t≈5.5). We call this **emergent selective learning**, and we are careful to define its level (allocation of writes, not experience-level or success-gated selection).
 
 ---
 
@@ -160,8 +160,9 @@ Our paper's core construct is **allocation-level selectivity**: identical total 
 - Metrics: gain@40 (relative ppl improvement), LE_D, T80. All causal/ablation claims use **within-seed, within-arm paired contrasts** (the raw EH/HE gap is seed-noisy).
 - Controls: cross-injection of state components; norm-matched / shuffled / module-localized swaps; consolidation ablations (Q-only / direct-only / none); and the energy-matched **allocation shuffle** (per-matrix random permutation of each sleep's `gamma·W_fast` increment).
 - Every claim is tagged by evidence level (causal / controlled / correlational / negative). No pre-registration; n=10→n=12 transparent; no seed selection; no hyperparameter tuning for effect size.
+- **Aggregation provenance.** The consolidation/selectivity ablations were run **twice independently** on the same protocol, each n=12: (i) a first series assembled as n=4 (seeds 0–3) plus n=8 (seeds 4–11) extensions (`selectivity_test_n12.md`), and (ii) a later **unified batch** running all 12 seeds × 6 variants in one job, with same-protocol retention measured alongside (`audit_batch2_retention_alloc.md`). The two agree on every conclusion and on the core contrast (`direct − shufwrite` paired t=+4.86 and t=+5.45 respectively) — i.e. the central allocation result is *independently replicated*. **All numbers quoted in this paper come from the unified batch**, except comparisons against the archived server `full` learners, which are labelled as such where they appear.
 
-Backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab 7280) pretrained on Chinese Wikipedia. Second setting (replication in direction only): 10.65M Shakespeare char GPT, n=2.
+Backbone: 6.59M Chinese character GPT (6 layers, 8 heads, 256 dim, vocab 7280) pretrained on Chinese Wikipedia. Second setting (replication in direction only): 10.65M Shakespeare char GPT, n=9 (§4.8).
 
 ---
 
@@ -213,7 +214,7 @@ define **allocation selectivity** operationally, by an energy-matched shuffle
 selective  ⇔  τ_shuf := E[G(Φ_shuf)] − E[G(Φ_direct)] < 0   at fixed write energy
 ```
 
-which holds (τ_shuf = −0.0106, paired t=−4.86, n=12) and is not reproduced by energy
+which holds (τ_shuf = −0.0115, paired t=−5.45, n=12) and is not reproduced by energy
 concentration (`uniformwrite`, `topwrite` both ≈ no-consolidation, §4.4).
 
 **Link 4 — a first-order account of why placement matters.** For a small write `A`
@@ -236,7 +237,7 @@ modest absolute size of the effect (with `|ρ| ≈ 0.02`, the first-order term i
 
 ### 4.1 History lives in the fast trace (carrier, causal)
 
-Replacing a hard→easy learner's `W_fast` with an easy→hard learner's significantly degrades future adaptation on D: paired gain@40 Δ≈−0.019, 95% CI [−0.033,−0.005], sign p=0.019 (10/12 negative, n=12). Norm-matching does not rescue it (d≈−0.90), within-matrix shuffling does not remove it (d≈−1.25), and module-localized swaps implicate MLP (d≈−1.05) and attention (d≈−1.06) more than embedding (d≈−0.87). The direction replicates on the Shakespeare backbone (n=2). Slow weights, plasticity and rule parameters transfer little alone (component decomposition). *Level: causal (single small backbone, n=12, controls + partial replication).*
+Replacing a hard→easy learner's `W_fast` with an easy→hard learner's significantly degrades future adaptation on D: paired gain@40 Δ≈−0.019, 95% CI [−0.033,−0.005], sign p=0.019 (10/12 negative, n=12). Norm-matching does not rescue it (d≈−0.90), within-matrix shuffling does not remove it (d≈−1.25), and module-localized swaps implicate MLP (d≈−1.05) and attention (d≈−1.06) more than embedding (d≈−0.87). The direction replicates on the Shakespeare backbone (§4.8, n=9). Slow weights, plasticity and rule parameters transfer little alone (component decomposition). *Level: causal (single small backbone, n=12, controls + partial replication).*
 
 **Relation to task/curriculum-order results.** This mirrors, but differs from, the
 task-order results of continual learning (Bell & Lawrence, 2022; Li & Hiratani, 2025;
@@ -256,26 +257,39 @@ A static code audit of the full wake/sleep/meta path confirms there is **no alig
 
 Measured on saved bodies: `‖Q‖ ≈ 0.002` vs `‖W_fast‖ ≈ 3.6`; the designed `Q` write is ≈0.4% of the direct write. Consolidation ablation on the HE arm (n=12, gain@40):
 
-| variant | mean | paired t vs full | paired t vs direct |
-|---|---|---|---|
-| full (archive) | +0.0143 | — | — |
-| direct (γ·W_fast only) | +0.0148 | +0.59 | — |
-| nocons (no write) | +0.0036 | **−5.53** | **+5.30** |
-| qonly (β·Q only; n=4) | +0.0094 | ≈ nocons | ≈ nocons |
+| variant | mean (unified batch) | paired t vs direct |
+|---|---|---|
+| direct (γ·W_fast only) | +0.0140 | — |
+| nocons (no write) | +0.0027 | **+7.36** |
+| qonly (β·Q only; n=4) | +0.0094 | ≈ nocons |
 
-`direct ≈ full`; removing consolidation drops the HE arm; the designed success-gated `Q` pathway (which is the only "selective" mechanism in the code, and is global-scalar by construction) adds nothing on top of no-consolidation. *Level: causal (n=12; n=4 for qonly).*
+`direct ≈ full`: the same-protocol `full` learners from the archived server runs average +0.0143, a paired difference of +0.0005 (t=+0.59) against the Mac `direct` arm — an archived-vs-Mac comparison (`selectivity_test_n12.md`), not part of the unified batch and not re-derived here. Removing consolidation drops the HE arm; the designed success-gated `Q` pathway (which is the only "selective" mechanism in the code, and is global-scalar by construction) adds nothing on top of no-consolidation. *Level: causal (n=12; n=4 for qonly).*
 
 ### 4.4 The allocation of the unselective write is functionally necessary — emergent selective learning
 
 Energy-matched allocation shuffle (`shufwrite`): identical to `direct` except each sleep's `gamma·W_fast` increment is randomly permuted *within each matrix* before being added to `W_slow`. Total energy, magnitudes, rule and coefficients are identical; only *which coordinates* receive the write is destroyed.
 
-HE arm, n=12: `shufwrite` mean +0.0042 vs `direct` +0.0148 → paired **t=4.86**; `shufwrite ≈ nocons` (t=−0.38) ≪ `direct` (t=4.86); `direct ≈ full` (t=0.59).
+HE arm, n=12 (unified batch): `shufwrite` mean +0.0025 vs `direct` +0.0140 → paired **t=−5.45** (τ_shuf=−0.0115); `shufwrite ≈ nocons` (Δ=−0.0002 against the +0.0027 no-consolidation mean, i.e. indistinguishable given sd≈0.009–0.010) ≪ `direct` (t=−5.45); `direct ≈ full` (t=+0.59, archived comparison).
 
 ![Figure 8: Consolidation ablation and allocation shuffle (HE arm, n=12).](figures/fig_audit_consolidation.png)
 
-Interpretation: the write rule is scalar-uniform and unselective *by rule*, yet its effect depends entirely on where the self-organized fast trace points it. The system therefore performs **allocation-level selection with no selection objective** — and the selection is not decorative: destroying it removes the effect. *Level: causal (n=12, single setting).*
+Interpretation: the write rule is scalar-uniform and unselective *by rule*, yet its effect depends entirely on where the self-organized fast trace points it. The system therefore performs **allocation-level selection with no selection objective** — and the selection is not decorative: destroying it removes the effect. *Level: causal (n=12; settings varied below).*
 
 ![Figure 10: Mechanism chain, empirical panels (n=12 HE arm unless noted). Top-left: mean ||g_f|| and cos(g_f, Δ)×100 across the 40 D-probe steps (alignment is small but systematic). Top-right: per-coordinate magnitude distributions of W_fast and of the history contrast (fine-grained, heavy-tailed). Bottom-left: direct vs energy-matched shuffled allocation (identical energy, different placement). Bottom-right: gain@40 for the write-rule family — shuffled/uniform/top-concentrated writes fall to no-consolidation, boundary-off (nosleep) is highest forward but worst on retention.](figures/chain_empirical.png)
+
+**Is the effect an artifact of one write strength?** The result above is measured at the default setting (`γ_scale = 1`, i.e. 1× the learned `consolidate_fast_direct` coefficient). Since the claim rests on a single intervention at a single hyperparameter, the natural objection is that it could be a knife-edge artifact of that coefficient. We therefore swept the write strength over a 3× range, re-running **both** arms at each setting under the same protocol, with the energy-matched shuffle applied at every setting (12 seeds each):
+
+| γ_scale | `direct` | `shufwrite` | paired gap | t | dz |
+|---|---|---|---|---|---|
+| 0.5 | +0.0059 | +0.0035 | +0.0024 | +1.82 (n.s.) | +0.52 |
+| **1.0** (default) | +0.0140 | +0.0025 | **+0.0115** | **+5.45** | +1.60 |
+| 1.5 | +0.0241 | +0.0040 | **+0.0201** | **+4.78** | +1.38 |
+
+The gap rises monotonically and *both adjacent steps are individually significant* (gap(1.0)−gap(0.5) = +0.0091, t=+4.42, dz=+1.28; gap(1.5)−gap(1.0) = +0.0086, t=+3.57, dz=+1.03). This is the direction the first-order account of §3.4 predicts: with `A = γW_fast`, `ΔL_D ≈ ⟨∇L_D, A⟩` scales with `γ`, and a through-origin fit (slope k=0.0123) tracks the measured gaps for `γ ≥ 1`, with the weakest setting falling *below* the linear trend — a soft onset, not a threshold. A tail point at `γ_scale = 0.05` (n=3, underpowered) is consistent with this but supports no claim.
+
+The sharper form of the same test: **the shuffled write never leaves the no-consolidation floor, at any write strength.** Relative to `nocons` (+0.0027 ± 0.0103), `shufwrite` sits at +0.0008 / −0.0002 / +0.0013 for `γ_scale` = 0.5 / 1.0 / 1.5 (all n.s., |dz| ≤ 0.30), while the coordinate-matched write climbs off that same floor (+0.0032 / +0.0113 / +0.0215 over `nocons`; t = +2.38 / +7.36 / +6.58). Adding 50% more write energy to a misallocated write is simply wasted — what matters is *where* the write lands, not how much is written.
+
+![Figure 11: Write-strength robustness of allocation selectivity. Left: paired direct−shuffled gap against the write-strength scale, with 95% CI; the hollow square at 0.05 is the n=3 tail point, and the dotted line is the first-order prediction fitted through the origin. Right: the two arms against the no-consolidation floor (shaded) — the shuffled write stays on the floor at every write strength, while the coordinate-matched write rises off it.](figures/fig_a1_dose_response.png)
 
 ### 4.5 What does not happen (negative results, kept for honesty)
 
@@ -348,7 +362,7 @@ in the primary setting.
 
 **What the finding does and does not imply for design.** If allocation-selectivity emerges for free in minimal fast/slow learners, then "selectivity" need not be an added mechanism — and adding a *global* scalar gate (like `success`) does not create it. Obtaining *parameter-level or experience-level* selectivity would require genuinely new per-parameter/per-item signals and a channel with the same causal weight as the direct write (which currently dwarfs `Q` by ~250×). This is directly relevant to plasticity-maintenance work (Dohare et al., 2024; Lyle et al., 2022; Nikishin et al., 2022) and to the design of "growing" learners.
 
-**Limits.** One 6.59M backbone (n=12); raw EH/HE gap is seed-noisy (strong claims are within-seed paired); the directional-alignment result is correlational; retention is now measured in the same protocol (end-of-history ppl; 10-task sequences): the sleep boundary protects earlier tasks and direct write gives the best retention (n=8–12, one backbone, no tuned baselines in the ten-task run); qonly was run at n=4; second-backbone replication is now n=9 with a shuffled-injection arm (paired t≈−7.1), but the second backbone is still a small char model with 3-chunk histories, and the selectivity/retention ablations were run on the Chinese backbone only.
+**Limits.** One 6.59M backbone (n=12); raw EH/HE gap is seed-noisy (strong claims are within-seed paired); the directional-alignment result is correlational; retention is now measured in the same protocol (end-of-history ppl; 10-task sequences): the sleep boundary protects earlier tasks and direct write gives the best retention (n=8–12, one backbone, no tuned baselines in the ten-task run); qonly was run at n=4; the write-strength sweep (§4.4) varies the direct-write coefficient only, and the separate sleep-decay axis was probed at just n=6 (indicative, not a result); second-backbone replication is now n=9 with a shuffled-injection arm (paired t≈−7.1), but the second backbone is still a small char model with 3-chunk histories, and the selectivity/retention ablations were run on the Chinese backbone only.
 
 **Chain evidence levels and falsifiers.**
 
@@ -359,13 +373,15 @@ in the primary setting.
 | 2b | global geometry of `Δ_hist` is indistinguishable from seed noise | measurement + null | established (negative) |
 | 2c | `cos(g_0, Δ_hist)` orders seeds by adaptation (r=0.87, FDR q≈0.003) | correlational | supported, not causal |
 | 3 | direct write carries the effect; Q/success-gating inert (global scalar, ‖Q‖≈0.002) | causal (ablation, n=12) | established |
-| 3′ | **allocation necessity**: energy-matched shuffle removes the effect | causal (n=12, t=−4.86) | **established (core)** |
+| 3′ | **allocation necessity**: energy-matched shuffle removes the effect | causal (n=12, t=−5.45; graded over a 3× write-strength range, §4.4) | **established (core)** |
 | 4a | forward adaptation: direct ≈ full; boundary-off costs forward but wins nothing else | causal (n=12) | established |
 | 4b | retention: boundary protects old tasks; the write adds little relative retention | causal (n=12; 10-task n=8) | established |
 
 Falsifiers we would accept: (i) an explicit alignment objective found in the code
 (breaks 2a); (ii) the energy-matched shuffle losing significance at larger n
-(breaks 3′); (iii) `τ_shuf ≈ τ_unif ≈ τ_top ≈ 0` (placement irrelevant);
+(breaks 3′) *or* the direct−shuffled gap collapsing to zero outside the default write
+strength (which the 3× sweep in §4.4 does **not** show — the gap grows monotonically
+there); (iii) `τ_shuf ≈ τ_unif ≈ τ_top ≈ 0` (placement irrelevant);
 (iv) direction manipulation (α·Δ̂ interpolation) failing to change adaptation
 (confines 2c to correlation); (v) retention surviving `nosleep` (moves the boundary
 claim to the write).
@@ -379,7 +395,7 @@ claim to the write).
 | Directional trace (predictive, module-aligned) | emergent | r=0.87 | correlational only | emergent character |
 | Designed selection via success-gated `Q` | global scalar only | Q≈0.002; qonly≈nocons | inert | refuted here |
 | Direct fast→slow write carries the effect | yes (unselective scalar) | yes | n=12, t≈5.3 | established |
-| **Allocation of the write is necessary** | emergent from `W_fast` | yes | n=12 energy-matched shuffle, t≈4.9 | **established (core)** |
+| **Allocation of the write is necessary** | emergent from `W_fast` | yes | n=12 energy-matched shuffle, t≈5.5 | **established (core)** |
 | Sleep boundary (decay+reset) protects earlier tasks | no-write keeps boundary | yes | n=12 retention, t≈10 vs nosleep | established |
 | Direct write best retention among sleeping variants | emergent from W_fast | yes | n=12 & n=8 (10-task) | established |
 | Carrier result replicates on a second backbone | — | yes | n=9 paired t=−7.13 (2nd corpus) | established |
@@ -389,13 +405,15 @@ claim to the write).
 
 ## 6. Conclusion
 
-Selectivity can emerge where none is designed. In a minimal fast/slow learner with no alignment objective, no per-parameter gate, and a scalar-uniform consolidation rule, the learner's own gradient history shapes a fast trace whose coordinate structure determines where consolidation writes; keeping the total write energy identical but destroying that allocation removes the effect (n=12, paired t≈4.9). The architecture's explicit, globally-gated "selective" pathway plays no measurable role. The lesson is twofold: emergent, allocation-level selective learning is real and causally potent in this setting; and designers should not assume that adding a selection *signal* (especially a global one) is what creates selective behavior—or that selection needs to be added at all.
+Selectivity can emerge where none is designed. In a minimal fast/slow learner with no alignment objective, no per-parameter gate, and a scalar-uniform consolidation rule, the learner's own gradient history shapes a fast trace whose coordinate structure determines where consolidation writes; keeping the total write energy identical but destroying that allocation removes the effect (n=12, paired t≈5.5). The architecture's explicit, globally-gated "selective" pathway plays no measurable role. The lesson is twofold: emergent, allocation-level selective learning is real and causally potent in this setting; and designers should not assume that adding a selection *signal* (especially a global one) is what creates selective behavior—or that selection needs to be added at all.
 
 ---
 
 ## Reproducibility
 
-Code: https://github.com/JayCRL/DLA (paper + audit tooling under `analysis/wfast_geom/`, reports under `report_output/`). Protocol, hyperparameters, per-seed data and commit hashes are recorded for every claim. Mechanism-audit runs used a parity-validated harness (Apple M2 CPU; mean |Δppl| ≈ 0.24 vs archived server runs). Scripts: `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `stage6/7/8`, `analysis/wfast_geom/{geom,replay,p1,p1b,p1c,p2,p4_consolidation_geom,audit_cheap,audit_b3,audit_t10,unified_summary,audit_second,mechanism_chain_fig}.py`; formal chain: `docs/mechanism_chain.md`.
+Code: https://github.com/JayCRL/DLA (paper + audit tooling under `analysis/wfast_geom/`, reports under `report_output/`). Protocol, hyperparameters, per-seed data and commit hashes are recorded for every claim. Mechanism-audit runs used a parity-validated harness (Apple M2 CPU; mean |Δppl| ≈ 0.24 vs archived server runs). Scripts: `stage55e_wfast_p0.py`, `validation_p0_controls.py`, `validation_baselines.py`, `stage6/7/8`, `analysis/wfast_geom/{geom,replay,p1,p1b,p1c,p2,p4_consolidation_geom,audit_cheap,audit_b3,audit_t10,unified_summary,audit_second,mechanism_chain_fig,a1_final,a1_dose_response_fig}.py`; formal chain: `docs/mechanism_chain.md`; write-strength sweep report: `report_output/a1_gamma_final.md`.
+
+**Which aggregation each number comes from.** Consolidation/selectivity numbers are quoted from the **unified batch** (`audit_batch2_retention_alloc.md`; 12 seeds × 6 variants, one job, retention measured alongside); the earlier independent series (`selectivity_test_n12.md`; n=4+n=8) is retained as an independent replication of the same contrasts. Within the γ/write-strength sweeps (`a1_gamma_final.md`), the default-γ arm's seeds 0–2 are re-runs: recomputing `direct` (n=12) from the resulting directory gives +0.0143 versus +0.0140 for the pre-sweep unified-batch aggregate — a Δ of 0.0003, ≈2% of one sd (0.0148), attributable to harness non-determinism (eval-RNG/threading; the same non-determinism the |Δppl| ≈ 0.24 parity figure measures). The paper keeps the unified-batch +0.0140; all γ contrasts are unaffected because the γ=0.5 and γ=1.5 arms are internally consistent single-run sets.
 
 ---
 

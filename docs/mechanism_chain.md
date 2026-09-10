@@ -123,9 +123,9 @@ Predictably, the Q-only individual behaves like no-consolidation (`qonly ≈ noc
 | intervention | operator | estimand τ = E[G(I·Φ)] − E[G(Φ_ref)] | measured |
 |---|---|---|---|
 | carrier swap | `W_fast ← W_fast^{EH}` in the HE body | τ_swap (HE ref) | −0.019, CI [−0.033,−0.005], d≈−0.7, 10/12 (n=12); second backbone −0.067, t=−7.13 (n=9) |
-| no write | `A = 0` | τ_nocons (direct ref) | −0.0106, t=−5.45 |
+| no write | `A = 0` | τ_nocons (direct ref) | −0.0113, t=−7.36 |
 | Q only | `A = βQ` | τ_qonly | ≈ τ_nocons (Q inert) |
-| **energy-matched shuffle** | `A' = Π_π A`, so `‖A'‖ = ‖A‖` exactly, pairing destroyed | τ_shuf (direct ref) | **−0.0106, t=−4.86** |
+| **energy-matched shuffle** | `A' = Π_π A`, so `‖A'‖ = ‖A‖` exactly, pairing destroyed | τ_shuf (direct ref) | **−0.0115, t=−5.45** |
 | uniform placement | `A'_i = γ‖W_fast‖/√d` | τ_unif | −0.0105, t=−5.16 |
 | top-20% concentration | energy on the largest `|W_fast,i|` | τ_top | −0.0089, t=−4.18 |
 | boundary off (`nosleep`) | skip sleep entirely (no write, no decay, no reset) | τ_nosleep (direct ref) | **+0.0163, t=+6.06** on adaptation; retention worse (see §4) |
@@ -137,7 +137,7 @@ coordinate pairing at fixed energy changes the outcome:
 τ_shuf < 0  with  ‖A'‖ = ‖A‖   ⇒  the coordinate placement of the write is functionally necessary
 ```
 
-This holds (t=−4.86, n=12) and is *not* explained by energy concentration, since
+This holds (t=−5.45, n=12) and is *not* explained by energy concentration, since
 uniform placement and top-20% concentration are both as harmful as shuffling. What
 matters is the **coordinate-matched (magnitude *and* sign) write** `A_i = γW_fast,i`.
 
@@ -194,7 +194,7 @@ content-matched write (γ W_fast) → forward adaptation (allocation-selective)
 | 2b | global geometry of `Δ_hist` is not separable from seed noise | measurement + null | established (negative) |
 | 2c | `cos(g_0, Δ_hist)` orders seeds by adaptation (r=0.87, FDR q=0.003) | correlational | supported, **not causal** |
 | 3 | direct write carries the effect; Q/success-gating inert (global scalar, ‖Q‖≈0.002) | causal (ablation, n=12) | established |
-| 3' | **allocation necessity**: energy-matched shuffle removes the effect | causal (n=12, t=−4.86) | **established (core)** |
+| 3' | **allocation necessity**: energy-matched shuffle removes the effect | causal (n=12, t=−5.45) | **established (core)** |
 | 4a | forward adaptation: direct ≈ full, nosleep highest (boundary costs forward) | causal (n=12) | established |
 | 4b | retention: boundary protects old tasks; direct write adds little *relative* retention | causal (n=12) + 10-task (n=8) | established |
 
