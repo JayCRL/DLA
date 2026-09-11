@@ -1,0 +1,17 @@
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 HE/HE: pre=43.11 LE=0.977
+number of parameters: 6.59M
+seed 9 HE+EH_Wfast: pre=41.88 LE=1.000
+number of parameters: 6.59M
+seed 9 HE+normEH: pre=41.92 LE=0.563
+number of parameters: 6.59M
+seed 9 HE+shuffleEH: pre=41.56 LE=1.000
+number of parameters: 6.59M
+seed 9 HE+EH_emb: pre=42.93 LE=1.000
+number of parameters: 6.59M
+seed 9 HE+EH_attn: pre=42.54 LE=0.881
+number of parameters: 6.59M
+seed 9 HE+EH_mlp: pre=42.09 LE=0.759
+saved -> results/validation/seeds/seed9.json

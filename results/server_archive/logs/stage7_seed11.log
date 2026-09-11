@@ -1,0 +1,14 @@
+number of parameters: 6.59M
+[seed 11] birth PPL [43.68, 48.4, 50.91, 41.75, 37.92, 37.74, 40.99, 33.83, 35.54, 35.7]
+number of parameters: 6.59M
+  seed 11 task1 wiki_general: birth=43.68 norm_slope=-0.0017 LE=0.00
+  seed 11 task2 synthetic_qa: birth=48.40 norm_slope=+0.0031 LE=0.24
+  seed 11 task3 physics: birth=50.91 norm_slope=-0.0034 LE=0.85
+  seed 11 task4 math: birth=41.75 norm_slope=+0.0054 LE=0.45
+  seed 11 task5 computer: birth=37.92 norm_slope=-0.0030 LE=0.43
+  seed 11 task6 biology: birth=37.74 norm_slope=-0.0038 LE=0.00
+  seed 11 task7 economics: birth=40.99 norm_slope=-0.0035 LE=1.00
+  seed 11 task8 law: birth=33.83 norm_slope=+0.0039 LE=1.00
+  seed 11 task9 history: birth=35.54 norm_slope=-0.0022 LE=0.00
+  seed 11 task10 literature: birth=35.70 norm_slope=-0.0038 LE=0.05
+saved seed 11

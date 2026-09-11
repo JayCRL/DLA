@@ -1,0 +1,14 @@
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 1 adamw easy_hard: LE=0.000
+number of parameters: 6.59M
+seed 1 adamw hard_easy: LE=1.000
+number of parameters: 6.59M
+seed 1 replay easy_hard: LE=0.000
+number of parameters: 6.59M
+seed 1 replay hard_easy: LE=1.000
+number of parameters: 6.59M
+seed 1 ewc easy_hard: LE=0.000
+number of parameters: 6.59M
+seed 1 ewc hard_easy: LE=0.920
+saved seed 1

@@ -1,0 +1,104 @@
+number of parameters: 6.59M
+[seed 4] easy_hard / static ...
+number of parameters: 6.59M
+  LE_D=1.000 T80_D=36 phi_norms=[] (980s)
+[seed 4] easy_hard / meta ...
+/home/wust_1/llm-lab/venv/lib/python3.10/site-packages/torch/autograd/graph.py:841: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /pytorch/torch/csrc/autograd/engine.cpp:1291.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+number of parameters: 6.59M
+  LE_D=1.000 T80_D=36 phi_norms=[0.003, 0.0022] (993s)
+[seed 4] hard_easy / static ...
+number of parameters: 6.59M
+  LE_D=1.000 T80_D=60 phi_norms=[] (959s)
+[seed 4] hard_easy / meta ...
+number of parameters: 6.59M
+  LE_D=1.000 T80_D=60 phi_norms=[0.0031, 0.0023] (961s)
+
+===== Stage 5.5b summary =====
+{
+  "seeds": [
+    4
+  ],
+  "easy_hard_static": {
+    "LE_D": [
+      1.0
+    ],
+    "LE_D_mean": 1.0,
+    "LE_D_std": 0.0,
+    "T80_D": [
+      36
+    ],
+    "T80_D_mean": 36.0,
+    "T80_D_std": 0.0
+  },
+  "easy_hard_meta": {
+    "LE_D": [
+      1.0
+    ],
+    "LE_D_mean": 1.0,
+    "LE_D_std": 0.0,
+    "T80_D": [
+      36
+    ],
+    "T80_D_mean": 36.0,
+    "T80_D_std": 0.0
+  },
+  "easy_hard_DG": {
+    "per_seed": [
+      0.0
+    ],
+    "mean": 0.0
+  },
+  "easy_hard_DG_T": {
+    "per_seed": [
+      0
+    ],
+    "mean": 0.0
+  },
+  "hard_easy_static": {
+    "LE_D": [
+      1.0
+    ],
+    "LE_D_mean": 1.0,
+    "LE_D_std": 0.0,
+    "T80_D": [
+      60
+    ],
+    "T80_D_mean": 60.0,
+    "T80_D_std": 0.0
+  },
+  "hard_easy_meta": {
+    "LE_D": [
+      1.0
+    ],
+    "LE_D_mean": 1.0,
+    "LE_D_std": 0.0,
+    "T80_D": [
+      60
+    ],
+    "T80_D_mean": 60.0,
+    "T80_D_std": 0.0
+  },
+  "hard_easy_DG": {
+    "per_seed": [
+      0.0
+    ],
+    "mean": 0.0
+  },
+  "hard_easy_DG_T": {
+    "per_seed": [
+      0
+    ],
+    "mean": 0.0
+  },
+  "interaction_LE": 0.0,
+  "interaction_T": 0.0,
+  "phi_distance_histories": {
+    "per_seed": [
+      0.0008895883721700569
+    ],
+    "mean": 0.0008895883721700569
+  }
+}
+
+saved -> results/stage55b/part_4.json

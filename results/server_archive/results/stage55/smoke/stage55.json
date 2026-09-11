@@ -1,0 +1,367 @@
+{
+  "args": {
+    "max_steps": 3,
+    "target_gain": 0.04,
+    "block": 64,
+    "batch": 8,
+    "eval_every": 1,
+    "eval_batch": 4,
+    "eval_batches": 4,
+    "wiki_start": 40000000,
+    "train_chars": 300000,
+    "val_chars": 40000,
+    "lr": 0.0001,
+    "eta_fast": 0.0006,
+    "meta_lr": 0.003,
+    "meta_batch": 2,
+    "meta_unroll_len": 1,
+    "seeds": [
+      0
+    ],
+    "reversed_seeds": [],
+    "skip_adamw": true,
+    "skip_static": true,
+    "skip_meta": false,
+    "out": "results/stage55/smoke"
+  },
+  "summary": {
+    "order": {
+      "0": {
+        "forward": [
+          "sft",
+          "wiki",
+          "science"
+        ],
+        "pre": {
+          "wiki": 32.77334588513804,
+          "sft": 29.31450702531164,
+          "science": 36.34479766790331
+        }
+      }
+    },
+    "target_gain": 0.04,
+    "arms": {
+      "dla_meta": {
+        "LE_mean": [
+          0.9736616866345534,
+          -5.872373633264116,
+          0.821561159962153
+        ],
+        "T80_mean": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "raw_lambda_mean": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "LE_slope": -0.07605026333620013,
+        "delta_phi_norms": [
+          0.0,
+          0.0
+        ],
+        "delta_phi_mean": 0.0,
+        "D_LE_mean": 0.8851601465832538,
+        "D_T80_mean": 1.0,
+        "D_LE_all": [
+          0.8851601465832538
+        ]
+      }
+    }
+  },
+  "reversed": {},
+  "results": {
+    "adamw": [],
+    "dla_static": [],
+    "dla_meta": [
+      {
+        "stage_pre": [
+          29.31450702531164,
+          32.922397511686455,
+          36.52146870649251
+        ],
+        "curve": [
+          [
+            {
+              "step": 1,
+              "ppl": 28.802711156565756,
+              "gain": 0.017458791590933956
+            },
+            {
+              "step": 2,
+              "ppl": 28.83033873006834,
+              "gain": 0.01651633762168488
+            },
+            {
+              "step": 3,
+              "ppl": 28.816190996535926,
+              "gain": 0.016998956467029914
+            }
+          ],
+          [
+            {
+              "step": 1,
+              "ppl": 32.74578657550611,
+              "gain": 0.005364461568075482
+            },
+            {
+              "step": 2,
+              "ppl": 33.280350677179506,
+              "gain": -0.010872633603490998
+            },
+            {
+              "step": 3,
+              "ppl": 33.95952291665801,
+              "gain": -0.031502122669025134
+            }
+          ],
+          [
+            {
+              "step": 1,
+              "ppl": 36.059340111579466,
+              "gain": 0.012653614744439151
+            },
+            {
+              "step": 2,
+              "ppl": 35.99305638644625,
+              "gain": 0.014468539704492423
+            },
+            {
+              "step": 3,
+              "ppl": 36.08734566789701,
+              "gain": 0.011886790262581262
+            }
+          ]
+        ],
+        "curve_slow": [
+          [
+            {
+              "step": 1,
+              "ppl": 29.31450702531164,
+              "gain": 0.0
+            },
+            {
+              "step": 2,
+              "ppl": 29.31450702531164,
+              "gain": 0.0
+            },
+            {
+              "step": 3,
+              "ppl": 29.31450702531164,
+              "gain": 0.0
+            }
+          ],
+          [
+            {
+              "step": 1,
+              "ppl": 32.64395388391409,
+              "gain": 0.0
+            },
+            {
+              "step": 2,
+              "ppl": 32.64395388391409,
+              "gain": 0.0
+            },
+            {
+              "step": 3,
+              "ppl": 32.64395388391409,
+              "gain": 0.0
+            }
+          ],
+          [
+            {
+              "step": 1,
+              "ppl": 35.930819921606414,
+              "gain": 0.0
+            },
+            {
+              "step": 2,
+              "ppl": 35.930819921606414,
+              "gain": 0.0
+            },
+            {
+              "step": 3,
+              "ppl": 35.930819921606414,
+              "gain": 0.0
+            }
+          ]
+        ],
+        "plasticity": [
+          {
+            "transformer.wte": 0.5000225901603699,
+            "transformer.wpe": 0.5000603199005127,
+            "transformer.h.0.attn.c_attn": 0.5000823140144348,
+            "transformer.h.0.attn.c_proj": 0.5001192092895508,
+            "transformer.h.0.mlp.c_fc": 0.5001221895217896,
+            "transformer.h.0.mlp.c_proj": 0.5001153349876404,
+            "transformer.h.1.attn.c_attn": 0.5001065135002136,
+            "transformer.h.1.attn.c_proj": 0.5001041889190674,
+            "transformer.h.1.mlp.c_fc": 0.5001158714294434,
+            "transformer.h.1.mlp.c_proj": 0.5001208186149597,
+            "transformer.h.2.attn.c_attn": 0.5001060962677002,
+            "transformer.h.2.attn.c_proj": 0.500125527381897,
+            "transformer.h.2.mlp.c_fc": 0.5001165270805359,
+            "transformer.h.2.mlp.c_proj": 0.5001225471496582,
+            "transformer.h.3.attn.c_attn": 0.500105619430542,
+            "transformer.h.3.attn.c_proj": 0.5001258850097656,
+            "transformer.h.3.mlp.c_fc": 0.5001221895217896,
+            "transformer.h.3.mlp.c_proj": 0.5001212954521179,
+            "transformer.h.4.attn.c_attn": 0.5001066327095032,
+            "transformer.h.4.attn.c_proj": 0.500126838684082,
+            "transformer.h.4.mlp.c_fc": 0.5001225471496582,
+            "transformer.h.4.mlp.c_proj": 0.5001213550567627,
+            "transformer.h.5.attn.c_attn": 0.5001010298728943,
+            "transformer.h.5.attn.c_proj": 0.5001257658004761,
+            "transformer.h.5.mlp.c_fc": 0.5001201033592224,
+            "transformer.h.5.mlp.c_proj": 0.5001220107078552,
+            "lm_head": 0.5000225901603699
+          },
+          {
+            "transformer.wte": 0.5000165700912476,
+            "transformer.wpe": 0.5000503063201904,
+            "transformer.h.0.attn.c_attn": 0.5000693798065186,
+            "transformer.h.0.attn.c_proj": 0.5000983476638794,
+            "transformer.h.0.mlp.c_fc": 0.5000996589660645,
+            "transformer.h.0.mlp.c_proj": 0.5000947117805481,
+            "transformer.h.1.attn.c_attn": 0.5000870823860168,
+            "transformer.h.1.attn.c_proj": 0.5000865459442139,
+            "transformer.h.1.mlp.c_fc": 0.500094473361969,
+            "transformer.h.1.mlp.c_proj": 0.5000981688499451,
+            "transformer.h.2.attn.c_attn": 0.5000874400138855,
+            "transformer.h.2.attn.c_proj": 0.5001022219657898,
+            "transformer.h.2.mlp.c_fc": 0.5000963807106018,
+            "transformer.h.2.mlp.c_proj": 0.5001002550125122,
+            "transformer.h.3.attn.c_attn": 0.5000877976417542,
+            "transformer.h.3.attn.c_proj": 0.500102162361145,
+            "transformer.h.3.mlp.c_fc": 0.5000990629196167,
+            "transformer.h.3.mlp.c_proj": 0.5000981092453003,
+            "transformer.h.4.attn.c_attn": 0.5000898838043213,
+            "transformer.h.4.attn.c_proj": 0.5001029968261719,
+            "transformer.h.4.mlp.c_fc": 0.5000993013381958,
+            "transformer.h.4.mlp.c_proj": 0.500098466873169,
+            "transformer.h.5.attn.c_attn": 0.5000830888748169,
+            "transformer.h.5.attn.c_proj": 0.5001027584075928,
+            "transformer.h.5.mlp.c_fc": 0.500097393989563,
+            "transformer.h.5.mlp.c_proj": 0.5000989437103271,
+            "lm_head": 0.5000165700912476
+          },
+          {
+            "transformer.wte": 0.5000239610671997,
+            "transformer.wpe": 0.5000714063644409,
+            "transformer.h.0.attn.c_attn": 0.5000974535942078,
+            "transformer.h.0.attn.c_proj": 0.500139594078064,
+            "transformer.h.0.mlp.c_fc": 0.5001404881477356,
+            "transformer.h.0.mlp.c_proj": 0.5001326203346252,
+            "transformer.h.1.attn.c_attn": 0.5001223683357239,
+            "transformer.h.1.attn.c_proj": 0.5001212358474731,
+            "transformer.h.1.mlp.c_fc": 0.5001318454742432,
+            "transformer.h.1.mlp.c_proj": 0.5001384615898132,
+            "transformer.h.2.attn.c_attn": 0.5001218318939209,
+            "transformer.h.2.attn.c_proj": 0.5001453161239624,
+            "transformer.h.2.mlp.c_fc": 0.5001358985900879,
+            "transformer.h.2.mlp.c_proj": 0.5001417398452759,
+            "transformer.h.3.attn.c_attn": 0.5001235604286194,
+            "transformer.h.3.attn.c_proj": 0.5001453161239624,
+            "transformer.h.3.mlp.c_fc": 0.5001405477523804,
+            "transformer.h.3.mlp.c_proj": 0.500139057636261,
+            "transformer.h.4.attn.c_attn": 0.5001271367073059,
+            "transformer.h.4.attn.c_proj": 0.5001466274261475,
+            "transformer.h.4.mlp.c_fc": 0.5001409649848938,
+            "transformer.h.4.mlp.c_proj": 0.5001402497291565,
+            "transformer.h.5.attn.c_attn": 0.5001177191734314,
+            "transformer.h.5.attn.c_proj": 0.5001461505889893,
+            "transformer.h.5.mlp.c_fc": 0.5001386404037476,
+            "transformer.h.5.mlp.c_proj": 0.500140368938446,
+            "lm_head": 0.5000239610671997
+          }
+        ],
+        "phi_trace": [
+          {
+            "stage": 1,
+            "before": {
+              "eta_fast": 0.0005998199922032654,
+              "eta_plast": 0.019802626222372055,
+              "fast_decay": 0.020000001415610313,
+              "stability_pressure": 0.00995033048093319,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "after": {
+              "eta_fast": 0.0005998199922032654,
+              "eta_plast": 0.019802626222372055,
+              "fast_decay": 0.020000001415610313,
+              "stability_pressure": 0.00995033048093319,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "norm": 0.0
+          },
+          {
+            "stage": 2,
+            "before": {
+              "eta_fast": 0.0005998199922032654,
+              "eta_plast": 0.019802626222372055,
+              "fast_decay": 0.020000001415610313,
+              "stability_pressure": 0.00995033048093319,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "after": {
+              "eta_fast": 0.0005998199922032654,
+              "eta_plast": 0.019802626222372055,
+              "fast_decay": 0.020000001415610313,
+              "stability_pressure": 0.00995033048093319,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "norm": 0.0
+          }
+        ],
+        "meta_loss": [
+          3.908109664916992,
+          3.9180171489715576
+        ]
+      }
+    ]
+  },
+  "d_results": {
+    "adamw": [],
+    "dla_static": [],
+    "dla_meta": [
+      {
+        "pre": 42.79222461168231,
+        "curve": [
+          {
+            "step": 1,
+            "ppl": 42.220345229087755,
+            "gain": 0.013364095645507269
+          },
+          {
+            "step": 2,
+            "ppl": 42.288182369109855,
+            "gain": 0.01177882774607724
+          },
+          {
+            "step": 3,
+            "ppl": 42.28601977355697,
+            "gain": 0.011829364860529839
+          }
+        ]
+      }
+    ]
+  }
+}

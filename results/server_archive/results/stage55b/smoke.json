@@ -1,0 +1,255 @@
+{
+  "args": {
+    "max_steps": 2,
+    "target_gain": 0.04,
+    "block": 64,
+    "batch": 8,
+    "eval_every": 1,
+    "eval_batch": 4,
+    "eval_batches": 4,
+    "wiki_start": 40000000,
+    "train_chars": 300000,
+    "val_chars": 40000,
+    "eta_fast": 0.0006,
+    "meta_lr": 0.1,
+    "meta_batch": 2,
+    "meta_unroll_len": 2,
+    "seeds": [
+      0
+    ],
+    "out": "results/stage55b/smoke.json"
+  },
+  "summary": {
+    "seeds": [
+      0
+    ],
+    "easy_hard_static": {
+      "LE_D": [
+        0.0
+      ],
+      "LE_D_mean": 0.0,
+      "LE_D_std": 0.0,
+      "T80_D": [
+        2
+      ],
+      "T80_D_mean": 2.0,
+      "T80_D_std": 0.0
+    },
+    "easy_hard_meta": {
+      "LE_D": [
+        0.0
+      ],
+      "LE_D_mean": 0.0,
+      "LE_D_std": 0.0,
+      "T80_D": [
+        2
+      ],
+      "T80_D_mean": 2.0,
+      "T80_D_std": 0.0
+    },
+    "easy_hard_DG": {
+      "per_seed": [
+        0.0
+      ],
+      "mean": 0.0
+    },
+    "easy_hard_DG_T": {
+      "per_seed": [
+        0
+      ],
+      "mean": 0.0
+    },
+    "hard_easy_static": {
+      "LE_D": [
+        0.0
+      ],
+      "LE_D_mean": 0.0,
+      "LE_D_std": 0.0,
+      "T80_D": [
+        1
+      ],
+      "T80_D_mean": 1.0,
+      "T80_D_std": 0.0
+    },
+    "hard_easy_meta": {
+      "LE_D": [
+        0.0
+      ],
+      "LE_D_mean": 0.0,
+      "LE_D_std": 0.0,
+      "T80_D": [
+        2
+      ],
+      "T80_D_mean": 2.0,
+      "T80_D_std": 0.0
+    },
+    "hard_easy_DG": {
+      "per_seed": [
+        0.0
+      ],
+      "mean": 0.0
+    },
+    "hard_easy_DG_T": {
+      "per_seed": [
+        -1
+      ],
+      "mean": -1.0
+    },
+    "interaction_LE": 0.0,
+    "interaction_T": -1.0,
+    "phi_distance_histories": {
+      "per_seed": [
+        0.003061341280120977
+      ],
+      "mean": 0.003061341280120977
+    }
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "order": "easy_hard",
+      "learner": "static",
+      "LE_D": 0.0,
+      "T80_D": 2,
+      "raw_lambda_D": 0.0,
+      "best_gain_D": -0.0032898540759817552,
+      "final_gain_D": -0.011744564797632476,
+      "phi_norms": [],
+      "phi_final": null,
+      "stage_pre": [
+        29.314508772592472,
+        33.102028656012905,
+        36.81410409973485
+      ],
+      "D_pre": 42.22747515679998,
+      "D_curve": [
+        {
+          "step": 1,
+          "ppl": 42.366397388063,
+          "gain": -0.0032898540759817552
+        },
+        {
+          "step": 2,
+          "ppl": 42.723418475019436,
+          "gain": -0.011744564797632476
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "order": "easy_hard",
+      "learner": "meta",
+      "LE_D": 0.0,
+      "T80_D": 2,
+      "raw_lambda_D": 0.0,
+      "best_gain_D": -0.013638817180178758,
+      "final_gain_D": -0.02584203016745902,
+      "phi_norms": [
+        0.0027963666430029497,
+        0.002543308396058032
+      ],
+      "phi_final": {
+        "eta_fast": 0.0007040182827040553,
+        "eta_plast": 0.01657351851463318,
+        "fast_decay": 0.02413305640220642,
+        "stability_pressure": 0.010812993161380291,
+        "alpha_q": 0.2623642683029175,
+        "consolidate_beta": 0.9998999834060669,
+        "consolidate_fast_direct": 0.15000000596046448,
+        "consolidate_fast_decay": 0.5,
+        "consolidate_q_decay": 0.699999988079071
+      },
+      "stage_pre": [
+        29.314508772592472,
+        33.173209300856826,
+        37.27581497189706
+      ],
+      "D_pre": 42.64984689049061,
+      "D_curve": [
+        {
+          "step": 1,
+          "ppl": 43.231540354992624,
+          "gain": -0.013638817180178758
+        },
+        {
+          "step": 2,
+          "ppl": 43.752005520472174,
+          "gain": -0.02584203016745902
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "order": "hard_easy",
+      "learner": "static",
+      "LE_D": 0.0,
+      "T80_D": 1,
+      "raw_lambda_D": 0.0,
+      "best_gain_D": 0.0027056622084812463,
+      "final_gain_D": -0.00744904101886638,
+      "phi_norms": [],
+      "phi_final": null,
+      "stage_pre": [
+        36.34479766790331,
+        33.16873897798468,
+        29.62679200250817
+      ],
+      "D_pre": 42.40247813611814,
+      "D_curve": [
+        {
+          "step": 1,
+          "ppl": 42.287751353479294,
+          "gain": 0.0027056622084812463
+        },
+        {
+          "step": 2,
+          "ppl": 42.71833593505567,
+          "gain": -0.00744904101886638
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "order": "hard_easy",
+      "learner": "meta",
+      "LE_D": 0.0,
+      "T80_D": 2,
+      "raw_lambda_D": 0.0,
+      "best_gain_D": -0.0009632574618165108,
+      "final_gain_D": -0.016749891251081502,
+      "phi_norms": [
+        0.002776048402454126,
+        0.002203466511287079
+      ],
+      "phi_final": {
+        "eta_fast": 0.00073173304554075,
+        "eta_plast": 0.019171103835105896,
+        "fast_decay": 0.023783115670084953,
+        "stability_pressure": 0.009231495670974255,
+        "alpha_q": 0.2623642683029175,
+        "consolidate_beta": 0.9998999834060669,
+        "consolidate_fast_direct": 0.15000000596046448,
+        "consolidate_fast_decay": 0.5,
+        "consolidate_q_decay": 0.699999988079071
+      },
+      "stage_pre": [
+        36.34479766790331,
+        33.051799799101396,
+        29.249770220272804
+      ],
+      "D_pre": 43.093143365228435,
+      "D_curve": [
+        {
+          "step": 1,
+          "ppl": 43.13465315712812,
+          "gain": -0.0009632574618165108
+        },
+        {
+          "step": 2,
+          "ppl": 43.814948830263276,
+          "gain": -0.016749891251081502
+        }
+      ]
+    }
+  ]
+}

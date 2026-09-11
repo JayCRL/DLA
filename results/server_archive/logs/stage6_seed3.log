@@ -1,0 +1,8 @@
+number of parameters: 6.59M
+[seed 3] chosen PPL [37.5, 38.29, 39.74, 39.74]
+number of parameters: 6.59M
+  seed 3 task1: pre=35.90 raw_slope=+0.0203 norm_slope=+0.0056 LE=1.000
+  seed 3 task2: pre=38.62 raw_slope=-0.0182 norm_slope=-0.0046 LE=0.893
+  seed 3 task3: pre=42.15 raw_slope=-0.0126 norm_slope=-0.0033 LE=1.000
+  seed 3 task4: pre=42.65 raw_slope=-0.0021 norm_slope=-0.0006 LE=0.000
+saved -> results/stage6/stage6.json

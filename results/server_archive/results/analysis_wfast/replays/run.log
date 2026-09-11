@@ -1,0 +1,121 @@
+number of parameters: 6.59M
+seed 0 HE/HE: pre=44.35 gain40=0.0304 parity_ppl_diff=0.2065
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 0 HE_body+EH_fast: pre=42.41 gain40=-0.0115 parity_ppl_diff=0.4093
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 0 EH_body+HE_fast: pre=43.57 gain40=0.0201 parity_ppl_diff=0.1213
+number of parameters: 6.59M
+seed 0 EH/EH: pre=42.41 gain40=-0.0038 parity_ppl_diff=0.2629
+number of parameters: 6.59M
+seed 1 EH/EH: pre=44.46 gain40=-0.0042 parity_ppl_diff=0.2007
+number of parameters: 6.59M
+seed 1 HE/HE: pre=45.74 gain40=0.0226 parity_ppl_diff=0.2626
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 1 EH_body+HE_fast: pre=45.15 gain40=0.0075 parity_ppl_diff=0.2071
+number of parameters: 6.59M
+seed 2 EH/EH: pre=43.19 gain40=0.0046 parity_ppl_diff=0.2340
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 1 HE_body+EH_fast: pre=44.27 gain40=-0.0109 parity_ppl_diff=0.3022
+number of parameters: 6.59M
+seed 2 HE/HE: pre=44.35 gain40=0.0302 parity_ppl_diff=0.2323
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 2 HE_body+EH_fast: pre=43.03 gain40=0.0020 parity_ppl_diff=0.2463
+number of parameters: 6.59M
+seed 3 EH/EH: pre=41.41 gain40=0.0084 parity_ppl_diff=0.3055
+number of parameters: 6.59M
+seed 3 HE/HE: pre=41.65 gain40=0.0136 parity_ppl_diff=0.2505
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 2 EH_body+HE_fast: pre=43.61 gain40=0.0144 parity_ppl_diff=0.1969
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 3 EH_body+HE_fast: pre=41.38 gain40=0.0078 parity_ppl_diff=0.2430
+number of parameters: 6.59M
+seed 4 EH/EH: pre=44.55 gain40=0.0248 parity_ppl_diff=0.3856
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 3 HE_body+EH_fast: pre=41.14 gain40=0.0014 parity_ppl_diff=0.2039
+number of parameters: 6.59M
+seed 4 HE/HE: pre=43.10 gain40=-0.0096 parity_ppl_diff=0.2645
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4 HE_body+EH_fast: pre=43.88 gain40=0.0106 parity_ppl_diff=0.3453
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4 EH_body+HE_fast: pre=42.98 gain40=-0.0100 parity_ppl_diff=0.1847
+number of parameters: 6.59M
+seed 5 EH/EH: pre=37.24 gain40=0.0116 parity_ppl_diff=0.1341
+number of parameters: 6.59M
+seed 5 HE/HE: pre=36.48 gain40=-0.0093 parity_ppl_diff=0.2700
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5 HE_body+EH_fast: pre=36.79 gain40=0.0008 parity_ppl_diff=0.1829
+number of parameters: 6.59M
+seed 6 EH/EH: pre=37.21 gain40=-0.0685 parity_ppl_diff=0.2259
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5 EH_body+HE_fast: pre=36.48 gain40=-0.0116 parity_ppl_diff=0.2441
+number of parameters: 6.59M
+seed 6 HE/HE: pre=40.62 gain40=-0.0008 parity_ppl_diff=0.2317
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6 EH_body+HE_fast: pre=39.97 gain40=-0.0124 parity_ppl_diff=0.3028
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6 HE_body+EH_fast: pre=37.30 gain40=-0.0697 parity_ppl_diff=0.1784
+number of parameters: 6.59M
+seed 7 EH/EH: pre=38.78 gain40=0.0089 parity_ppl_diff=0.3343
+number of parameters: 6.59M
+seed 7 HE/HE: pre=38.52 gain40=0.0087 parity_ppl_diff=0.1333
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7 EH_body+HE_fast: pre=38.39 gain40=0.0011 parity_ppl_diff=0.2486
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7 HE_body+EH_fast: pre=38.50 gain40=0.0101 parity_ppl_diff=0.1165
+number of parameters: 6.59M
+seed 8 EH/EH: pre=38.88 gain40=-0.0044 parity_ppl_diff=0.1896
+number of parameters: 6.59M
+seed 8 HE/HE: pre=39.41 gain40=0.0111 parity_ppl_diff=0.1657
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8 EH_body+HE_fast: pre=39.01 gain40=0.0007 parity_ppl_diff=0.2310
+number of parameters: 6.59M
+seed 9 EH/EH: pre=42.16 gain40=0.0173 parity_ppl_diff=0.2135
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8 HE_body+EH_fast: pre=38.63 gain40=-0.0072 parity_ppl_diff=0.1657
+number of parameters: 6.59M
+seed 9 HE/HE: pre=43.11 gain40=0.0417 parity_ppl_diff=0.3406
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 EH_body+HE_fast: pre=42.63 gain40=0.0259 parity_ppl_diff=0.3880
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 HE_body+EH_fast: pre=41.88 gain40=0.0106 parity_ppl_diff=0.2325
+number of parameters: 6.59M
+seed 10 EH/EH: pre=42.38 gain40=0.0054 parity_ppl_diff=0.1680
+number of parameters: 6.59M
+seed 10 HE/HE: pre=43.27 gain40=0.0177 parity_ppl_diff=0.2020
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10 EH_body+HE_fast: pre=42.85 gain40=0.0175 parity_ppl_diff=0.0852
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10 HE_body+EH_fast: pre=42.37 gain40=-0.0015 parity_ppl_diff=0.3929
+number of parameters: 6.59M
+seed 11 EH/EH: pre=41.77 gain40=0.0006 parity_ppl_diff=0.3217
+number of parameters: 6.59M
+seed 11 HE/HE: pre=41.84 gain40=0.0093 parity_ppl_diff=0.2121
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11 EH_body+HE_fast: pre=41.67 gain40=-0.0009 parity_ppl_diff=0.2958
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11 HE_body+EH_fast: pre=41.47 gain40=0.0030 parity_ppl_diff=0.2397
+ALL_REPLAYS_DONE

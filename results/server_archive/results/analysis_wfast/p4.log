@@ -1,0 +1,40 @@
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 0 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 1 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 2 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 3 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10 done
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11 done
+[wf] |D|=3.340 vs cross-seed HE 3.206 | cos_true_HE mean +0.0194 | r(cos_HE,gain)=+0.872 (perm p=0.000) | r(cos_EH,gain)=-0.452
+[q] |D|=0.003 vs cross-seed HE 0.003 | cos_true_HE mean +0.0087 | r(cos_HE,gain)=+0.127 (perm p=0.682) | r(cos_EH,gain)=+0.152
+[slow] |D|=1.395 vs cross-seed HE 1.689 | cos_true_HE mean +0.0103 | r(cos_HE,gain)=+0.604 (perm p=0.036) | r(cos_EH,gain)=-0.087
+saved results/analysis_wfast/p4_consolidation_geom.json

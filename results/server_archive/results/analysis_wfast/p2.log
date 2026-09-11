@@ -1,0 +1,54 @@
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 0: |delta|=3.234 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 1: |delta|=3.538 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 2: |delta|=3.694 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 3: |delta|=3.475 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4: |delta|=3.556 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5: |delta|=3.491 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6: |delta|=3.585 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7: |delta|=3.114 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8: |delta|=3.274 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9: |delta|=3.224 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10: |delta|=3.003 
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11: |delta|=2.894 
+variance ratios (centered): [0.2048, 0.1125, 0.0908, 0.0837, 0.0828, 0.0787]
+proj gf0(HE) PC1 vs gain_HE: r=-0.833
+proj gf0(HE) PC2 vs gain_HE: r=-0.720
+proj gf0(HE) PC3 vs gain_HE: r=-0.674
+proj gf0(HE) PC4 vs gain_HE: r=-0.278
+proj gf0(HE) PC1 vs LE_HE: r=-0.654
+proj gf0(HE) PC2 vs LE_HE: r=-0.527
+proj gf0(HE) PC3 vs LE_HE: r=-0.577
+proj gf0(HE) PC4 vs LE_HE: r=-0.328
+proj gf0(EH) PC1 vs gain_EH: r=-0.386
+proj gf0(EH) PC2 vs gain_EH: r=-0.199
+proj gf0(EH) PC3 vs gain_EH: r=-0.090
+proj gf0(EH) PC4 vs gain_EH: r=+0.173
+proj gf0(EH) PC1 vs LE_EH: r=-0.376
+proj gf0(EH) PC2 vs LE_EH: r=-0.482
+proj gf0(EH) PC3 vs LE_EH: r=-0.589
+proj gf0(EH) PC4 vs LE_EH: r=-0.198
+saved results/analysis_wfast/p2_pca.json

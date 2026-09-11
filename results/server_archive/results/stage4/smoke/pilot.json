@@ -1,0 +1,255 @@
+{
+  "args": {
+    "steps": 2,
+    "block": 128,
+    "batch": 16,
+    "eval_every": 1,
+    "eval_batch": 16,
+    "eval_batches": 6,
+    "wiki_start": 40000000,
+    "train_chars": 250000,
+    "val_chars": 40000,
+    "lr_baseline": 0.0006,
+    "eta_fast": 0.0006,
+    "consolidate_beta": 0.3,
+    "skip_baseline": true,
+    "skip_dla": false,
+    "out": "results/stage4/smoke"
+  },
+  "summary": {
+    "dla": {
+      "A_pre": 29.192546134637713,
+      "B_pre": 30.692379817928575,
+      "A_postA": 29.872042975376257,
+      "B_postB": 30.547812701863474,
+      "A_afterB": 31.228275669376384,
+      "A_afterRel": 29.76422973995102,
+      "A_slow_postA": 30.51946763951067,
+      "B_slow_postB": 29.28975850942967,
+      "A_slow_afterB": 30.25788884120172,
+      "A_slow_afterRel": 30.63262129278631,
+      "gain_B_full": 0.0047101957203284014,
+      "gain_B_slow": 0.045699333737541606,
+      "forget_A_full": 0.04540140408602383,
+      "forget_A_slow": -0.008570883391501508,
+      "relearn_A_full": 0.04688206114630473,
+      "relearn_A_slow": -0.012384619877191305
+    }
+  },
+  "results": {
+    "dla": {
+      "pre": {
+        "wiki": 29.192546134637713,
+        "sft": 30.692379817928575
+      },
+      "curve": {
+        "wiki": [
+          {
+            "step": 1,
+            "ppl_full": 31.42244359643804,
+            "ppl_slow": 30.412783506832614,
+            "sec": 2.393512010574341,
+            "loss": 3.973984956741333,
+            "progress": 0.0006503895323420953,
+            "life_step": 1
+          },
+          {
+            "step": 2,
+            "ppl_full": 30.28595485763725,
+            "ppl_slow": 32.54708179745997,
+            "sec": 2.6073250770568848,
+            "loss": 3.5660717487335205,
+            "progress": 0.010789524877199174,
+            "life_step": 2
+          }
+        ],
+        "sft": [
+          {
+            "step": 1,
+            "ppl_full": 32.4271990803099,
+            "ppl_slow": 29.635291293954833,
+            "sec": 2.3902385234832764,
+            "loss": 3.7324061393737793,
+            "progress": 0.005610459518985416,
+            "life_step": 3
+          },
+          {
+            "step": 2,
+            "ppl_full": 30.107642309074368,
+            "ppl_slow": 29.39708545218726,
+            "sec": 2.441342830657959,
+            "loss": 3.791425943374634,
+            "progress": 0.0035770096184024438,
+            "life_step": 4
+          }
+        ],
+        "wiki_relearn": [
+          {
+            "step": 1,
+            "ppl_full": 29.144894836992343,
+            "ppl_slow": 30.198429081710707,
+            "sec": 2.5972516536712646,
+            "loss": 3.7136452198028564,
+            "progress": 0.005215983144615717,
+            "life_step": 5
+          },
+          {
+            "step": 2,
+            "ppl_full": 32.08574603356165,
+            "ppl_slow": 31.93998407410403,
+            "sec": 2.406613826751709,
+            "loss": 4.0161943435668945,
+            "progress": -0.0030432295870290033,
+            "life_step": 6
+          }
+        ]
+      },
+      "matrix": [
+        {
+          "wiki": 29.872042975376257,
+          "sft": 34.8625995675041
+        },
+        {
+          "wiki": 31.228275669376384,
+          "sft": 30.547812701863474
+        },
+        {
+          "wiki": 29.76422973995102,
+          "sft": 34.06888981671553
+        }
+      ],
+      "matrix_slow": [
+        {
+          "wiki": 30.51946763951067,
+          "sft": 30.40327896719334
+        },
+        {
+          "wiki": 30.25788884120172,
+          "sft": 29.28975850942967
+        },
+        {
+          "wiki": 30.63262129278631,
+          "sft": 35.743165402865046
+        }
+      ],
+      "plasticity": {
+        "wiki": {
+          "transformer.wte": 0.5000185966491699,
+          "transformer.wpe": 0.5000486373901367,
+          "transformer.h.0.attn.c_attn": 0.5000453591346741,
+          "transformer.h.0.attn.c_proj": 0.5000653266906738,
+          "transformer.h.0.mlp.c_fc": 0.5000663995742798,
+          "transformer.h.0.mlp.c_proj": 0.5000638365745544,
+          "transformer.h.1.attn.c_attn": 0.5000572204589844,
+          "transformer.h.1.attn.c_proj": 0.5000573396682739,
+          "transformer.h.1.mlp.c_fc": 0.5000641345977783,
+          "transformer.h.1.mlp.c_proj": 0.5000660419464111,
+          "transformer.h.2.attn.c_attn": 0.5000601410865784,
+          "transformer.h.2.attn.c_proj": 0.5000695586204529,
+          "transformer.h.2.mlp.c_fc": 0.5000644326210022,
+          "transformer.h.2.mlp.c_proj": 0.5000683069229126,
+          "transformer.h.3.attn.c_attn": 0.5000609755516052,
+          "transformer.h.3.attn.c_proj": 0.5000702142715454,
+          "transformer.h.3.mlp.c_fc": 0.5000675916671753,
+          "transformer.h.3.mlp.c_proj": 0.5000683069229126,
+          "transformer.h.4.attn.c_attn": 0.500060498714447,
+          "transformer.h.4.attn.c_proj": 0.5000706911087036,
+          "transformer.h.4.mlp.c_fc": 0.5000690221786499,
+          "transformer.h.4.mlp.c_proj": 0.5000690221786499,
+          "transformer.h.5.attn.c_attn": 0.5000578761100769,
+          "transformer.h.5.attn.c_proj": 0.5000694990158081,
+          "transformer.h.5.mlp.c_fc": 0.5000673532485962,
+          "transformer.h.5.mlp.c_proj": 0.5000686645507812,
+          "lm_head": 0.5000185966491699
+        },
+        "sft": {
+          "transformer.wte": 0.5000336766242981,
+          "transformer.wpe": 0.5000865459442139,
+          "transformer.h.0.attn.c_attn": 0.50008225440979,
+          "transformer.h.0.attn.c_proj": 0.5001161694526672,
+          "transformer.h.0.mlp.c_fc": 0.5001196265220642,
+          "transformer.h.0.mlp.c_proj": 0.5001141428947449,
+          "transformer.h.1.attn.c_attn": 0.5001014471054077,
+          "transformer.h.1.attn.c_proj": 0.5001020431518555,
+          "transformer.h.1.mlp.c_fc": 0.5001152753829956,
+          "transformer.h.1.mlp.c_proj": 0.5001187920570374,
+          "transformer.h.2.attn.c_attn": 0.5001065135002136,
+          "transformer.h.2.attn.c_proj": 0.5001238584518433,
+          "transformer.h.2.mlp.c_fc": 0.5001153945922852,
+          "transformer.h.2.mlp.c_proj": 0.5001214742660522,
+          "transformer.h.3.attn.c_attn": 0.5001078248023987,
+          "transformer.h.3.attn.c_proj": 0.5001247525215149,
+          "transformer.h.3.mlp.c_fc": 0.5001201629638672,
+          "transformer.h.3.mlp.c_proj": 0.5001214146614075,
+          "transformer.h.4.attn.c_attn": 0.5001067519187927,
+          "transformer.h.4.attn.c_proj": 0.5001256465911865,
+          "transformer.h.4.mlp.c_fc": 0.5001223683357239,
+          "transformer.h.4.mlp.c_proj": 0.500122606754303,
+          "transformer.h.5.attn.c_attn": 0.5001019835472107,
+          "transformer.h.5.attn.c_proj": 0.5001237988471985,
+          "transformer.h.5.mlp.c_fc": 0.5001187920570374,
+          "transformer.h.5.mlp.c_proj": 0.5001220703125,
+          "lm_head": 0.5000336766242981
+        },
+        "wiki_relearn": {
+          "transformer.wte": 0.5000362992286682,
+          "transformer.wpe": 0.500093936920166,
+          "transformer.h.0.attn.c_attn": 0.5000893473625183,
+          "transformer.h.0.attn.c_proj": 0.5001257658004761,
+          "transformer.h.0.mlp.c_fc": 0.5001296401023865,
+          "transformer.h.0.mlp.c_proj": 0.5001235604286194,
+          "transformer.h.1.attn.c_attn": 0.5001105070114136,
+          "transformer.h.1.attn.c_proj": 0.5001106262207031,
+          "transformer.h.1.mlp.c_fc": 0.5001248121261597,
+          "transformer.h.1.mlp.c_proj": 0.5001290440559387,
+          "transformer.h.2.attn.c_attn": 0.5001153349876404,
+          "transformer.h.2.attn.c_proj": 0.5001342296600342,
+          "transformer.h.2.mlp.c_fc": 0.5001251697540283,
+          "transformer.h.2.mlp.c_proj": 0.5001317262649536,
+          "transformer.h.3.attn.c_attn": 0.5001165270805359,
+          "transformer.h.3.attn.c_proj": 0.5001353025436401,
+          "transformer.h.3.mlp.c_fc": 0.5001301765441895,
+          "transformer.h.3.mlp.c_proj": 0.5001317858695984,
+          "transformer.h.4.attn.c_attn": 0.5001150369644165,
+          "transformer.h.4.attn.c_proj": 0.5001362562179565,
+          "transformer.h.4.mlp.c_fc": 0.50013267993927,
+          "transformer.h.4.mlp.c_proj": 0.5001329183578491,
+          "transformer.h.5.attn.c_attn": 0.5001099109649658,
+          "transformer.h.5.attn.c_proj": 0.5001342296600342,
+          "transformer.h.5.mlp.c_fc": 0.5001288652420044,
+          "transformer.h.5.mlp.c_proj": 0.5001323223114014,
+          "lm_head": 0.5000362992286682
+        },
+        "final": {
+          "transformer.wte": 0.5000362992286682,
+          "transformer.wpe": 0.500093936920166,
+          "transformer.h.0.attn.c_attn": 0.5000893473625183,
+          "transformer.h.0.attn.c_proj": 0.5001257658004761,
+          "transformer.h.0.mlp.c_fc": 0.5001296401023865,
+          "transformer.h.0.mlp.c_proj": 0.5001235604286194,
+          "transformer.h.1.attn.c_attn": 0.5001105070114136,
+          "transformer.h.1.attn.c_proj": 0.5001106262207031,
+          "transformer.h.1.mlp.c_fc": 0.5001248121261597,
+          "transformer.h.1.mlp.c_proj": 0.5001290440559387,
+          "transformer.h.2.attn.c_attn": 0.5001153349876404,
+          "transformer.h.2.attn.c_proj": 0.5001342296600342,
+          "transformer.h.2.mlp.c_fc": 0.5001251697540283,
+          "transformer.h.2.mlp.c_proj": 0.5001317262649536,
+          "transformer.h.3.attn.c_attn": 0.5001165270805359,
+          "transformer.h.3.attn.c_proj": 0.5001353025436401,
+          "transformer.h.3.mlp.c_fc": 0.5001301765441895,
+          "transformer.h.3.mlp.c_proj": 0.5001317858695984,
+          "transformer.h.4.attn.c_attn": 0.5001150369644165,
+          "transformer.h.4.attn.c_proj": 0.5001362562179565,
+          "transformer.h.4.mlp.c_fc": 0.50013267993927,
+          "transformer.h.4.mlp.c_proj": 0.5001329183578491,
+          "transformer.h.5.attn.c_attn": 0.5001099109649658,
+          "transformer.h.5.attn.c_proj": 0.5001342296600342,
+          "transformer.h.5.mlp.c_fc": 0.5001288652420044,
+          "transformer.h.5.mlp.c_proj": 0.5001323223114014,
+          "lm_head": 0.5000362992286682
+        }
+      }
+    }
+  }
+}

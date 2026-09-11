@@ -86,10 +86,14 @@ paper/
 docs/
   experiments.md       分阶段详细结果与判定
   mechanism_chain.md   机制链形式化（恒等式 / 中间量 / 分配场 / 一阶解释 / falcifier）
+  assets/              **展示材料，非科研材料**（含 DLA_cover.png 宣传图，版头为虚构，见该目录 README）
 results/
   mac_audit/           **Mac 侧审计运行的逐 seed 原始数据**（消融 / shuffle / γ·δ 扫描 / 第二骨干 / T10）
                        路径镜像报告里引用的 ~/llm-lab/{dla_audit,dla_audit_second,dla_audit_t10}，
                        见 results/mac_audit/README.md（含臂→报告对应表与复现说明）
+  server_archive/      **服务器（linghang1，CPU 期）results + logs 的逐 seed 原始数据**
+                       含论文 `full` 基线（results/stage55e/seeds/，n=12，HE/HE ≡ +0.0143），
+                       见 results/server_archive/README.md（排除 3.9 GB *.pt 权重）
   cloud/ · alloc_cloud/ · scale_cloud/   云端（GPU）运行归档
 README.md
 ```
@@ -135,6 +139,7 @@ python3 paper/md2pdf.py paper/DLA_paper_draft.md paper/DLA_paper_draft.pdf
 - 论文：`paper/DLA_paper_draft.md` / `.pdf`（v0.8，claims×证据级别对齐）
 - **聚合口径（重要）**：论文全部数字取自 **unified batch**（`audit_batch2_retention_alloc.md`）。此前的 n=4+8 系列（`selectivity_test_n12.md`）**保留作为独立复现**——两者在核心对比上一致（配对 t=+4.86 与 +5.45），即核心分配结论已独立复现；仅与归档服务器 `full` 的比较在正文中另行标注。
 - 审计证据链：上述 `report_output/` 各报告；**逐 seed 数据在 `results/mac_audit/`**（Mac 侧审计原始 JSON，路径镜像报告引用的 `~/llm-lab/dla_audit*`；臂→报告对应表见该目录 README），脚本在 `analysis/wfast_geom/` 与其 `queue/` 驱动，commit 为运行窗口 `a365bcf`→`828c49c`
+- 服务器期（CPU）逐 seed 数据在 `results/server_archive/`，**论文 `full` 基线即 `results/stage55e/seeds/` 的 `HE/HE` 条件**（n=12，均值 +0.0143，与 `selectivity_test_n12.md` 所引数字一致；Mac parity 重放为 +0.0138）。排除项：3.9 GB `*.pt` 权重
 - 写入强度扫描中默认臂 seed 0–2 为**重跑**：重算 direct(n=12)=+0.0143 vs 扫描前 unified 的 +0.0140（Δ=0.0003，≈单 sd 的 2%，源于 harness 非确定性；配对 **gap 两者完全相同 = +0.0115**）
 - GitHub：https://github.com/JayCRL/DLA
 

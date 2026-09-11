@@ -1,0 +1,6 @@
+number of parameters: 6.59M
+seed 19 task1 physics_basic: norm_slope=-0.0015
+seed 19 task2 physics_intermediate: norm_slope=-0.0055
+seed 19 task3 physics_advanced: norm_slope=-0.0020
+seed 19 task4 physics_frontier: norm_slope=-0.0035
+saved -> results/stage8_physics_20/stage8.json

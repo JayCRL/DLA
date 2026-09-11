@@ -1,0 +1,246 @@
+{
+ "loo": [
+  {
+   "predictor": "delta_norm",
+   "outcome": "out_HE/HE_gain40",
+   "r_full": -0.1868,
+   "loo_min": -0.3952,
+   "loo_max": -0.0785,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "delta_norm",
+   "outcome": "out_HE/HE_LE_D",
+   "r_full": -0.3454,
+   "loo_min": -0.5123,
+   "loo_max": -0.2389,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "delta_norm",
+   "outcome": "out_EH/EH_gain40",
+   "r_full": -0.1852,
+   "loo_min": -0.3007,
+   "loo_max": 0.266,
+   "loo_all_same_sign": false
+  },
+  {
+   "predictor": "rel_delta_HE",
+   "outcome": "out_HE/HE_gain40",
+   "r_full": -0.1402,
+   "loo_min": -0.2413,
+   "loo_max": 0.0103,
+   "loo_all_same_sign": false
+  },
+  {
+   "predictor": "cos_eh_he",
+   "outcome": "out_HE/HE_gain40",
+   "r_full": 0.1646,
+   "loo_min": -0.0726,
+   "loo_max": 0.3625,
+   "loo_all_same_sign": false
+  },
+  {
+   "predictor": "cos_eh_he",
+   "outcome": "out_HE/HE_LE_D",
+   "r_full": 0.2523,
+   "loo_min": 0.1642,
+   "loo_max": 0.4006,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "share_mlp",
+   "outcome": "out_HE/HE_gain40",
+   "r_full": 0.4338,
+   "loo_min": 0.2116,
+   "loo_max": 0.5486,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "tr_HE/HE_cos0",
+   "outcome": "out_HE/HE_gain40",
+   "r_full": 0.8704,
+   "loo_min": 0.8057,
+   "loo_max": 0.9108,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "tr_HE/HE_cos0",
+   "outcome": "out_HE/HE_LE_D",
+   "r_full": 0.673,
+   "loo_min": 0.4708,
+   "loo_max": 0.8063,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "tr_HE/HE_cos_mean_abs",
+   "outcome": "out_HE/HE_gain40",
+   "r_full": -0.1851,
+   "loo_min": -0.4984,
+   "loo_max": 0.412,
+   "loo_all_same_sign": false
+  },
+  {
+   "predictor": "tr_HE/HE_g0_norm_gf",
+   "outcome": "out_HE/HE_gain40",
+   "r_full": 0.6154,
+   "loo_min": 0.5368,
+   "loo_max": 0.7123,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "tr_HE/HE_g0_norm_gf",
+   "outcome": "out_HE/HE_LE_D",
+   "r_full": 0.2903,
+   "loo_min": 0.1504,
+   "loo_max": 0.5384,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "tr_EH/EH_cos0",
+   "outcome": "out_EH/EH_gain40",
+   "r_full": -0.5076,
+   "loo_min": -0.6694,
+   "loo_max": -0.4098,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "tr_EH/EH_cos0",
+   "outcome": "out_EH/EH_LE_D",
+   "r_full": -0.5309,
+   "loo_min": -0.6137,
+   "loo_max": -0.4516,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "delta_norm",
+   "outcome": "contrast_HE_delta",
+   "r_full": -0.2253,
+   "loo_min": -0.4125,
+   "loo_max": -0.0067,
+   "loo_all_same_sign": true
+  },
+  {
+   "predictor": "tr_HE/HE_cos_mean_abs",
+   "outcome": "contrast_HE_delta",
+   "r_full": -0.297,
+   "loo_min": -0.934,
+   "loo_max": -0.0978,
+   "loo_all_same_sign": true
+  }
+ ],
+ "fdr": [
+  {
+   "predictor": "tr_HE/HE_cos0",
+   "outcome": "out_HE/HE_gain40",
+   "r": 0.8704,
+   "perm_p": 0.0001999600079984003,
+   "q": 0.0032
+  },
+  {
+   "predictor": "tr_HE/HE_cos0",
+   "outcome": "out_HE/HE_LE_D",
+   "r": 0.673,
+   "perm_p": 0.014597080583883223,
+   "q": 0.1168
+  },
+  {
+   "predictor": "tr_HE/HE_g0_norm_gf",
+   "outcome": "out_HE/HE_gain40",
+   "r": 0.6154,
+   "perm_p": 0.03239352129574085,
+   "q": 0.1728
+  },
+  {
+   "predictor": "tr_EH/EH_cos0",
+   "outcome": "out_EH/EH_LE_D",
+   "r": -0.5309,
+   "perm_p": 0.08038392321535692,
+   "q": 0.3215
+  },
+  {
+   "predictor": "tr_EH/EH_cos0",
+   "outcome": "out_EH/EH_gain40",
+   "r": -0.5076,
+   "perm_p": 0.1219756048790242,
+   "q": 0.3903
+  },
+  {
+   "predictor": "share_mlp",
+   "outcome": "out_HE/HE_gain40",
+   "r": 0.4338,
+   "perm_p": 0.16076784643071385,
+   "q": 0.4287
+  },
+  {
+   "predictor": "delta_norm",
+   "outcome": "out_HE/HE_LE_D",
+   "r": -0.3454,
+   "perm_p": 0.2705458908218356,
+   "q": 0.6184
+  },
+  {
+   "predictor": "tr_HE/HE_cos_mean_abs",
+   "outcome": "contrast_HE_delta",
+   "r": -0.297,
+   "perm_p": 0.34133173365326935,
+   "q": 0.6827
+  },
+  {
+   "predictor": "tr_HE/HE_g0_norm_gf",
+   "outcome": "out_HE/HE_LE_D",
+   "r": 0.2903,
+   "perm_p": 0.3619276144771046,
+   "q": 0.6434
+  },
+  {
+   "predictor": "cos_eh_he",
+   "outcome": "out_HE/HE_LE_D",
+   "r": 0.2523,
+   "perm_p": 0.4345130973805239,
+   "q": 0.6952
+  },
+  {
+   "predictor": "delta_norm",
+   "outcome": "contrast_HE_delta",
+   "r": -0.2253,
+   "perm_p": 0.4877024595080984,
+   "q": 0.7094
+  },
+  {
+   "predictor": "tr_HE/HE_cos_mean_abs",
+   "outcome": "out_HE/HE_gain40",
+   "r": -0.1851,
+   "perm_p": 0.5612877424515097,
+   "q": 0.7484
+  },
+  {
+   "predictor": "delta_norm",
+   "outcome": "out_HE/HE_gain40",
+   "r": -0.1868,
+   "perm_p": 0.5616876624675065,
+   "q": 0.6913
+  },
+  {
+   "predictor": "cos_eh_he",
+   "outcome": "out_HE/HE_gain40",
+   "r": 0.1646,
+   "perm_p": 0.5886822635472906,
+   "q": 0.6728
+  },
+  {
+   "predictor": "delta_norm",
+   "outcome": "out_EH/EH_gain40",
+   "r": -0.1852,
+   "perm_p": 0.6156768646270746,
+   "q": 0.6567
+  },
+  {
+   "predictor": "rel_delta_HE",
+   "outcome": "out_HE/HE_gain40",
+   "r": -0.1402,
+   "perm_p": 0.6766646670665867,
+   "q": 0.6767
+  }
+ ]
+}

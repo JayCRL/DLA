@@ -1,0 +1,46 @@
+{
+ "A3": {
+  "zero_order": {
+   "cos0": 0.87,
+   "g0_norm": 0.615,
+   "delta_norm": -0.187,
+   "cos_emb": 0.681,
+   "cos_attn": 0.827,
+   "cos_mlp": 0.868
+  },
+  "partial_vs_gain": {
+   "cos0": {
+    "delta_norm": 0.871,
+    "rel_delta": 0.868,
+    "cos_eh_he": 0.873,
+    "g0_norm": 0.786,
+    "all_norm_confounds": 0.771
+   },
+   "cos_attn": {
+    "delta_norm": 0.836,
+    "rel_delta": 0.823,
+    "cos_eh_he": 0.849,
+    "g0_norm": 0.701,
+    "all_norm_confounds": 0.733
+   },
+   "cos_mlp": {
+    "delta_norm": 0.874,
+    "rel_delta": 0.869,
+    "cos_eh_he": 0.876,
+    "g0_norm": 0.786,
+    "all_norm_confounds": 0.785
+   }
+  },
+  "confound_R2_of_cos0": 0.607
+ },
+ "B2": {
+  "mean_Q_norm": 0.0019643443633457387,
+  "mean_Wfast_norm": 3.6042612867463717,
+  "mean_Wslow_norm": 120.27280735251601,
+  "mean_Q_ratio_wf": 0.0005450060933620565,
+  "est_write_Q_per_sleep": 0.001964147896313205,
+  "est_write_direct_per_sleep": 0.5406392144950272,
+  "write_Q_to_direct_ratio": 0.0036330104136966398,
+  "est_total_write_per_sleep_rel_Wslow": 0.004511438406862709
+ }
+}

@@ -1,0 +1,96 @@
+
+===== seed 0 =====
+  meta-training base phi (100 epochs) ...
+    meta epoch   1/100  mean loss 0.7004
+    meta epoch   5/100  mean loss 0.6576
+    meta epoch  10/100  mean loss 0.6332
+    meta epoch  15/100  mean loss 0.5395
+    meta epoch  20/100  mean loss 0.4257
+    meta epoch  25/100  mean loss 0.3765
+    meta epoch  30/100  mean loss 0.3714
+    meta epoch  35/100  mean loss 0.3418
+    meta epoch  40/100  mean loss 0.3145
+    meta epoch  45/100  mean loss 0.3236
+    meta epoch  50/100  mean loss 0.2935
+    meta epoch  55/100  mean loss 0.2867
+    meta epoch  60/100  mean loss 0.2883
+    meta epoch  65/100  mean loss 0.2651
+    meta epoch  70/100  mean loss 0.2711
+    meta epoch  75/100  mean loss 0.2762
+    meta epoch  80/100  mean loss 0.2619
+    meta epoch  85/100  mean loss 0.2361
+    meta epoch  90/100  mean loss 0.2507
+    meta epoch  95/100  mean loss 0.2408
+    meta epoch 100/100  mean loss 0.2471
+  lifetime arm: frozen phi ...
+  lifetime arm: adaptive phi ...
+  seed summary: frozen post=0.884 steps=4.25 | adaptive post=0.862 steps=4.25
+
+===== seed 1 =====
+  meta-training base phi (100 epochs) ...
+    meta epoch   1/100  mean loss 0.7188
+    meta epoch   5/100  mean loss 0.6636
+    meta epoch  10/100  mean loss 0.6436
+    meta epoch  15/100  mean loss 0.5453
+    meta epoch  20/100  mean loss 0.4262
+    meta epoch  25/100  mean loss 0.3776
+    meta epoch  30/100  mean loss 0.3626
+    meta epoch  35/100  mean loss 0.3356
+    meta epoch  40/100  mean loss 0.3021
+    meta epoch  45/100  mean loss 0.3108
+    meta epoch  50/100  mean loss 0.2818
+    meta epoch  55/100  mean loss 0.2750
+    meta epoch  60/100  mean loss 0.2842
+    meta epoch  65/100  mean loss 0.2539
+    meta epoch  70/100  mean loss 0.2719
+    meta epoch  75/100  mean loss 0.2803
+    meta epoch  80/100  mean loss 0.2587
+    meta epoch  85/100  mean loss 0.2335
+    meta epoch  90/100  mean loss 0.2534
+    meta epoch  95/100  mean loss 0.2386
+    meta epoch 100/100  mean loss 0.2430
+  lifetime arm: frozen phi ...
+  lifetime arm: adaptive phi ...
+  seed summary: frozen post=0.841 steps=4.50 | adaptive post=0.853 steps=4.50
+
+===== seed 2 =====
+  meta-training base phi (100 epochs) ...
+    meta epoch   1/100  mean loss 0.7034
+    meta epoch   5/100  mean loss 0.6635
+    meta epoch  10/100  mean loss 0.6523
+    meta epoch  15/100  mean loss 0.5829
+    meta epoch  20/100  mean loss 0.4510
+    meta epoch  25/100  mean loss 0.3932
+    meta epoch  30/100  mean loss 0.3779
+    meta epoch  35/100  mean loss 0.3502
+    meta epoch  40/100  mean loss 0.3183
+    meta epoch  45/100  mean loss 0.3343
+    meta epoch  50/100  mean loss 0.3043
+    meta epoch  55/100  mean loss 0.2959
+    meta epoch  60/100  mean loss 0.2995
+    meta epoch  65/100  mean loss 0.2762
+    meta epoch  70/100  mean loss 0.2795
+    meta epoch  75/100  mean loss 0.2838
+    meta epoch  80/100  mean loss 0.2692
+    meta epoch  85/100  mean loss 0.2427
+    meta epoch  90/100  mean loss 0.2628
+    meta epoch  95/100  mean loss 0.2482
+    meta epoch 100/100  mean loss 0.2560
+  lifetime arm: frozen phi ...
+  lifetime arm: adaptive phi ...
+  seed summary: frozen post=0.756 steps=4.75 | adaptive post=0.856 steps=4.75
+
+===== Stage 3 results (mean over seeds) =====
+task    frozen steps  adaptive steps  frozen Lambda  adaptive Lambda
+1               5.00            5.00          0.167            0.167
+2               1.00            1.00          0.500            0.500
+3              10.00           10.00          0.091            0.091
+4               1.00            1.00          0.500            0.500
+5               7.00            7.00          0.125            0.125
+6               1.00            1.00          0.500            0.500
+7              10.00           10.00          0.091            0.091
+8               1.00            1.00          0.500            0.500
+slope of steps vs task:      frozen=-0.048  adaptive=-0.048
+slope of Lambda vs task:     frozen=+0.014  adaptive=+0.014
+
+saved -> results/stage3/results.json + plots

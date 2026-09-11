@@ -3,6 +3,10 @@ __pycache__/
 *.pyo
 .DS_Store
 logs/
+# ...but the archived run logs ARE part of the record: results/server_archive/logs/ is the
+# stdout of the server-era runs. A bare `logs/` rule silently dropped all 126 of them when
+# the archive was first staged -- the same trap the results/ note below warns about.
+!results/server_archive/logs/
 *.egg-info/
 .venv/
 venv/

@@ -1,0 +1,160 @@
+{
+  "seed2": {
+    "EH/EH": {
+      "tag": "EH/EH",
+      "LE_D": 0.9381814570318266,
+      "T80_D": 28,
+      "best_gain_D": 0.009150227060816736
+    },
+    "HE/HE": {
+      "tag": "HE/HE",
+      "LE_D": 0.9613039876032224,
+      "T80_D": 24,
+      "best_gain_D": 0.02972176424104441
+    },
+    "EH_body+HE_slow": {
+      "tag": "EH_body+HE_slow",
+      "LE_D": 1.0,
+      "T80_D": 30,
+      "best_gain_D": 0.001526262701607024
+    },
+    "EH_body+HE_fast": {
+      "tag": "EH_body+HE_fast",
+      "LE_D": 1.0,
+      "T80_D": 8,
+      "best_gain_D": 0.010806162433045916
+    },
+    "EH_body+HE_P": {
+      "tag": "EH_body+HE_P",
+      "LE_D": 0.4230744071570177,
+      "T80_D": 28,
+      "best_gain_D": 0.0026859862573477404
+    },
+    "EH_body+HE_Q": {
+      "tag": "EH_body+HE_Q",
+      "LE_D": 0.8637477331810772,
+      "T80_D": 28,
+      "best_gain_D": 0.00627430549688066
+    },
+    "EH_body+HE_fastP": {
+      "tag": "EH_body+HE_fastP",
+      "LE_D": 0.9410055096302592,
+      "T80_D": 12,
+      "best_gain_D": 0.019170530632000592
+    },
+    "EH_body+HE_fastQ": {
+      "tag": "EH_body+HE_fastQ",
+      "LE_D": 0.8847369979219402,
+      "T80_D": 24,
+      "best_gain_D": 0.02142188647991873
+    },
+    "EH_body+HE_PQ": {
+      "tag": "EH_body+HE_PQ",
+      "LE_D": 0.028418374441813294,
+      "T80_D": 16,
+      "best_gain_D": 0.00326130291768796
+    },
+    "EH_body+HE_fastPQ": {
+      "tag": "EH_body+HE_fastPQ",
+      "LE_D": 0.22937628521588535,
+      "T80_D": 24,
+      "best_gain_D": 0.01656721863414814
+    },
+    "EH_body+HE_allState": {
+      "tag": "EH_body+HE_allState",
+      "LE_D": 0.8814663542049832,
+      "T80_D": 24,
+      "best_gain_D": 0.010860581521256688
+    },
+    "EH_body+HE_attn_slow": {
+      "tag": "EH_body+HE_attn_slow",
+      "LE_D": 0.7712178753318639,
+      "T80_D": 24,
+      "best_gain_D": 0.008375716823855473
+    },
+    "EH_body+HE_mlp_slow": {
+      "tag": "EH_body+HE_mlp_slow",
+      "LE_D": 0.9891235766708715,
+      "T80_D": 28,
+      "best_gain_D": 0.004202095330318503
+    },
+    "EH_body+HE_emb_slow": {
+      "tag": "EH_body+HE_emb_slow",
+      "LE_D": 0.7866955501177303,
+      "T80_D": 24,
+      "best_gain_D": 0.003397640129969714
+    },
+    "HE_body+EH_slow": {
+      "tag": "HE_body+EH_slow",
+      "LE_D": 0.833741127491894,
+      "T80_D": 8,
+      "best_gain_D": 0.011426115118383946
+    },
+    "HE_body+EH_fast": {
+      "tag": "HE_body+EH_fast",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.005392735037051018
+    },
+    "HE_body+EH_P": {
+      "tag": "HE_body+EH_P",
+      "LE_D": 0.9364885020327147,
+      "T80_D": 24,
+      "best_gain_D": 0.0313203405203461
+    },
+    "HE_body+EH_Q": {
+      "tag": "HE_body+EH_Q",
+      "LE_D": 0.953242514270551,
+      "T80_D": 24,
+      "best_gain_D": 0.02775582137698808
+    },
+    "HE_body+EH_fastP": {
+      "tag": "HE_body+EH_fastP",
+      "LE_D": 0.6506676021151042,
+      "T80_D": 12,
+      "best_gain_D": 0.001886552968773278
+    },
+    "HE_body+EH_fastQ": {
+      "tag": "HE_body+EH_fastQ",
+      "LE_D": 1.0,
+      "T80_D": 30,
+      "best_gain_D": 0.006503146440806357
+    },
+    "HE_body+EH_PQ": {
+      "tag": "HE_body+EH_PQ",
+      "LE_D": 0.8607582470423036,
+      "T80_D": 16,
+      "best_gain_D": 0.023386026200992914
+    },
+    "HE_body+EH_fastPQ": {
+      "tag": "HE_body+EH_fastPQ",
+      "LE_D": 0.0,
+      "T80_D": 24,
+      "best_gain_D": 0.0004781533179268571
+    },
+    "HE_body+EH_allState": {
+      "tag": "HE_body+EH_allState",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.0010377781478565335
+    },
+    "HE_body+EH_attn_slow": {
+      "tag": "HE_body+EH_attn_slow",
+      "LE_D": 0.9760658525206906,
+      "T80_D": 20,
+      "best_gain_D": 0.030891600188295926
+    },
+    "HE_body+EH_mlp_slow": {
+      "tag": "HE_body+EH_mlp_slow",
+      "LE_D": 0.9625110543445712,
+      "T80_D": 24,
+      "best_gain_D": 0.024911584429577843
+    },
+    "HE_body+EH_emb_slow": {
+      "tag": "HE_body+EH_emb_slow",
+      "LE_D": 0.9333473762838079,
+      "T80_D": 16,
+      "best_gain_D": 0.027320691365690663
+    }
+  }
+}

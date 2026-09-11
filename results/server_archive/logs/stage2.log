@@ -1,0 +1,151 @@
+
+===== seed 0 =====
+  meta-training learned rule ...
+    meta epoch   1/100  mean loss 0.7004
+    meta epoch   5/100  mean loss 0.6576
+    meta epoch  10/100  mean loss 0.6332
+    meta epoch  15/100  mean loss 0.5395
+    meta epoch  20/100  mean loss 0.4257
+    meta epoch  25/100  mean loss 0.3765
+    meta epoch  30/100  mean loss 0.3714
+    meta epoch  35/100  mean loss 0.3418
+    meta epoch  40/100  mean loss 0.3145
+    meta epoch  45/100  mean loss 0.3236
+    meta epoch  50/100  mean loss 0.2935
+    meta epoch  55/100  mean loss 0.2867
+    meta epoch  60/100  mean loss 0.2883
+    meta epoch  65/100  mean loss 0.2651
+    meta epoch  70/100  mean loss 0.2711
+    meta epoch  75/100  mean loss 0.2762
+    meta epoch  80/100  mean loss 0.2619
+    meta epoch  85/100  mean loss 0.2361
+    meta epoch  90/100  mean loss 0.2507
+    meta epoch  95/100  mean loss 0.2408
+    meta epoch 100/100  mean loss 0.2471
+  meta-training fixed-Hebbian (initial W_slow only) ...
+    meta epoch   1/100  mean loss 0.7006
+    meta epoch   5/100  mean loss 0.6605
+    meta epoch  10/100  mean loss 0.6449
+    meta epoch  15/100  mean loss 0.5820
+    meta epoch  20/100  mean loss 0.4868
+    meta epoch  25/100  mean loss 0.4476
+    meta epoch  30/100  mean loss 0.4494
+    meta epoch  35/100  mean loss 0.4464
+    meta epoch  40/100  mean loss 0.4313
+    meta epoch  45/100  mean loss 0.4313
+    meta epoch  50/100  mean loss 0.4222
+    meta epoch  55/100  mean loss 0.4242
+    meta epoch  60/100  mean loss 0.4143
+    meta epoch  65/100  mean loss 0.4170
+    meta epoch  70/100  mean loss 0.4131
+    meta epoch  75/100  mean loss 0.4065
+    meta epoch  80/100  mean loss 0.3924
+    meta epoch  85/100  mean loss 0.3871
+    meta epoch  90/100  mean loss 0.3889
+    meta epoch  95/100  mean loss 0.3834
+    meta epoch 100/100  mean loss 0.3844
+  seed summary: learned post=0.884 forget=0.021 | hebbian post=0.730 forget=-0.001
+
+===== seed 1 =====
+  meta-training learned rule ...
+    meta epoch   1/100  mean loss 0.7188
+    meta epoch   5/100  mean loss 0.6636
+    meta epoch  10/100  mean loss 0.6436
+    meta epoch  15/100  mean loss 0.5453
+    meta epoch  20/100  mean loss 0.4262
+    meta epoch  25/100  mean loss 0.3776
+    meta epoch  30/100  mean loss 0.3626
+    meta epoch  35/100  mean loss 0.3356
+    meta epoch  40/100  mean loss 0.3021
+    meta epoch  45/100  mean loss 0.3108
+    meta epoch  50/100  mean loss 0.2818
+    meta epoch  55/100  mean loss 0.2750
+    meta epoch  60/100  mean loss 0.2842
+    meta epoch  65/100  mean loss 0.2539
+    meta epoch  70/100  mean loss 0.2719
+    meta epoch  75/100  mean loss 0.2803
+    meta epoch  80/100  mean loss 0.2587
+    meta epoch  85/100  mean loss 0.2335
+    meta epoch  90/100  mean loss 0.2534
+    meta epoch  95/100  mean loss 0.2386
+    meta epoch 100/100  mean loss 0.2430
+  meta-training fixed-Hebbian (initial W_slow only) ...
+    meta epoch   1/100  mean loss 0.7223
+    meta epoch   5/100  mean loss 0.6643
+    meta epoch  10/100  mean loss 0.6474
+    meta epoch  15/100  mean loss 0.5717
+    meta epoch  20/100  mean loss 0.4800
+    meta epoch  25/100  mean loss 0.4442
+    meta epoch  30/100  mean loss 0.4444
+    meta epoch  35/100  mean loss 0.4388
+    meta epoch  40/100  mean loss 0.4229
+    meta epoch  45/100  mean loss 0.4217
+    meta epoch  50/100  mean loss 0.4128
+    meta epoch  55/100  mean loss 0.4137
+    meta epoch  60/100  mean loss 0.4032
+    meta epoch  65/100  mean loss 0.4046
+    meta epoch  70/100  mean loss 0.4051
+    meta epoch  75/100  mean loss 0.3980
+    meta epoch  80/100  mean loss 0.3848
+    meta epoch  85/100  mean loss 0.3798
+    meta epoch  90/100  mean loss 0.3828
+    meta epoch  95/100  mean loss 0.3759
+    meta epoch 100/100  mean loss 0.3788
+  seed summary: learned post=0.841 forget=0.026 | hebbian post=0.731 forget=-0.001
+
+===== seed 2 =====
+  meta-training learned rule ...
+    meta epoch   1/100  mean loss 0.7034
+    meta epoch   5/100  mean loss 0.6635
+    meta epoch  10/100  mean loss 0.6523
+    meta epoch  15/100  mean loss 0.5829
+    meta epoch  20/100  mean loss 0.4510
+    meta epoch  25/100  mean loss 0.3932
+    meta epoch  30/100  mean loss 0.3779
+    meta epoch  35/100  mean loss 0.3502
+    meta epoch  40/100  mean loss 0.3183
+    meta epoch  45/100  mean loss 0.3343
+    meta epoch  50/100  mean loss 0.3043
+    meta epoch  55/100  mean loss 0.2959
+    meta epoch  60/100  mean loss 0.2995
+    meta epoch  65/100  mean loss 0.2762
+    meta epoch  70/100  mean loss 0.2795
+    meta epoch  75/100  mean loss 0.2838
+    meta epoch  80/100  mean loss 0.2692
+    meta epoch  85/100  mean loss 0.2427
+    meta epoch  90/100  mean loss 0.2628
+    meta epoch  95/100  mean loss 0.2482
+    meta epoch 100/100  mean loss 0.2560
+  meta-training fixed-Hebbian (initial W_slow only) ...
+    meta epoch   1/100  mean loss 0.7035
+    meta epoch   5/100  mean loss 0.6657
+    meta epoch  10/100  mean loss 0.6600
+    meta epoch  15/100  mean loss 0.6096
+    meta epoch  20/100  mean loss 0.5022
+    meta epoch  25/100  mean loss 0.4509
+    meta epoch  30/100  mean loss 0.4493
+    meta epoch  35/100  mean loss 0.4454
+    meta epoch  40/100  mean loss 0.4314
+    meta epoch  45/100  mean loss 0.4323
+    meta epoch  50/100  mean loss 0.4245
+    meta epoch  55/100  mean loss 0.4259
+    meta epoch  60/100  mean loss 0.4178
+    meta epoch  65/100  mean loss 0.4194
+    meta epoch  70/100  mean loss 0.4203
+    meta epoch  75/100  mean loss 0.4135
+    meta epoch  80/100  mean loss 0.3996
+    meta epoch  85/100  mean loss 0.3947
+    meta epoch  90/100  mean loss 0.3967
+    meta epoch  95/100  mean loss 0.3889
+    meta epoch 100/100  mean loss 0.3894
+  seed summary: learned post=0.756 forget=0.248 | hebbian post=0.728 forget=-0.004
+
+===== Stage 2 results (mean +/- std over seeds) =====
+metric                     Fixed Hebbian         Learned F_phi
+post-task acc            0.729+/-0.001       0.827+/-0.053
+final slow acc           0.731+/-0.002       0.662+/-0.133
+steps->85%               5.500+/-0.000       4.500+/-0.204
+forgetting              -0.002+/-0.001       0.099+/-0.106
+backward transfer        0.002+/-0.001      -0.099+/-0.106
+
+saved -> results/stage2/results.json + plots

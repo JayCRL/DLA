@@ -1,0 +1,100 @@
+{
+  "seed2": {
+    "EH/EH": {
+      "tag": "EH/EH",
+      "LE_D": 1.0,
+      "T80_D": 28,
+      "best_gain_D": 0.009362758500407757
+    },
+    "HE/HE": {
+      "tag": "HE/HE",
+      "LE_D": 1.0,
+      "T80_D": 24,
+      "best_gain_D": 0.02984841044120691
+    },
+    "EH_body+HE_slow": {
+      "tag": "EH_body+HE_slow",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.0021563141616056975
+    },
+    "EH_body+HE_fast": {
+      "tag": "EH_body+HE_fast",
+      "LE_D": 0.8828197349850028,
+      "T80_D": 4,
+      "best_gain_D": 0.011896036912804206
+    },
+    "EH_body+HE_P": {
+      "tag": "EH_body+HE_P",
+      "LE_D": 0.7581118958309352,
+      "T80_D": 28,
+      "best_gain_D": 0.009377697172732905
+    },
+    "EH_body+HE_Q": {
+      "tag": "EH_body+HE_Q",
+      "LE_D": 0.724015462002528,
+      "T80_D": 28,
+      "best_gain_D": 0.0058193690996178925
+    },
+    "EH_body+HE_attn_slow": {
+      "tag": "EH_body+HE_attn_slow",
+      "LE_D": 0.5996102694262301,
+      "T80_D": 20,
+      "best_gain_D": 0.0054743104176035624
+    },
+    "EH_body+HE_mlp_slow": {
+      "tag": "EH_body+HE_mlp_slow",
+      "LE_D": 0.5770801749285231,
+      "T80_D": 24,
+      "best_gain_D": 0.0024015035309928293
+    },
+    "EH_body+HE_emb_slow": {
+      "tag": "EH_body+HE_emb_slow",
+      "LE_D": 0.9980769391825587,
+      "T80_D": 28,
+      "best_gain_D": 0.004013153051534405
+    },
+    "HE_body+EH_slow": {
+      "tag": "HE_body+EH_slow",
+      "LE_D": 1.0,
+      "T80_D": 4,
+      "best_gain_D": 0.011153673803389493
+    },
+    "HE_body+EH_fast": {
+      "tag": "HE_body+EH_fast",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.00012589293361608218
+    },
+    "HE_body+EH_P": {
+      "tag": "HE_body+EH_P",
+      "LE_D": 0.928146033215785,
+      "T80_D": 24,
+      "best_gain_D": 0.02724572524431268
+    },
+    "HE_body+EH_Q": {
+      "tag": "HE_body+EH_Q",
+      "LE_D": 0.9262101839461421,
+      "T80_D": 24,
+      "best_gain_D": 0.027299471843326643
+    },
+    "HE_body+EH_attn_slow": {
+      "tag": "HE_body+EH_attn_slow",
+      "LE_D": 1.0,
+      "T80_D": 20,
+      "best_gain_D": 0.030253336001281605
+    },
+    "HE_body+EH_mlp_slow": {
+      "tag": "HE_body+EH_mlp_slow",
+      "LE_D": 1.0,
+      "T80_D": 16,
+      "best_gain_D": 0.02283286767897689
+    },
+    "HE_body+EH_emb_slow": {
+      "tag": "HE_body+EH_emb_slow",
+      "LE_D": 0.9270750646381832,
+      "T80_D": 24,
+      "best_gain_D": 0.0228939051699822
+    }
+  }
+}

@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/home/wust_1/llm-lab/dla-v0.2/experiments/stage55e_wfast_p0.py", line 151, in <module>
+    main()
+  File "/home/wust_1/llm-lab/dla-v0.2/experiments/stage55e_wfast_p0.py", line 144, in main
+    all_out[f"seed{seed}"] = run_seed(seed, args, device)
+  File "/home/wust_1/llm-lab/dla-v0.2/experiments/stage55e_wfast_p0.py", line 72, in run_seed
+    eb = _s55.make_eval_batches(domains, d_val, args, device, seed)
+  File "/home/wust_1/llm-lab/dla-v0.2/experiments/stage55_learning_rule_development.py", line 135, in make_eval_batches
+    out[dom] = [get_batch(ids, args.block, args.eval_batch, rng, device) for _ in range(args.eval_batches)]
+  File "/home/wust_1/llm-lab/dla-v0.2/experiments/stage55_learning_rule_development.py", line 135, in <listcomp>
+    out[dom] = [get_batch(ids, args.block, args.eval_batch, rng, device) for _ in range(args.eval_batches)]
+  File "/home/wust_1/llm-lab/dla-v0.2/experiments/stage55_learning_rule_development.py", line 125, in get_batch
+    ix = [rng.randrange(n) for _ in range(batch_size)]
+  File "/home/wust_1/llm-lab/dla-v0.2/experiments/stage55_learning_rule_development.py", line 125, in <listcomp>
+    ix = [rng.randrange(n) for _ in range(batch_size)]
+  File "/usr/lib/python3.10/random.py", line 321, in randrange
+    raise ValueError("empty range for randrange()")
+ValueError: empty range for randrange()

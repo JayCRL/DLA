@@ -1,0 +1,19 @@
+number of parameters: 6.59M
+[seed 6] creating missing body easy_hard ...
+/home/wust_1/llm-lab/venv/lib/python3.10/site-packages/torch/autograd/graph.py:841: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /pytorch/torch/csrc/autograd/engine.cpp:1291.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+number of parameters: 6.59M
+number of parameters: 6.59M
+[seed 6] creating missing body hard_easy ...
+number of parameters: 6.59M
+number of parameters: 6.59M
+[seed 6] EH/EH: pre=37.21 LE_D=0.000 T80=40
+number of parameters: 6.59M
+[seed 6] HE/HE: pre=40.62 LE_D=0.408 T80=2
+number of parameters: 6.59M
+number of parameters: 6.59M
+[seed 6] EH_body+HE_fast: pre=39.97 LE_D=0.000 T80=40
+number of parameters: 6.59M
+number of parameters: 6.59M
+[seed 6] HE_body+EH_fast: pre=37.30 LE_D=0.000 T80=40
+saved -> results/stage55e/p0.json

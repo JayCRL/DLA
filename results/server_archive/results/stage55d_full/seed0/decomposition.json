@@ -1,0 +1,160 @@
+{
+  "seed0": {
+    "EH/EH": {
+      "tag": "EH/EH",
+      "LE_D": 0.0,
+      "T80_D": 20,
+      "best_gain_D": 0.000509132433035121
+    },
+    "HE/HE": {
+      "tag": "HE/HE",
+      "LE_D": 0.8018857967154097,
+      "T80_D": 4,
+      "best_gain_D": 0.03680336621738987
+    },
+    "EH_body+HE_slow": {
+      "tag": "EH_body+HE_slow",
+      "LE_D": 1.0,
+      "T80_D": 30,
+      "best_gain_D": 0.000462842131489175
+    },
+    "EH_body+HE_fast": {
+      "tag": "EH_body+HE_fast",
+      "LE_D": 1.0,
+      "T80_D": 4,
+      "best_gain_D": 0.023471650429584684
+    },
+    "EH_body+HE_P": {
+      "tag": "EH_body+HE_P",
+      "LE_D": 0.0,
+      "T80_D": 24,
+      "best_gain_D": 0.00128353644717447
+    },
+    "EH_body+HE_Q": {
+      "tag": "EH_body+HE_Q",
+      "LE_D": 0.0,
+      "T80_D": 24,
+      "best_gain_D": 0.0009953786865633666
+    },
+    "EH_body+HE_fastP": {
+      "tag": "EH_body+HE_fastP",
+      "LE_D": 0.8976287569157804,
+      "T80_D": 4,
+      "best_gain_D": 0.02689116680892264
+    },
+    "EH_body+HE_fastQ": {
+      "tag": "EH_body+HE_fastQ",
+      "LE_D": 0.9506239793327173,
+      "T80_D": 4,
+      "best_gain_D": 0.02792096561616762
+    },
+    "EH_body+HE_PQ": {
+      "tag": "EH_body+HE_PQ",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.00010514812105999925
+    },
+    "EH_body+HE_fastPQ": {
+      "tag": "EH_body+HE_fastPQ",
+      "LE_D": 0.7121427296903038,
+      "T80_D": 4,
+      "best_gain_D": 0.025487962415408173
+    },
+    "EH_body+HE_allState": {
+      "tag": "EH_body+HE_allState",
+      "LE_D": 0.739947651565943,
+      "T80_D": 12,
+      "best_gain_D": 0.020445634057144845
+    },
+    "EH_body+HE_attn_slow": {
+      "tag": "EH_body+HE_attn_slow",
+      "LE_D": 0.44831280073112145,
+      "T80_D": 24,
+      "best_gain_D": 0.007459869514732565
+    },
+    "EH_body+HE_mlp_slow": {
+      "tag": "EH_body+HE_mlp_slow",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.005583737584761481
+    },
+    "EH_body+HE_emb_slow": {
+      "tag": "EH_body+HE_emb_slow",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.003676659976486178
+    },
+    "HE_body+EH_slow": {
+      "tag": "HE_body+EH_slow",
+      "LE_D": 1.0,
+      "T80_D": 28,
+      "best_gain_D": 0.02048300037804715
+    },
+    "HE_body+EH_fast": {
+      "tag": "HE_body+EH_fast",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.004347688357468245
+    },
+    "HE_body+EH_P": {
+      "tag": "HE_body+EH_P",
+      "LE_D": 0.6730999262127756,
+      "T80_D": 20,
+      "best_gain_D": 0.036221847027962155
+    },
+    "HE_body+EH_Q": {
+      "tag": "HE_body+EH_Q",
+      "LE_D": 0.778035633031887,
+      "T80_D": 20,
+      "best_gain_D": 0.03640312846224249
+    },
+    "HE_body+EH_fastP": {
+      "tag": "HE_body+EH_fastP",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.008788234409157847
+    },
+    "HE_body+EH_fastQ": {
+      "tag": "HE_body+EH_fastQ",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.0067118534890363395
+    },
+    "HE_body+EH_PQ": {
+      "tag": "HE_body+EH_PQ",
+      "LE_D": 0.9625826406671856,
+      "T80_D": 16,
+      "best_gain_D": 0.039949620663539305
+    },
+    "HE_body+EH_fastPQ": {
+      "tag": "HE_body+EH_fastPQ",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.00262562807723463
+    },
+    "HE_body+EH_allState": {
+      "tag": "HE_body+EH_allState",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.008531638762649408
+    },
+    "HE_body+EH_attn_slow": {
+      "tag": "HE_body+EH_attn_slow",
+      "LE_D": 0.8683725141758504,
+      "T80_D": 20,
+      "best_gain_D": 0.041104553230390674
+    },
+    "HE_body+EH_mlp_slow": {
+      "tag": "HE_body+EH_mlp_slow",
+      "LE_D": 0.7781610667408042,
+      "T80_D": 20,
+      "best_gain_D": 0.02995052497191621
+    },
+    "HE_body+EH_emb_slow": {
+      "tag": "HE_body+EH_emb_slow",
+      "LE_D": 0.6986897951894544,
+      "T80_D": 12,
+      "best_gain_D": 0.029260146411812037
+    }
+  }
+}

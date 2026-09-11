@@ -1,0 +1,248 @@
+number of parameters: 6.59M
+
+[seed 0] AdamW forward curriculum ...
+number of parameters: 6.59M
+  AdamW D transfer LE=0.000
+[seed 0] dla_static forward curriculum ...
+number of parameters: 6.59M
+  dla_static D transfer LE=0.206
+[seed 0] dla_meta forward curriculum ...
+/home/wust_1/llm-lab/venv/lib/python3.10/site-packages/torch/autograd/graph.py:841: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /pytorch/torch/csrc/autograd/engine.cpp:1291.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+number of parameters: 6.59M
+  dla_meta D transfer LE=0.000
+number of parameters: 6.59M
+
+[seed 1] AdamW forward curriculum ...
+number of parameters: 6.59M
+  AdamW D transfer LE=0.000
+[seed 1] dla_static forward curriculum ...
+number of parameters: 6.59M
+  dla_static D transfer LE=0.792
+[seed 1] dla_meta forward curriculum ...
+number of parameters: 6.59M
+  dla_meta D transfer LE=0.000
+number of parameters: 6.59M
+
+[seed 2] AdamW forward curriculum ...
+number of parameters: 6.59M
+  AdamW D transfer LE=0.846
+[seed 2] dla_static forward curriculum ...
+number of parameters: 6.59M
+  dla_static D transfer LE=0.423
+[seed 2] dla_meta forward curriculum ...
+number of parameters: 6.59M
+  dla_meta D transfer LE=0.689
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+[seed 0] reversed curriculum done
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+[seed 1] reversed curriculum done
+
+===== Stage 5.5 summary =====
+{
+  "summary": {
+    "order": {
+      "0": {
+        "forward": [
+          "sft",
+          "wiki",
+          "science"
+        ],
+        "pre": {
+          "wiki": 31.214044546985946,
+          "sft": 28.733015564506474,
+          "science": 34.340225017554864
+        }
+      },
+      "1": {
+        "forward": [
+          "sft",
+          "wiki",
+          "science"
+        ],
+        "pre": {
+          "wiki": 38.946896107567724,
+          "sft": 37.88153713967696,
+          "science": 39.19980556803958
+        }
+      },
+      "2": {
+        "forward": [
+          "sft",
+          "wiki",
+          "science"
+        ],
+        "pre": {
+          "wiki": 36.242736485135005,
+          "sft": 33.989716337622525,
+          "science": 43.928922283059066
+        }
+      }
+    },
+    "target_gain": 0.04,
+    "arms": {
+      "adamw": {
+        "LE_mean": [
+          0.9941696943605723,
+          0.9600233250566159,
+          0.4426917178785714
+        ],
+        "T80_mean": [
+          24.0,
+          18.666666666666668,
+          33.333333333333336
+        ],
+        "raw_lambda_mean": [
+          0.20833333333333334,
+          0.125,
+          0.0
+        ],
+        "LE_slope": -0.27573898824100046,
+        "D_LE_mean": 0.2820703389817651,
+        "D_T80_mean": 29.333333333333332,
+        "D_LE_all": [
+          0.0,
+          0.0,
+          0.8462110169452953
+        ]
+      },
+      "dla_static": {
+        "LE_mean": [
+          0.9991643272001042,
+          0.9644083561818855,
+          0.24283144750756394
+        ],
+        "T80_mean": [
+          21.333333333333332,
+          21.333333333333332,
+          40.0
+        ],
+        "raw_lambda_mean": [
+          0.25,
+          0.0,
+          0.0
+        ],
+        "LE_slope": -0.37816643984627013,
+        "D_LE_mean": 0.4736939700851046,
+        "D_T80_mean": 37.333333333333336,
+        "D_LE_all": [
+          0.2062934527871153,
+          0.7916785952350675,
+          0.42310986223313113
+        ]
+      },
+      "dla_meta": {
+        "LE_mean": [
+          0.9965638339690361,
+          0.9408245662789089,
+          0.539010620404475
+        ],
+        "T80_mean": [
+          20.0,
+          24.0,
+          38.666666666666664
+        ],
+        "raw_lambda_mean": [
+          0.25,
+          0.0,
+          0.0
+        ],
+        "LE_slope": -0.22877660678228057,
+        "delta_phi_norms": [
+          0.002949069327569939,
+          0.0024541450646198932,
+          0.0030879231029675848,
+          0.0029391354479272555,
+          0.0030861650384133316,
+          0.002351550128180271
+        ],
+        "delta_phi_mean": 0.002811331351613046,
+        "D_LE_mean": 0.22952248157347974,
+        "D_T80_mean": 52.0,
+        "D_LE_all": [
+          0.0,
+          0.0,
+          0.6885674447204392
+        ]
+      }
+    }
+  },
+  "reversed": {
+    "seeds": [
+      0,
+      1
+    ],
+    "forward": {},
+    "reversed": {},
+    "forward_dla_static": [
+      {
+        "LE_D": 1.0,
+        "T80_D": 36,
+        "phi_norms": []
+      },
+      {
+        "LE_D": 0.8435057771432609,
+        "T80_D": 56,
+        "phi_norms": []
+      }
+    ],
+    "forward_dla_meta": [
+      {
+        "LE_D": 0.9495121894039886,
+        "T80_D": 36,
+        "phi_norms": [
+          0.003085168789984197,
+          0.0024183355757902273
+        ]
+      },
+      {
+        "LE_D": 0.934879142213673,
+        "T80_D": 56,
+        "phi_norms": [
+          0.0029632748958522996,
+          0.0021574711310800524
+        ]
+      }
+    ],
+    "reversed_dla_static": [
+      {
+        "LE_D": 1.0,
+        "T80_D": 40,
+        "phi_norms": []
+      },
+      {
+        "LE_D": 1.0,
+        "T80_D": 32,
+        "phi_norms": []
+      }
+    ],
+    "reversed_dla_meta": [
+      {
+        "LE_D": 1.0,
+        "T80_D": 24,
+        "phi_norms": [
+          0.0029979098934688336,
+          0.0026195274439281455
+        ]
+      },
+      {
+        "LE_D": 1.0,
+        "T80_D": 12,
+        "phi_norms": [
+          0.0029249515789794528,
+          0.0024987577546207312
+        ]
+      }
+    ]
+  }
+}
+
+saved -> results/stage55/stage55.json + LE_development.png

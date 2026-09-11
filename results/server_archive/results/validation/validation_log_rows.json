@@ -1,0 +1,506 @@
+[
+  {
+    "seed": 4,
+    "tag": "HE/HE",
+    "pre": 43.1,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 4,
+    "tag": "HE+EH_Wfast",
+    "pre": 43.88,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 4,
+    "tag": "HE+normEH",
+    "pre": 43.85,
+    "LE_D": 0.655
+  },
+  {
+    "seed": 4,
+    "tag": "HE+shuffleEH",
+    "pre": 43.09,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 4,
+    "tag": "HE+EH_emb",
+    "pre": 43.09,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 4,
+    "tag": "HE+EH_attn",
+    "pre": 43.11,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 4,
+    "tag": "HE+EH_mlp",
+    "pre": 43.36,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 0,
+    "tag": "HE/HE",
+    "pre": 44.35,
+    "LE_D": 0.846
+  },
+  {
+    "seed": 0,
+    "tag": "HE+EH_Wfast",
+    "pre": 42.41,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 0,
+    "tag": "HE+normEH",
+    "pre": 42.44,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 0,
+    "tag": "HE+shuffleEH",
+    "pre": 42.73,
+    "LE_D": 0.689
+  },
+  {
+    "seed": 0,
+    "tag": "HE+EH_emb",
+    "pre": 44.19,
+    "LE_D": 0.712
+  },
+  {
+    "seed": 0,
+    "tag": "HE+EH_attn",
+    "pre": 43.26,
+    "LE_D": 0.386
+  },
+  {
+    "seed": 0,
+    "tag": "HE+EH_mlp",
+    "pre": 42.99,
+    "LE_D": 0.054
+  },
+  {
+    "seed": 10,
+    "tag": "HE/HE",
+    "pre": 43.27,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 10,
+    "tag": "HE+EH_Wfast",
+    "pre": 42.37,
+    "LE_D": 0.569
+  },
+  {
+    "seed": 10,
+    "tag": "HE+normEH",
+    "pre": 42.45,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 10,
+    "tag": "HE+shuffleEH",
+    "pre": 42.68,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 10,
+    "tag": "HE+EH_emb",
+    "pre": 43.13,
+    "LE_D": 0.819
+  },
+  {
+    "seed": 10,
+    "tag": "HE+EH_attn",
+    "pre": 42.84,
+    "LE_D": 0.061
+  },
+  {
+    "seed": 10,
+    "tag": "HE+EH_mlp",
+    "pre": 42.67,
+    "LE_D": 0.062
+  },
+  {
+    "seed": 1,
+    "tag": "HE/HE",
+    "pre": 45.74,
+    "LE_D": 0.948
+  },
+  {
+    "seed": 1,
+    "tag": "HE+EH_Wfast",
+    "pre": 44.27,
+    "LE_D": 0.836
+  },
+  {
+    "seed": 1,
+    "tag": "HE+normEH",
+    "pre": 44.27,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 1,
+    "tag": "HE+shuffleEH",
+    "pre": 44.6,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 1,
+    "tag": "HE+EH_emb",
+    "pre": 45.6,
+    "LE_D": 0.855
+  },
+  {
+    "seed": 1,
+    "tag": "HE+EH_attn",
+    "pre": 45.01,
+    "LE_D": 0.204
+  },
+  {
+    "seed": 1,
+    "tag": "HE+EH_mlp",
+    "pre": 44.58,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 8,
+    "tag": "HE/HE",
+    "pre": 39.41,
+    "LE_D": 0.668
+  },
+  {
+    "seed": 8,
+    "tag": "HE+EH_Wfast",
+    "pre": 38.63,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 8,
+    "tag": "HE+normEH",
+    "pre": 38.63,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 8,
+    "tag": "HE+shuffleEH",
+    "pre": 38.57,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 8,
+    "tag": "HE+EH_emb",
+    "pre": 39.31,
+    "LE_D": 0.315
+  },
+  {
+    "seed": 8,
+    "tag": "HE+EH_attn",
+    "pre": 38.91,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 8,
+    "tag": "HE+EH_mlp",
+    "pre": 38.76,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 5,
+    "tag": "HE/HE",
+    "pre": 36.48,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 5,
+    "tag": "HE+EH_Wfast",
+    "pre": 36.79,
+    "LE_D": 0.872
+  },
+  {
+    "seed": 5,
+    "tag": "HE+normEH",
+    "pre": 36.8,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 5,
+    "tag": "HE+shuffleEH",
+    "pre": 36.58,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 5,
+    "tag": "HE+EH_emb",
+    "pre": 36.47,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 5,
+    "tag": "HE+EH_attn",
+    "pre": 36.53,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 5,
+    "tag": "HE+EH_mlp",
+    "pre": 36.49,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 6,
+    "tag": "HE/HE",
+    "pre": 40.62,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 6,
+    "tag": "HE+EH_Wfast",
+    "pre": 37.3,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 6,
+    "tag": "HE+normEH",
+    "pre": 37.37,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 6,
+    "tag": "HE+shuffleEH",
+    "pre": 40.05,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 6,
+    "tag": "HE+EH_emb",
+    "pre": 39.78,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 6,
+    "tag": "HE+EH_attn",
+    "pre": 39.61,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 6,
+    "tag": "HE+EH_mlp",
+    "pre": 38.7,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 2,
+    "tag": "HE/HE",
+    "pre": 44.35,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 2,
+    "tag": "HE+EH_Wfast",
+    "pre": 43.03,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 2,
+    "tag": "HE+normEH",
+    "pre": 43.02,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 2,
+    "tag": "HE+shuffleEH",
+    "pre": 43.02,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 2,
+    "tag": "HE+EH_emb",
+    "pre": 44.19,
+    "LE_D": 0.765
+  },
+  {
+    "seed": 2,
+    "tag": "HE+EH_attn",
+    "pre": 43.64,
+    "LE_D": 0.793
+  },
+  {
+    "seed": 2,
+    "tag": "HE+EH_mlp",
+    "pre": 43.37,
+    "LE_D": 0.578
+  },
+  {
+    "seed": 9,
+    "tag": "HE/HE",
+    "pre": 43.11,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 9,
+    "tag": "HE+EH_Wfast",
+    "pre": 41.88,
+    "LE_D": 0.762
+  },
+  {
+    "seed": 9,
+    "tag": "HE+normEH",
+    "pre": 41.92,
+    "LE_D": 0.313
+  },
+  {
+    "seed": 9,
+    "tag": "HE+shuffleEH",
+    "pre": 41.56,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 9,
+    "tag": "HE+EH_emb",
+    "pre": 42.93,
+    "LE_D": 0.868
+  },
+  {
+    "seed": 9,
+    "tag": "HE+EH_attn",
+    "pre": 42.54,
+    "LE_D": 0.969
+  },
+  {
+    "seed": 9,
+    "tag": "HE+EH_mlp",
+    "pre": 42.09,
+    "LE_D": 0.55
+  },
+  {
+    "seed": 3,
+    "tag": "HE/HE",
+    "pre": 41.65,
+    "LE_D": 0.758
+  },
+  {
+    "seed": 3,
+    "tag": "HE+EH_Wfast",
+    "pre": 41.14,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 3,
+    "tag": "HE+normEH",
+    "pre": 41.12,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 3,
+    "tag": "HE+shuffleEH",
+    "pre": 41.11,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 3,
+    "tag": "HE+EH_emb",
+    "pre": 41.61,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 3,
+    "tag": "HE+EH_attn",
+    "pre": 41.33,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 3,
+    "tag": "HE+EH_mlp",
+    "pre": 41.19,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 11,
+    "tag": "HE/HE",
+    "pre": 41.84,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 11,
+    "tag": "HE+EH_Wfast",
+    "pre": 41.47,
+    "LE_D": 0.294
+  },
+  {
+    "seed": 11,
+    "tag": "HE+normEH",
+    "pre": 41.36,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 11,
+    "tag": "HE+shuffleEH",
+    "pre": 41.3,
+    "LE_D": 0.454
+  },
+  {
+    "seed": 11,
+    "tag": "HE+EH_emb",
+    "pre": 41.8,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 11,
+    "tag": "HE+EH_attn",
+    "pre": 41.58,
+    "LE_D": 0.824
+  },
+  {
+    "seed": 11,
+    "tag": "HE+EH_mlp",
+    "pre": 41.45,
+    "LE_D": 0.102
+  },
+  {
+    "seed": 7,
+    "tag": "HE/HE",
+    "pre": 38.52,
+    "LE_D": 0.993
+  },
+  {
+    "seed": 7,
+    "tag": "HE+EH_Wfast",
+    "pre": 38.5,
+    "LE_D": 0.75
+  },
+  {
+    "seed": 7,
+    "tag": "HE+normEH",
+    "pre": 38.41,
+    "LE_D": 0.797
+  },
+  {
+    "seed": 7,
+    "tag": "HE+shuffleEH",
+    "pre": 38.34,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 7,
+    "tag": "HE+EH_emb",
+    "pre": 38.46,
+    "LE_D": 1.0
+  },
+  {
+    "seed": 7,
+    "tag": "HE+EH_attn",
+    "pre": 38.45,
+    "LE_D": 0.0
+  },
+  {
+    "seed": 7,
+    "tag": "HE+EH_mlp",
+    "pre": 38.38,
+    "LE_D": 1.0
+  }
+]

@@ -1,0 +1,332 @@
+{
+  "args": {
+    "max_steps": 2,
+    "target_gain": 0.04,
+    "block": 64,
+    "batch": 8,
+    "eval_every": 1,
+    "eval_batch": 4,
+    "eval_batches": 4,
+    "wiki_start": 40000000,
+    "train_chars": 300000,
+    "val_chars": 40000,
+    "lr": 0.0001,
+    "eta_fast": 0.0006,
+    "meta_lr": 0.003,
+    "meta_batch": 2,
+    "meta_unroll_len": 2,
+    "seeds": [
+      0
+    ],
+    "reversed_seeds": [],
+    "skip_adamw": true,
+    "skip_static": true,
+    "skip_meta": false,
+    "out": "results/stage55/smoke2"
+  },
+  "summary": {
+    "order": {
+      "0": {
+        "forward": [
+          "sft",
+          "wiki",
+          "science"
+        ],
+        "pre": {
+          "wiki": 32.77334588513804,
+          "sft": 29.31450702531164,
+          "science": 36.34479766790331
+        }
+      }
+    },
+    "target_gain": 0.04,
+    "arms": {
+      "dla_meta": {
+        "LE_mean": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "T80_mean": [
+          1.0,
+          2.0,
+          2.0
+        ],
+        "raw_lambda_mean": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "LE_slope": -0.5,
+        "delta_phi_norms": [
+          8.569184971631202e-05,
+          6.301472392450998e-05
+        ],
+        "delta_phi_mean": 7.4353286820411e-05,
+        "D_LE_mean": 0.7775802377901339,
+        "D_T80_mean": 1.0,
+        "D_LE_all": [
+          0.7775802377901339
+        ]
+      }
+    }
+  },
+  "reversed": {},
+  "results": {
+    "adamw": [],
+    "dla_static": [],
+    "dla_meta": [
+      {
+        "stage_pre": [
+          29.31450702531164,
+          32.796242378646255,
+          36.38023641227311
+        ],
+        "curve": [
+          [
+            {
+              "step": 1,
+              "ppl": 28.916908511810654,
+              "gain": 0.013563199720796294
+            },
+            {
+              "step": 2,
+              "ppl": 28.831216857133725,
+              "gain": 0.01648638224619022
+            }
+          ],
+          [
+            {
+              "step": 1,
+              "ppl": 33.137153484153366,
+              "gain": -0.0103948221131906
+            },
+            {
+              "step": 2,
+              "ppl": 33.61527625809074,
+              "gain": -0.024973406099040127
+            }
+          ],
+          [
+            {
+              "step": 1,
+              "ppl": 36.400004862016544,
+              "gain": -0.0005433843122790135
+            },
+            {
+              "step": 2,
+              "ppl": 36.63472036891994,
+              "gain": -0.006995115528193157
+            }
+          ]
+        ],
+        "curve_slow": [
+          [
+            {
+              "step": 1,
+              "ppl": 29.31450702531164,
+              "gain": 0.0
+            },
+            {
+              "step": 2,
+              "ppl": 29.31450702531164,
+              "gain": 0.0
+            }
+          ],
+          [
+            {
+              "step": 1,
+              "ppl": 32.66588964217283,
+              "gain": 0.0
+            },
+            {
+              "step": 2,
+              "ppl": 32.66588964217283,
+              "gain": 0.0
+            }
+          ],
+          [
+            {
+              "step": 1,
+              "ppl": 36.00510670755317,
+              "gain": 0.0
+            },
+            {
+              "step": 2,
+              "ppl": 36.00510670755317,
+              "gain": 0.0
+            }
+          ]
+        ],
+        "plasticity": [
+          {
+            "transformer.wte": 0.5000138282775879,
+            "transformer.wpe": 0.5000375509262085,
+            "transformer.h.0.attn.c_attn": 0.5000520348548889,
+            "transformer.h.0.attn.c_proj": 0.5000739097595215,
+            "transformer.h.0.mlp.c_fc": 0.5000761151313782,
+            "transformer.h.0.mlp.c_proj": 0.5000714063644409,
+            "transformer.h.1.attn.c_attn": 0.5000655055046082,
+            "transformer.h.1.attn.c_proj": 0.5000646114349365,
+            "transformer.h.1.mlp.c_fc": 0.5000712871551514,
+            "transformer.h.1.mlp.c_proj": 0.5000758171081543,
+            "transformer.h.2.attn.c_attn": 0.5000643134117126,
+            "transformer.h.2.attn.c_proj": 0.5000780820846558,
+            "transformer.h.2.mlp.c_fc": 0.5000723600387573,
+            "transformer.h.2.mlp.c_proj": 0.5000759363174438,
+            "transformer.h.3.attn.c_attn": 0.5000662803649902,
+            "transformer.h.3.attn.c_proj": 0.5000784397125244,
+            "transformer.h.3.mlp.c_fc": 0.50007563829422,
+            "transformer.h.3.mlp.c_proj": 0.5000750422477722,
+            "transformer.h.4.attn.c_attn": 0.5000668168067932,
+            "transformer.h.4.attn.c_proj": 0.5000787973403931,
+            "transformer.h.4.mlp.c_fc": 0.5000760555267334,
+            "transformer.h.4.mlp.c_proj": 0.5000752806663513,
+            "transformer.h.5.attn.c_attn": 0.5000627636909485,
+            "transformer.h.5.attn.c_proj": 0.5000783205032349,
+            "transformer.h.5.mlp.c_fc": 0.500074565410614,
+            "transformer.h.5.mlp.c_proj": 0.5000755786895752,
+            "lm_head": 0.5000138282775879
+          },
+          {
+            "transformer.wte": 0.500024676322937,
+            "transformer.wpe": 0.5000661611557007,
+            "transformer.h.0.attn.c_attn": 0.5000918507575989,
+            "transformer.h.0.attn.c_proj": 0.5001301169395447,
+            "transformer.h.0.mlp.c_fc": 0.5001341104507446,
+            "transformer.h.0.mlp.c_proj": 0.5001263618469238,
+            "transformer.h.1.attn.c_attn": 0.5001148581504822,
+            "transformer.h.1.attn.c_proj": 0.500114917755127,
+            "transformer.h.1.mlp.c_fc": 0.5001259446144104,
+            "transformer.h.1.mlp.c_proj": 0.5001325607299805,
+            "transformer.h.2.attn.c_attn": 0.5001140236854553,
+            "transformer.h.2.attn.c_proj": 0.500137209892273,
+            "transformer.h.2.mlp.c_fc": 0.5001274943351746,
+            "transformer.h.2.mlp.c_proj": 0.5001335144042969,
+            "transformer.h.3.attn.c_attn": 0.500116765499115,
+            "transformer.h.3.attn.c_proj": 0.5001375675201416,
+            "transformer.h.3.mlp.c_fc": 0.5001328587532043,
+            "transformer.h.3.mlp.c_proj": 0.5001322627067566,
+            "transformer.h.4.attn.c_attn": 0.500117301940918,
+            "transformer.h.4.attn.c_proj": 0.500138521194458,
+            "transformer.h.4.mlp.c_fc": 0.500133752822876,
+            "transformer.h.4.mlp.c_proj": 0.5001325607299805,
+            "transformer.h.5.attn.c_attn": 0.5001117587089539,
+            "transformer.h.5.attn.c_proj": 0.500137209892273,
+            "transformer.h.5.mlp.c_fc": 0.5001311898231506,
+            "transformer.h.5.mlp.c_proj": 0.5001323223114014,
+            "lm_head": 0.500024676322937
+          },
+          {
+            "transformer.wte": 0.5000182390213013,
+            "transformer.wpe": 0.50005042552948,
+            "transformer.h.0.attn.c_attn": 0.5000705122947693,
+            "transformer.h.0.attn.c_proj": 0.5000995397567749,
+            "transformer.h.0.mlp.c_fc": 0.5001024007797241,
+            "transformer.h.0.mlp.c_proj": 0.5000962615013123,
+            "transformer.h.1.attn.c_attn": 0.5000872015953064,
+            "transformer.h.1.attn.c_proj": 0.500088095664978,
+            "transformer.h.1.mlp.c_fc": 0.5000961422920227,
+            "transformer.h.1.mlp.c_proj": 0.5001015663146973,
+            "transformer.h.2.attn.c_attn": 0.5000863671302795,
+            "transformer.h.2.attn.c_proj": 0.5001051425933838,
+            "transformer.h.2.mlp.c_fc": 0.5000970959663391,
+            "transformer.h.2.mlp.c_proj": 0.5001020431518555,
+            "transformer.h.3.attn.c_attn": 0.5000892877578735,
+            "transformer.h.3.attn.c_proj": 0.5001054406166077,
+            "transformer.h.3.mlp.c_fc": 0.5001015067100525,
+            "transformer.h.3.mlp.c_proj": 0.5001009702682495,
+            "transformer.h.4.attn.c_attn": 0.5000899434089661,
+            "transformer.h.4.attn.c_proj": 0.5001059770584106,
+            "transformer.h.4.mlp.c_fc": 0.5001020431518555,
+            "transformer.h.4.mlp.c_proj": 0.5001010894775391,
+            "transformer.h.5.attn.c_attn": 0.5000860095024109,
+            "transformer.h.5.attn.c_proj": 0.5001051425933838,
+            "transformer.h.5.mlp.c_fc": 0.5001000165939331,
+            "transformer.h.5.mlp.c_proj": 0.5001010894775391,
+            "lm_head": 0.5000182390213013
+          }
+        ],
+        "phi_trace": [
+          {
+            "stage": 1,
+            "before": {
+              "eta_fast": 0.0005998199922032654,
+              "eta_plast": 0.019802626222372055,
+              "fast_decay": 0.020000001415610313,
+              "stability_pressure": 0.00995033048093319,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "after": {
+              "eta_fast": 0.0005980238784104586,
+              "eta_plast": 0.019743986427783966,
+              "fast_decay": 0.020058883354067802,
+              "stability_pressure": 0.009971166960895061,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "norm": 8.569184971631202e-05
+          },
+          {
+            "stage": 2,
+            "before": {
+              "eta_fast": 0.0005980238784104586,
+              "eta_plast": 0.019743986427783966,
+              "fast_decay": 0.020058883354067802,
+              "stability_pressure": 0.009971166960895061,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "after": {
+              "eta_fast": 0.0005962644354440272,
+              "eta_plast": 0.019728489220142365,
+              "fast_decay": 0.020116131752729416,
+              "stability_pressure": 0.009992385283112526,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "norm": 6.301472392450998e-05
+          }
+        ],
+        "meta_loss": [
+          3.9703598022460938,
+          4.102724552154541
+        ]
+      }
+    ]
+  },
+  "d_results": {
+    "adamw": [],
+    "dla_static": [],
+    "dla_meta": [
+      {
+        "pre": 42.66905445656973,
+        "curve": [
+          {
+            "step": 1,
+            "ppl": 42.17591163128651,
+            "gain": 0.011557388171916545
+          },
+          {
+            "step": 2,
+            "ppl": 42.285596341221506,
+            "gain": 0.008986796642951747
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "seed1": {
+    "EH/EH": {
+      "tag": "EH/EH",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.005588712406369041
+    },
+    "HE/HE": {
+      "tag": "HE/HE",
+      "LE_D": 1.0,
+      "T80_D": 24,
+      "best_gain_D": 0.02175878817835321
+    },
+    "EH_body+HE_slow": {
+      "tag": "EH_body+HE_slow",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.0098008847735796
+    },
+    "EH_body+HE_fast": {
+      "tag": "EH_body+HE_fast",
+      "LE_D": 0.8419826899901074,
+      "T80_D": 4,
+      "best_gain_D": 0.007059926505201314
+    },
+    "EH_body+HE_P": {
+      "tag": "EH_body+HE_P",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.001624531414964651
+    },
+    "EH_body+HE_Q": {
+      "tag": "EH_body+HE_Q",
+      "LE_D": 0.0,
+      "T80_D": 24,
+      "best_gain_D": 0.00042924010641208173
+    },
+    "EH_body+HE_attn_slow": {
+      "tag": "EH_body+HE_attn_slow",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.0027550790721330327
+    },
+    "EH_body+HE_mlp_slow": {
+      "tag": "EH_body+HE_mlp_slow",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.0044508988293743236
+    },
+    "EH_body+HE_emb_slow": {
+      "tag": "EH_body+HE_emb_slow",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.006081581460298241
+    },
+    "HE_body+EH_slow": {
+      "tag": "HE_body+EH_slow",
+      "LE_D": 0.9866812454315647,
+      "T80_D": 4,
+      "best_gain_D": 0.010272189568711995
+    },
+    "HE_body+EH_fast": {
+      "tag": "HE_body+EH_fast",
+      "LE_D": 0.0,
+      "T80_D": 30,
+      "best_gain_D": -0.008163272432584471
+    },
+    "HE_body+EH_P": {
+      "tag": "HE_body+EH_P",
+      "LE_D": 0.8888008493731357,
+      "T80_D": 16,
+      "best_gain_D": 0.0242860729715169
+    },
+    "HE_body+EH_Q": {
+      "tag": "HE_body+EH_Q",
+      "LE_D": 1.0,
+      "T80_D": 24,
+      "best_gain_D": 0.024960868773277356
+    },
+    "HE_body+EH_attn_slow": {
+      "tag": "HE_body+EH_attn_slow",
+      "LE_D": 0.9938009029982126,
+      "T80_D": 24,
+      "best_gain_D": 0.02353928302412289
+    },
+    "HE_body+EH_mlp_slow": {
+      "tag": "HE_body+EH_mlp_slow",
+      "LE_D": 0.8849307197833157,
+      "T80_D": 20,
+      "best_gain_D": 0.025714527390580975
+    },
+    "HE_body+EH_emb_slow": {
+      "tag": "HE_body+EH_emb_slow",
+      "LE_D": 0.9954776264203743,
+      "T80_D": 24,
+      "best_gain_D": 0.021915973161609096
+    }
+  }
+}

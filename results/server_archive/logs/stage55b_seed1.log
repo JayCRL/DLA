@@ -1,0 +1,104 @@
+number of parameters: 6.59M
+[seed 1] easy_hard / static ...
+number of parameters: 6.59M
+  LE_D=0.789 T80_D=44 phi_norms=[] (974s)
+[seed 1] easy_hard / meta ...
+/home/wust_1/llm-lab/venv/lib/python3.10/site-packages/torch/autograd/graph.py:841: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /pytorch/torch/csrc/autograd/engine.cpp:1291.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+number of parameters: 6.59M
+  LE_D=0.909 T80_D=44 phi_norms=[0.0031, 0.0024] (976s)
+[seed 1] hard_easy / static ...
+number of parameters: 6.59M
+  LE_D=1.000 T80_D=24 phi_norms=[] (968s)
+[seed 1] hard_easy / meta ...
+number of parameters: 6.59M
+  LE_D=0.909 T80_D=24 phi_norms=[0.003, 0.0034] (967s)
+
+===== Stage 5.5b summary =====
+{
+  "seeds": [
+    1
+  ],
+  "easy_hard_static": {
+    "LE_D": [
+      0.7891501053034519
+    ],
+    "LE_D_mean": 0.7891501053034519,
+    "LE_D_std": 0.0,
+    "T80_D": [
+      44
+    ],
+    "T80_D_mean": 44.0,
+    "T80_D_std": 0.0
+  },
+  "easy_hard_meta": {
+    "LE_D": [
+      0.9089601452070989
+    ],
+    "LE_D_mean": 0.9089601452070989,
+    "LE_D_std": 0.0,
+    "T80_D": [
+      44
+    ],
+    "T80_D_mean": 44.0,
+    "T80_D_std": 0.0
+  },
+  "easy_hard_DG": {
+    "per_seed": [
+      0.11981003990364703
+    ],
+    "mean": 0.11981003990364703
+  },
+  "easy_hard_DG_T": {
+    "per_seed": [
+      0
+    ],
+    "mean": 0.0
+  },
+  "hard_easy_static": {
+    "LE_D": [
+      1.0
+    ],
+    "LE_D_mean": 1.0,
+    "LE_D_std": 0.0,
+    "T80_D": [
+      24
+    ],
+    "T80_D_mean": 24.0,
+    "T80_D_std": 0.0
+  },
+  "hard_easy_meta": {
+    "LE_D": [
+      0.908523577284582
+    ],
+    "LE_D_mean": 0.908523577284582,
+    "LE_D_std": 0.0,
+    "T80_D": [
+      24
+    ],
+    "T80_D_mean": 24.0,
+    "T80_D_std": 0.0
+  },
+  "hard_easy_DG": {
+    "per_seed": [
+      -0.091476422715418
+    ],
+    "mean": -0.091476422715418
+  },
+  "hard_easy_DG_T": {
+    "per_seed": [
+      0
+    ],
+    "mean": 0.0
+  },
+  "interaction_LE": -0.21128646261906503,
+  "interaction_T": 0.0,
+  "phi_distance_histories": {
+    "per_seed": [
+      0.0009132718019013086
+    ],
+    "mean": 0.0009132718019013086
+  }
+}
+
+saved -> results/stage55b/part_1.json

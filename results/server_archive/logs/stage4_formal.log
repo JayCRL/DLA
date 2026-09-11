@@ -1,0 +1,327 @@
+
+===== AdamW lr sweep (2 sweep lifetimes) =====
+number of parameters: 6.59M
+number of parameters: 6.59M
+  lr 0.0001: score +0.0270  (+0.035, +0.019)
+number of parameters: 6.59M
+number of parameters: 6.59M
+  lr 0.0003: score -0.1474  (-0.191, -0.104)
+number of parameters: 6.59M
+number of parameters: 6.59M
+  lr 0.0006: score -0.2992  (-0.385, -0.214)
+number of parameters: 6.59M
+number of parameters: 6.59M
+  lr 0.001: score -0.5554  (-0.571, -0.540)
+  -> best baseline lr = 0.0001 (score +0.0270)
+
+===== DLA eta_fast sweep =====
+number of parameters: 6.59M
+number of parameters: 6.59M
+  eta 0.0006: score +0.1331  (+0.148, +0.119)
+number of parameters: 6.59M
+number of parameters: 6.59M
+  eta 0.0012: score +0.1133  (+0.127, +0.100)
+number of parameters: 6.59M
+number of parameters: 6.59M
+  eta 0.0024: score +0.0282  (+0.045, +0.012)
+  -> best DLA eta_fast = 0.0006 (score +0.1331)
+
+===== formal seed 0 / baseline lr=0.0001 =====
+number of parameters: 6.59M
+  baseline 472s  gainB=+0.127 forgetA=+0.084 relearn=+0.056
+===== formal seed 0 / DLA eta=0.0006 =====
+number of parameters: 6.59M
+  DLA 496s  gainB_full=+0.137 forgetA_slow=-0.006 relearnA_full=+0.056
+
+===== formal seed 1 / baseline lr=0.0001 =====
+number of parameters: 6.59M
+  baseline 473s  gainB=+0.121 forgetA=+0.114 relearn=+0.082
+===== formal seed 1 / DLA eta=0.0006 =====
+number of parameters: 6.59M
+  DLA 492s  gainB_full=+0.128 forgetA_slow=-0.005 relearnA_full=+0.071
+
+===== formal seed 2 / baseline lr=0.0001 =====
+number of parameters: 6.59M
+  baseline 476s  gainB=+0.140 forgetA=+0.127 relearn=+0.094
+===== formal seed 2 / DLA eta=0.0006 =====
+number of parameters: 6.59M
+  DLA 526s  gainB_full=+0.151 forgetA_slow=-0.002 relearnA_full=+0.083
+
+===== formal seed 3 / baseline lr=0.0001 =====
+number of parameters: 6.59M
+  baseline 476s  gainB=+0.163 forgetA=+0.105 relearn=+0.070
+===== formal seed 3 / DLA eta=0.0006 =====
+number of parameters: 6.59M
+  DLA 496s  gainB_full=+0.174 forgetA_slow=-0.002 relearnA_full=+0.077
+
+===== formal seed 4 / baseline lr=0.0001 =====
+number of parameters: 6.59M
+  baseline 479s  gainB=+0.097 forgetA=+0.073 relearn=+0.055
+===== formal seed 4 / DLA eta=0.0006 =====
+number of parameters: 6.59M
+  DLA 499s  gainB_full=+0.109 forgetA_slow=-0.006 relearnA_full=+0.057
+
+===== Stage 4 FORMAL summary =====
+{
+  "best_lr": 0.0001,
+  "best_eta": 0.0006,
+  "baseline": {
+    "per_seed": [
+      {
+        "A_pre": 31.214044546985946,
+        "B_pre": 28.733015564506474,
+        "A_postA": 31.807512109929775,
+        "B_postB": 25.076301381900535,
+        "A_afterB": 34.48411328608593,
+        "A_afterRel": 32.55426625198592,
+        "gain_B": 0.12726524211830487,
+        "forget_A": 0.08414996957025646,
+        "relearn_A": 0.05596336545149575
+      },
+      {
+        "A_pre": 38.946896107567724,
+        "B_pre": 33.9534793566224,
+        "A_postA": 39.835455278528634,
+        "B_postB": 29.828963705752003,
+        "A_afterB": 44.367442344770076,
+        "A_afterRel": 40.75127899328169,
+        "gain_B": 0.12147549320496782,
+        "forget_A": 0.11376767340937581,
+        "relearn_A": 0.08150488647481509
+      },
+      {
+        "A_pre": 36.242736485135005,
+        "B_pre": 28.368820174034326,
+        "A_postA": 37.43571190258327,
+        "B_postB": 24.40058721598281,
+        "A_afterB": 42.20778961825869,
+        "A_afterRel": 38.22984744016169,
+        "gain_B": 0.13988008432171586,
+        "forget_A": 0.1274739406076612,
+        "relearn_A": 0.09424663584790462
+      },
+      {
+        "A_pre": 36.16589639343917,
+        "B_pre": 35.59283626695588,
+        "A_postA": 37.55112041066879,
+        "B_postB": 29.806792088623826,
+        "A_afterB": 41.47622722806106,
+        "A_afterRel": 38.592533569681855,
+        "gain_B": 0.16256204296098123,
+        "forget_A": 0.10452702274835718,
+        "relearn_A": 0.0695264215455986
+      },
+      {
+        "A_pre": 35.01783626226647,
+        "B_pre": 36.32745176156737,
+        "A_postA": 35.71448460864209,
+        "B_postB": 32.80954363661857,
+        "A_afterB": 38.308693366257664,
+        "A_afterRel": 36.2172244471699,
+        "gain_B": 0.09683883549108632,
+        "forget_A": 0.07263744069227969,
+        "relearn_A": 0.054595151525839686
+      }
+    ],
+    "mean": {
+      "A_pre": {
+        "mean": 35.517481959078864,
+        "std": 2.805197684221712
+      },
+      "B_pre": {
+        "mean": 32.59512062473729,
+        "std": 3.7927300268709603
+      },
+      "A_postA": {
+        "mean": 36.46885686207051,
+        "std": 2.989034139598462
+      },
+      "B_postB": {
+        "mean": 28.38443760577555,
+        "std": 3.553383616940368
+      },
+      "A_afterB": {
+        "mean": 40.16885316868669,
+        "std": 3.8493863754320428
+      },
+      "A_afterRel": {
+        "mean": 37.26903014045621,
+        "std": 3.0877249725340943
+      },
+      "gain_B": {
+        "mean": 0.1296043396194112,
+        "std": 0.024170896345969695
+      },
+      "forget_A": {
+        "mean": 0.10051120940558607,
+        "std": 0.022155623551342343
+      },
+      "relearn_A": {
+        "mean": 0.07116729216913076,
+        "std": 0.016941145550192896
+      }
+    }
+  },
+  "dla": {
+    "per_seed": [
+      {
+        "A_pre": 31.214044546985946,
+        "B_pre": 28.733015564506474,
+        "A_postA": 31.397766285736864,
+        "B_postB": 24.80378519065343,
+        "A_afterB": 33.45695502231906,
+        "A_afterRel": 31.57114863701826,
+        "A_slow_postA": 31.214044546985946,
+        "B_slow_postB": 28.67716311313749,
+        "A_slow_afterB": 31.039122798050744,
+        "A_slow_afterRel": 31.10777351822654,
+        "gain_B_full": 0.13674966921003492,
+        "gain_B_slow": 0.0019438423107241993,
+        "forget_A_full": 0.06558392459649671,
+        "forget_A_slow": -0.005603943720650962,
+        "relearn_A_full": 0.05636515289699195,
+        "relearn_A_slow": -0.0022117480774974567
+      },
+      {
+        "A_pre": 38.946896107567724,
+        "B_pre": 33.9534793566224,
+        "A_postA": 39.2210687232859,
+        "B_postB": 29.605603552245675,
+        "A_afterB": 41.989828629396634,
+        "A_afterRel": 39.02952622364366,
+        "A_slow_postA": 38.946896107567724,
+        "B_slow_postB": 34.031332417896834,
+        "A_slow_afterB": 38.73494235707168,
+        "A_slow_afterRel": 38.77713754343655,
+        "gain_B_full": 0.12805391043167724,
+        "gain_B_slow": -0.002292933235404848,
+        "forget_A_full": 0.07059368844956775,
+        "forget_A_slow": -0.005442121752415051,
+        "relearn_A_full": 0.0705004640976434,
+        "relearn_A_slow": -0.001089331332312364
+      },
+      {
+        "A_pre": 36.242736485135005,
+        "B_pre": 28.368820174034326,
+        "A_postA": 36.84097202859215,
+        "B_postB": 24.07564055335049,
+        "A_afterB": 40.14300959472597,
+        "A_afterRel": 36.81401852246201,
+        "A_slow_postA": 36.242736485135005,
+        "B_slow_postB": 28.31242515739461,
+        "A_slow_afterB": 36.15560244848023,
+        "A_slow_afterRel": 36.244635381824914,
+        "gain_B_full": 0.15133444374304075,
+        "gain_B_slow": 0.0019879225252847606,
+        "forget_A_full": 0.08962949087149817,
+        "forget_A_slow": -0.002404179295084748,
+        "relearn_A_full": 0.08292828828412822,
+        "relearn_A_slow": -0.0024624934260617
+      },
+      {
+        "A_pre": 36.16589639343917,
+        "B_pre": 35.59283626695588,
+        "A_postA": 36.78122635857146,
+        "B_postB": 29.381966662675392,
+        "A_afterB": 39.71644200741868,
+        "A_afterRel": 36.67024727906281,
+        "A_slow_postA": 36.16589639343917,
+        "B_slow_postB": 35.48613664598338,
+        "A_slow_afterB": 36.103234103231024,
+        "A_slow_afterRel": 36.22292390264717,
+        "gain_B_full": 0.1744977432452218,
+        "gain_B_slow": 0.002997783603762935,
+        "forget_A_full": 0.07980200606234543,
+        "forget_A_slow": -0.0017326347873825294,
+        "relearn_A_full": 0.07669858059759908,
+        "relearn_A_slow": -0.0033152099081736196
+      },
+      {
+        "A_pre": 35.01783626226647,
+        "B_pre": 36.32745176156737,
+        "A_postA": 35.17561127963044,
+        "B_postB": 32.350866977264374,
+        "A_afterB": 37.20340101547156,
+        "A_afterRel": 35.07012060201749,
+        "A_slow_postA": 35.01783626226647,
+        "B_slow_postB": 36.23635787127315,
+        "A_slow_afterB": 34.815635794363345,
+        "A_slow_afterRel": 34.7430307253393,
+        "gain_B_full": 0.10946500763122674,
+        "gain_B_slow": 0.00250757721439164,
+        "forget_A_full": 0.05764760474867374,
+        "forget_A_slow": -0.005774213643262904,
+        "relearn_A_full": 0.057341005263656375,
+        "relearn_A_slow": 0.0020854155716954477
+      }
+    ],
+    "mean": {
+      "A_pre": {
+        "mean": 35.517481959078864,
+        "std": 2.805197684221712
+      },
+      "B_pre": {
+        "mean": 32.59512062473729,
+        "std": 3.7927300268709603
+      },
+      "A_postA": {
+        "mean": 35.88332893516336,
+        "std": 2.893308812262102
+      },
+      "B_postB": {
+        "mean": 28.043572587237872,
+        "std": 3.500883152855159
+      },
+      "A_afterB": {
+        "mean": 38.501927253866384,
+        "std": 3.296648622100427
+      },
+      "A_afterRel": {
+        "mean": 35.83101225284084,
+        "std": 2.7670608281385327
+      },
+      "A_slow_postA": {
+        "mean": 35.517481959078864,
+        "std": 2.805197684221712
+      },
+      "B_slow_postB": {
+        "mean": 32.548683041137096,
+        "std": 3.7868316545074285
+      },
+      "A_slow_afterB": {
+        "mean": 35.36970750023941,
+        "std": 2.808089079191073
+      },
+      "A_slow_afterRel": {
+        "mean": 35.4191002142949,
+        "std": 2.8128572383264605
+      },
+      "gain_B_full": {
+        "mean": 0.14002015485224031,
+        "std": 0.024516429889294054
+      },
+      "gain_B_slow": {
+        "mean": 0.0014288384837517372,
+        "std": 0.0021245384601953246
+      },
+      "forget_A_full": {
+        "mean": 0.07265134294571637,
+        "std": 0.012436679561191679
+      },
+      "forget_A_slow": {
+        "mean": -0.004191418639759239,
+        "std": 0.0019560526520988786
+      },
+      "relearn_A_full": {
+        "mean": 0.06876669822800381,
+        "std": 0.011734736056322548
+      },
+      "relearn_A_slow": {
+        "mean": -0.0013986734344699383,
+        "std": 0.0021035971657930932
+      }
+    }
+  }
+}
+
+saved -> results/stage4_formal/formal.json + plots

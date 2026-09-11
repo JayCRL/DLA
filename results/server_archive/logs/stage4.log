@@ -1,0 +1,91 @@
+loading vocab + domain texts ...
+wiki train 249752 / val 39990 tokens
+sft  train 249901 / val 39985 tokens
+
+===== baseline: AdamW fine-tune =====
+number of parameters: 6.59M
+  baseline wiki step 5/30: ppl 37.922
+  baseline wiki step 10/30: ppl 34.894
+  baseline wiki step 15/30: ppl 36.915
+  baseline wiki step 20/30: ppl 38.678
+  baseline wiki step 25/30: ppl 39.397
+  baseline wiki step 30/30: ppl 40.455
+  baseline after wiki: wiki=39.114  sft=42.879
+  baseline sft step 5/30: ppl 37.108
+  baseline sft step 10/30: ppl 40.440
+  baseline sft step 15/30: ppl 35.614
+  baseline sft step 20/30: ppl 34.148
+  baseline sft step 25/30: ppl 35.010
+  baseline sft step 30/30: ppl 32.304
+  baseline after sft: wiki=41.919  sft=37.575
+  baseline wiki_relearn step 5/30: ppl 39.970
+  baseline wiki_relearn step 10/30: ppl 35.146
+  baseline wiki_relearn step 15/30: ppl 36.044
+  baseline wiki_relearn step 20/30: ppl 46.648
+  baseline wiki_relearn step 25/30: ppl 46.035
+  baseline wiki_relearn step 30/30: ppl 38.233
+  baseline after wiki_relearn: wiki=37.504  sft=39.859
+baseline done in 61.0s
+
+===== DLA-Transformer =====
+number of parameters: 6.59M
+  DLA wiki step 5/30: ppl_full 30.822 ppl_slow 29.289 (progress +0.008)
+  DLA wiki step 10/30: ppl_full 32.183 ppl_slow 34.237 (progress +0.001)
+  DLA wiki step 15/30: ppl_full 33.275 ppl_slow 32.908 (progress -0.002)
+  DLA wiki step 20/30: ppl_full 36.495 ppl_slow 30.373 (progress -0.001)
+  DLA wiki step 25/30: ppl_full 32.210 ppl_slow 32.216 (progress +0.008)
+  DLA wiki step 30/30: ppl_full 31.006 ppl_slow 36.363 (progress -0.002)
+  DLA after wiki full: wiki=30.900  sft=33.343
+  DLA after wiki slow: wiki=33.614  sft=34.539
+  DLA sft step 5/30: ppl_full 32.851 ppl_slow 29.513 (progress +0.001)
+  DLA sft step 10/30: ppl_full 29.107 ppl_slow 33.305 (progress +0.001)
+  DLA sft step 15/30: ppl_full 29.991 ppl_slow 30.004 (progress +0.004)
+  DLA sft step 20/30: ppl_full 28.437 ppl_slow 34.175 (progress +0.000)
+  DLA sft step 25/30: ppl_full 30.598 ppl_slow 34.448 (progress -0.005)
+  DLA sft step 30/30: ppl_full 33.900 ppl_slow 34.047 (progress +0.002)
+  DLA after sft full: wiki=32.529  sft=30.212
+  DLA after sft slow: wiki=31.508  sft=30.070
+  DLA wiki_relearn step 5/30: ppl_full 30.742 ppl_slow 31.649 (progress -0.011)
+  DLA wiki_relearn step 10/30: ppl_full 34.596 ppl_slow 31.858 (progress -0.002)
+  DLA wiki_relearn step 15/30: ppl_full 31.600 ppl_slow 30.521 (progress +0.005)
+  DLA wiki_relearn step 20/30: ppl_full 31.539 ppl_slow 27.399 (progress +0.004)
+  DLA wiki_relearn step 25/30: ppl_full 30.751 ppl_slow 32.024 (progress -0.002)
+  DLA wiki_relearn step 30/30: ppl_full 33.717 ppl_slow 34.137 (progress -0.005)
+  DLA after wiki_relearn full: wiki=34.017  sft=32.087
+  DLA after wiki_relearn slow: wiki=31.329  sft=33.866
+DLA done in 119.2s
+
+===== Stage 4 pilot summary =====
+{
+  "baseline": {
+    "A_pre": 29.192546134637713,
+    "B_pre": 30.692379817928575,
+    "A_postA": 39.11411045310298,
+    "B_postB": 37.5753816095349,
+    "A_afterB": 41.91907190260113,
+    "A_afterRel": 37.504056262868254,
+    "gain_B": -0.22425767674052127,
+    "forget_A": 0.07171226488357041,
+    "relearn_A": 0.10532236138221661
+  },
+  "dla": {
+    "A_pre": 26.489293446520584,
+    "B_pre": 28.16463671922084,
+    "A_postA": 30.899892794839026,
+    "B_postB": 30.21171455706722,
+    "A_afterB": 32.52942004727501,
+    "A_afterRel": 34.016615993214955,
+    "A_slow_postA": 33.61415624948001,
+    "B_slow_postB": 30.0703112047652,
+    "A_slow_afterB": 31.508110315884093,
+    "A_slow_afterRel": 31.329043883763095,
+    "gain_B_full": -0.07268255785629789,
+    "gain_B_slow": -0.06766195866619647,
+    "forget_A_full": 0.052735692749981064,
+    "forget_A_slow": -0.06265354150094123,
+    "relearn_A_full": -0.04571848940985123,
+    "relearn_A_slow": 0.0056831853870565234
+  }
+}
+
+saved -> results/stage4/pilot30/pilot.json

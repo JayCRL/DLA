@@ -1,0 +1,115 @@
+loading vocab + domain texts ...
+wiki train 249752 / val 39990 tokens
+sft  train 249901 / val 39985 tokens
+
+===== baseline: AdamW fine-tune =====
+number of parameters: 6.59M
+  baseline wiki step 10/100: ppl 33.228
+  baseline wiki step 20/100: ppl 34.420
+  baseline wiki step 30/100: ppl 35.338
+  baseline wiki step 40/100: ppl 35.686
+  baseline wiki step 50/100: ppl 36.325
+  baseline wiki step 60/100: ppl 36.515
+  baseline wiki step 70/100: ppl 37.316
+  baseline wiki step 80/100: ppl 37.591
+  baseline wiki step 90/100: ppl 37.677
+  baseline wiki step 100/100: ppl 38.228
+  baseline after wiki: wiki=38.228  sft=38.604
+  baseline sft step 10/100: ppl 32.722
+  baseline sft step 20/100: ppl 30.923
+  baseline sft step 30/100: ppl 30.530
+  baseline sft step 40/100: ppl 30.178
+  baseline sft step 50/100: ppl 30.230
+  baseline sft step 60/100: ppl 30.504
+  baseline sft step 70/100: ppl 30.504
+  baseline sft step 80/100: ppl 30.319
+  baseline sft step 90/100: ppl 30.867
+  baseline sft step 100/100: ppl 30.791
+  baseline after sft: wiki=42.926  sft=30.791
+  baseline wiki_relearn step 10/100: ppl 39.210
+  baseline wiki_relearn step 20/100: ppl 38.650
+  baseline wiki_relearn step 30/100: ppl 39.215
+  baseline wiki_relearn step 40/100: ppl 39.694
+  baseline wiki_relearn step 50/100: ppl 40.429
+  baseline wiki_relearn step 60/100: ppl 41.048
+  baseline wiki_relearn step 70/100: ppl 41.081
+  baseline wiki_relearn step 80/100: ppl 41.566
+  baseline wiki_relearn step 90/100: ppl 41.861
+  baseline wiki_relearn step 100/100: ppl 42.232
+  baseline after wiki_relearn: wiki=42.232  sft=38.133
+baseline done in 486.1s
+
+===== DLA-Transformer =====
+number of parameters: 6.59M
+  DLA wiki step 10/100: ppl_full 30.464 ppl_slow 29.075 (progress -0.000)
+  DLA wiki step 20/100: ppl_full 30.448 ppl_slow 29.075 (progress -0.002)
+  DLA wiki step 30/100: ppl_full 30.344 ppl_slow 29.075 (progress -0.001)
+  DLA wiki step 40/100: ppl_full 30.317 ppl_slow 29.075 (progress +0.004)
+  DLA wiki step 50/100: ppl_full 30.380 ppl_slow 29.075 (progress -0.009)
+  DLA wiki step 60/100: ppl_full 30.511 ppl_slow 29.075 (progress +0.003)
+  DLA wiki step 70/100: ppl_full 30.235 ppl_slow 29.075 (progress -0.004)
+  DLA wiki step 80/100: ppl_full 30.270 ppl_slow 29.075 (progress +0.008)
+  DLA wiki step 90/100: ppl_full 30.350 ppl_slow 29.075 (progress +0.001)
+  DLA wiki step 100/100: ppl_full 30.359 ppl_slow 29.075 (progress -0.003)
+  DLA after wiki full: wiki=30.359  sft=29.183
+  DLA after wiki slow: wiki=29.075  sft=27.469
+  DLA sft step 10/100: ppl_full 24.744 ppl_slow 27.469 (progress +0.001)
+  DLA sft step 20/100: ppl_full 24.230 ppl_slow 27.469 (progress -0.006)
+  DLA sft step 30/100: ppl_full 24.030 ppl_slow 27.469 (progress +0.004)
+  DLA sft step 40/100: ppl_full 23.892 ppl_slow 27.469 (progress -0.000)
+  DLA sft step 50/100: ppl_full 23.743 ppl_slow 27.469 (progress -0.006)
+  DLA sft step 60/100: ppl_full 23.870 ppl_slow 27.469 (progress -0.006)
+  DLA sft step 70/100: ppl_full 23.922 ppl_slow 27.469 (progress +0.004)
+  DLA sft step 80/100: ppl_full 23.924 ppl_slow 27.469 (progress -0.006)
+  DLA sft step 90/100: ppl_full 23.812 ppl_slow 27.469 (progress -0.005)
+  DLA sft step 100/100: ppl_full 23.756 ppl_slow 27.469 (progress +0.001)
+  DLA after sft full: wiki=32.746  sft=23.756
+  DLA after sft slow: wiki=29.075  sft=27.469
+  DLA wiki_relearn step 10/100: ppl_full 30.608 ppl_slow 29.075 (progress -0.005)
+  DLA wiki_relearn step 20/100: ppl_full 30.541 ppl_slow 29.075 (progress +0.005)
+  DLA wiki_relearn step 30/100: ppl_full 30.527 ppl_slow 29.075 (progress +0.006)
+  DLA wiki_relearn step 40/100: ppl_full 30.321 ppl_slow 29.075 (progress +0.007)
+  DLA wiki_relearn step 50/100: ppl_full 30.356 ppl_slow 29.075 (progress -0.005)
+  DLA wiki_relearn step 60/100: ppl_full 30.525 ppl_slow 29.075 (progress +0.001)
+  DLA wiki_relearn step 70/100: ppl_full 30.486 ppl_slow 29.075 (progress -0.006)
+  DLA wiki_relearn step 80/100: ppl_full 30.510 ppl_slow 29.075 (progress +0.009)
+  DLA wiki_relearn step 90/100: ppl_full 30.358 ppl_slow 29.075 (progress -0.000)
+  DLA wiki_relearn step 100/100: ppl_full 30.281 ppl_slow 29.075 (progress -0.001)
+  DLA after wiki_relearn full: wiki=30.281  sft=28.980
+  DLA after wiki_relearn slow: wiki=29.075  sft=27.469
+DLA done in 532.2s
+
+===== Stage 4 pilot summary =====
+{
+  "baseline": {
+    "A_pre": 29.074892293470842,
+    "B_pre": 27.46888763030603,
+    "A_postA": 38.22772984880617,
+    "B_postB": 30.790846177716944,
+    "A_afterB": 42.92590071901192,
+    "A_afterRel": 42.23233147861432,
+    "gain_B": -0.12093531387655633,
+    "forget_A": 0.12289955194272337,
+    "relearn_A": 0.016157360213303995
+  },
+  "dla": {
+    "A_pre": 29.074892293470842,
+    "B_pre": 27.46888763030603,
+    "A_postA": 30.358808088726832,
+    "B_postB": 23.755885451808634,
+    "A_afterB": 32.745696792784265,
+    "A_afterRel": 30.28146870700224,
+    "A_slow_postA": 29.074892293470842,
+    "B_slow_postB": 27.468895270915784,
+    "A_slow_afterB": 29.07488998280611,
+    "A_slow_afterRel": 29.074891138138454,
+    "gain_B_full": 0.13517118816274498,
+    "gain_B_slow": -2.78155047935943e-07,
+    "forget_A_full": 0.07862260919735381,
+    "forget_A_slow": -7.947285616766308e-08,
+    "relearn_A_full": 0.07525349365370763,
+    "relearn_A_slow": -3.973643050864831e-08
+  }
+}
+
+saved -> results/stage4/pilot100/pilot.json

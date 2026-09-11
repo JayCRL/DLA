@@ -1,0 +1,13 @@
+[seed 0] using existing body easy_hard
+[seed 0] using existing body hard_easy
+number of parameters: 6.59M
+[seed 0] EH/EH: pre=42.41 LE_D=0.000 T80=40
+number of parameters: 6.59M
+[seed 0] HE/HE: pre=44.35 LE_D=0.794 T80=18
+number of parameters: 6.59M
+number of parameters: 6.59M
+[seed 0] EH_body+HE_fast: pre=43.57 LE_D=0.812 T80=16
+number of parameters: 6.59M
+number of parameters: 6.59M
+[seed 0] HE_body+EH_fast: pre=42.41 LE_D=0.000 T80=40
+saved -> results/stage55e/p0.json

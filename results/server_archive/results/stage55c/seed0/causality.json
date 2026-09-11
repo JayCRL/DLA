@@ -1,0 +1,324 @@
+{
+  "meta_trace": {
+    "seed0_easy_hard": {
+      "body": "results/stage55c/seed0/bodies/seed0_easy_hard_meta.pt",
+      "trace": {
+        "phi": [
+          {
+            "stage": 1,
+            "before": {
+              "eta_fast": 0.0005998199922032654,
+              "eta_plast": 0.019802626222372055,
+              "fast_decay": 0.020000001415610313,
+              "stability_pressure": 0.00995033048093319,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "after": {
+              "eta_fast": 0.0005432922625914216,
+              "eta_plast": 0.021861696615815163,
+              "fast_decay": 0.022056931629776955,
+              "stability_pressure": 0.01094041671603918,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "norm": 0.003074768109673802
+          },
+          {
+            "stage": 2,
+            "before": {
+              "eta_fast": 0.0005432922625914216,
+              "eta_plast": 0.021861696615815163,
+              "fast_decay": 0.022056931629776955,
+              "stability_pressure": 0.01094041671603918,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "after": {
+              "eta_fast": 0.0005835268530063331,
+              "eta_plast": 0.022541478276252747,
+              "fast_decay": 0.024300461634993553,
+              "stability_pressure": 0.011825229041278362,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "norm": 0.002506001129954951
+          }
+        ],
+        "state": [
+          {
+            "stage": 0,
+            "phi": {
+              "eta_fast": 0.0005998199922032654,
+              "eta_plast": 0.019802626222372055,
+              "fast_decay": 0.020000001415610313,
+              "stability_pressure": 0.00995033048093319,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "state": {
+              "P_gate_mean": 0.5005518129238715,
+              "W_fast_norm": 5.96256554789922,
+              "Q_norm": 0.0032037685045512056,
+              "W_slow_norm": 120.06688698653868
+            }
+          },
+          {
+            "stage": 1,
+            "phi": {
+              "eta_fast": 0.0005432922625914216,
+              "eta_plast": 0.021861696615815163,
+              "fast_decay": 0.022056931629776955,
+              "stability_pressure": 0.01094041671603918,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "state": {
+              "P_gate_mean": 0.5001394817462335,
+              "W_fast_norm": 5.886964648342774,
+              "Q_norm": 0.0005104118193713052,
+              "W_slow_norm": 120.1077228280832
+            }
+          },
+          {
+            "stage": 2,
+            "phi": {
+              "eta_fast": 0.0005835268530063331,
+              "eta_plast": 0.022541478276252747,
+              "fast_decay": 0.024300461634993553,
+              "stability_pressure": 0.011825229041278362,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "state": {
+              "P_gate_mean": 0.49999087819686305,
+              "W_fast_norm": 6.222372576253909,
+              "Q_norm": 0.0022740558804251725,
+              "W_slow_norm": 120.15256605079891
+            }
+          }
+        ]
+      }
+    },
+    "seed0_hard_easy": {
+      "body": "results/stage55c/seed0/bodies/seed0_hard_easy_meta.pt",
+      "trace": {
+        "phi": [
+          {
+            "stage": 1,
+            "before": {
+              "eta_fast": 0.0005998199922032654,
+              "eta_plast": 0.019802626222372055,
+              "fast_decay": 0.020000001415610313,
+              "stability_pressure": 0.00995033048093319,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "after": {
+              "eta_fast": 0.0006628567352890968,
+              "eta_plast": 0.02185923233628273,
+              "fast_decay": 0.02205694653093815,
+              "stability_pressure": 0.010855615139007568,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "norm": 0.0030469929206300306
+          },
+          {
+            "stage": 2,
+            "before": {
+              "eta_fast": 0.0006628567352890968,
+              "eta_plast": 0.02185923233628273,
+              "fast_decay": 0.02205694653093815,
+              "stability_pressure": 0.010855615139007568,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "after": {
+              "eta_fast": 0.0007318879361264408,
+              "eta_plast": 0.022342801094055176,
+              "fast_decay": 0.02430642582476139,
+              "stability_pressure": 0.011856167577207088,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "norm": 0.002509953450785323
+          }
+        ],
+        "state": [
+          {
+            "stage": 0,
+            "phi": {
+              "eta_fast": 0.0005998199922032654,
+              "eta_plast": 0.019802626222372055,
+              "fast_decay": 0.020000001415610313,
+              "stability_pressure": 0.00995033048093319,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "state": {
+              "P_gate_mean": 0.5002130384628589,
+              "W_fast_norm": 6.312484318170893,
+              "Q_norm": 0.0026242448740973487,
+              "W_slow_norm": 120.06688698653868
+            }
+          },
+          {
+            "stage": 1,
+            "phi": {
+              "eta_fast": 0.0006628567352890968,
+              "eta_plast": 0.02185923233628273,
+              "fast_decay": 0.02205694653093815,
+              "stability_pressure": 0.010855615139007568,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "state": {
+              "P_gate_mean": 0.5003044788654034,
+              "W_fast_norm": 7.069633486879093,
+              "Q_norm": 0.002854404234513311,
+              "W_slow_norm": 120.14691996507635
+            }
+          },
+          {
+            "stage": 2,
+            "phi": {
+              "eta_fast": 0.0007318879361264408,
+              "eta_plast": 0.022342801094055176,
+              "fast_decay": 0.02430642582476139,
+              "stability_pressure": 0.011856167577207088,
+              "alpha_q": 0.2623642683029175,
+              "consolidate_beta": 0.9998999834060669,
+              "consolidate_fast_direct": 0.15000000596046448,
+              "consolidate_fast_decay": 0.5,
+              "consolidate_q_decay": 0.699999988079071
+            },
+            "state": {
+              "P_gate_mean": 0.5004689372502841,
+              "W_fast_norm": 7.400512150580024,
+              "Q_norm": 0.002876958380910903,
+              "W_slow_norm": 120.21085587127057
+            }
+          }
+        ]
+      }
+    }
+  },
+  "cross": {
+    "seed0": {
+      "Body_EA/phi_EA": {
+        "tag": "Body_EA/phi_EA",
+        "LE_D": 1.0,
+        "T80_D": 40,
+        "best_gain_D": 0.0012455567716914994,
+        "raw_lambda_D": 0.0
+      },
+      "Body_EA/phi_HA": {
+        "tag": "Body_EA/phi_HA",
+        "LE_D": 0.0,
+        "T80_D": 40,
+        "best_gain_D": -0.004632321126730507,
+        "raw_lambda_D": 0.0
+      },
+      "Body_HA/phi_EA": {
+        "tag": "Body_HA/phi_EA",
+        "LE_D": 0.8741320883140461,
+        "T80_D": 28,
+        "best_gain_D": 0.0469591306110808,
+        "raw_lambda_D": 0.03571428571428571
+      },
+      "Body_HA/phi_HA": {
+        "tag": "Body_HA/phi_HA",
+        "LE_D": 0.9917042023347679,
+        "T80_D": 24,
+        "best_gain_D": 0.037388550869272646,
+        "raw_lambda_D": 0.0
+      }
+    }
+  },
+  "sensitivity": {
+    "seed0": {
+      "-1.0": {
+        "tag": "alpha=-1.0",
+        "LE_D": 1.0,
+        "T80_D": 32,
+        "best_gain_D": 0.004940662140750944,
+        "raw_lambda_D": 0.0
+      },
+      "-0.5": {
+        "tag": "alpha=-0.5",
+        "LE_D": 1.0,
+        "T80_D": 28,
+        "best_gain_D": 0.005614256755695446,
+        "raw_lambda_D": 0.0
+      },
+      "0.0": {
+        "tag": "alpha=0.0",
+        "LE_D": 0.5216728355201244,
+        "T80_D": 32,
+        "best_gain_D": 0.0023982331429117034,
+        "raw_lambda_D": 0.0
+      },
+      "0.5": {
+        "tag": "alpha=0.5",
+        "LE_D": 0.0,
+        "T80_D": 40,
+        "best_gain_D": -1322562.0338246315,
+        "raw_lambda_D": 0.0
+      },
+      "1.0": {
+        "tag": "alpha=1.0",
+        "LE_D": 0.0,
+        "T80_D": 40,
+        "best_gain_D": -3862419376986.1543,
+        "raw_lambda_D": 0.0
+      },
+      "1.5": {
+        "tag": "alpha=1.5",
+        "LE_D": 0.0,
+        "T80_D": 40,
+        "best_gain_D": -61410955532471.945,
+        "raw_lambda_D": 0.0
+      }
+    }
+  }
+}
