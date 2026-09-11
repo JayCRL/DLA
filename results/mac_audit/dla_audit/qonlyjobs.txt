@@ -1,0 +1,8 @@
+0|EH|qonly
+0|HE|qonly
+1|EH|qonly
+1|HE|qonly
+2|EH|qonly
+2|HE|qonly
+3|EH|qonly
+3|HE|qonly

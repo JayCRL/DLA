@@ -1,0 +1,42 @@
+{
+ "seed": 4,
+ "order": "HE",
+ "variant": "uniformwrite",
+ "pre": 43.026869243032515,
+ "birth_ppl": {
+  "wiki": 35.01778825610848,
+  "sft": 35.5553606477596,
+  "science": 34.1595426303594
+ },
+ "ret_ppl": {
+  "wiki": 34.90358880192962,
+  "sft": 35.70010354668155,
+  "science": 33.695155426703835
+ },
+ "post_ppl": 43.455115387962515,
+ "gain40": -0.009952993384461675,
+ "LE_D": 0.0,
+ "T80_D": 40,
+ "Q_norm": 0.003335169855418634,
+ "Wfast_norm": 3.960883546965881,
+ "Wslow_norm": 120.08794291956504,
+ "cons_write_Q_total": 0.0,
+ "cons_write_direct_total": 3.182388574767388,
+ "cons_per_sleep": [
+  {
+   "stage": 0,
+   "Q_write": 0.0,
+   "direct_write": 0.9093986932110107
+  },
+  {
+   "stage": 1,
+   "Q_write": 0.0,
+   "direct_write": 1.0847247243845253
+  },
+  {
+   "stage": 2,
+   "Q_write": 0.0,
+   "direct_write": 1.1882651571718519
+  }
+ ]
+}

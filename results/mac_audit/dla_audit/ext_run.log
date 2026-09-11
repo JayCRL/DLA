@@ -1,0 +1,433 @@
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4 EH direct: pre=44.42 gain40=+0.0236 LE=0.993
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4 EH shufwrite: pre=43.97 gain40=+0.0106 LE=0.908
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4 EH nocons: pre=43.85 gain40=+0.0040 LE=0.658
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4 HE direct: pre=43.10 gain40=-0.0051 LE=0.000
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5 EH direct: pre=37.15 gain40=+0.0085 LE=0.886
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4 HE nocons: pre=43.08 gain40=-0.0059 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 4 HE shufwrite: pre=43.07 gain40=-0.0101 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5 EH nocons: pre=36.91 gain40=-0.0013 LE=0.000
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5 HE nocons: pre=36.41 gain40=-0.0086 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5 HE direct: pre=36.47 gain40=-0.0082 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5 EH shufwrite: pre=36.93 gain40=+0.0025 LE=0.538
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 5 HE shufwrite: pre=36.49 gain40=-0.0097 LE=0.000
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6 EH shufwrite: pre=38.54 gain40=-0.0672 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6 EH nocons: pre=38.56 gain40=-0.0696 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6 HE direct: pre=40.56 gain40=-0.0014 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6 EH direct: pre=37.33 gain40=-0.0656 LE=0.000
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7 EH direct: pre=38.63 gain40=+0.0052 LE=1.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7 EH nocons: pre=38.55 gain40=-0.0019 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6 HE nocons: pre=41.76 gain40=-0.0041 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 6 HE shufwrite: pre=41.75 gain40=-0.0073 LE=0.000
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7 EH shufwrite: pre=38.59 gain40=+0.0031 LE=1.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7 HE nocons: pre=38.44 gain40=-0.0072 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7 HE direct: pre=38.80 gain40=+0.0125 LE=1.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 7 HE shufwrite: pre=38.45 gain40=+0.0059 LE=1.000
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8 HE direct: pre=39.47 gain40=+0.0127 LE=0.840
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8 EH nocons: pre=38.86 gain40=-0.0061 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8 EH shufwrite: pre=38.91 gain40=-0.0065 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8 EH direct: pre=38.96 gain40=-0.0039 LE=0.000
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 EH nocons: pre=41.99 gain40=+0.0138 LE=0.977
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8 HE shufwrite: pre=39.08 gain40=-0.0036 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 EH direct: pre=42.09 gain40=+0.0171 LE=0.973
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 8 HE nocons: pre=39.04 gain40=-0.0023 LE=0.000
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 HE shufwrite: pre=42.18 gain40=+0.0193 LE=0.952
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 HE direct: pre=43.21 gain40=+0.0406 LE=1.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 EH shufwrite: pre=41.97 gain40=+0.0108 LE=1.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 9 HE nocons: pre=42.41 gain40=+0.0206 LE=0.964
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10 EH direct: pre=42.51 gain40=+0.0080 LE=0.929
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10 EH shufwrite: pre=42.46 gain40=+0.0057 LE=0.727
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10 EH nocons: pre=42.48 gain40=+0.0048 LE=0.926
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10 HE direct: pre=43.24 gain40=+0.0203 LE=0.953
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10 HE nocons: pre=42.80 gain40=+0.0072 LE=1.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 10 HE shufwrite: pre=43.01 gain40=+0.0116 LE=0.875
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11 EH direct: pre=41.57 gain40=+0.0046 LE=0.355
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11 EH nocons: pre=41.64 gain40=-0.0039 LE=0.000
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:120: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * s_["w_fast"]).pow(2).sum())
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/.venv/lib/python3.13/site-packages/torch/autograd/graph.py:865: UserWarning: Using backward() with create_graph=True will create a reference cycle between the parameter and its gradient which can cause a memory leak. We recommend using autograd.grad when creating the graph to avoid this. If you have to use this function, make sure to reset the .grad fields of your parameters to None after use to break the cycle and avoid the leak. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/engine.cpp:1306.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+$HOME/Desktop/dla-v0.2/analysis/wfast_geom/audit_b3.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+  sn = math.sqrt(sum(float(mp.pow(2).sum()) for mp in model.parameters() if mp.ndim >= 2))
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11 EH shufwrite: pre=41.47 gain40=-0.0040 LE=0.000
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11 HE direct: pre=42.08 gain40=+0.0142 LE=0.647
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11 HE nocons: pre=41.72 gain40=+0.0022 LE=0.211
+number of parameters: 6.59M
+number of parameters: 6.59M
+number of parameters: 6.59M
+seed 11 HE shufwrite: pre=41.72 gain40=+0.0074 LE=0.609
+EXT_DONE

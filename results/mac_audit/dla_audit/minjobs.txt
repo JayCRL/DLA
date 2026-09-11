@@ -1,0 +1,16 @@
+0|EH|nocons
+0|EH|direct
+0|HE|nocons
+0|HE|direct
+1|EH|nocons
+1|EH|direct
+1|HE|nocons
+1|HE|direct
+2|EH|nocons
+2|EH|direct
+2|HE|nocons
+2|HE|direct
+3|EH|nocons
+3|EH|direct
+3|HE|nocons
+3|HE|direct

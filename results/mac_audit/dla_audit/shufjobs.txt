@@ -1,0 +1,7 @@
+0|HE|shufwrite
+1|EH|shufwrite
+1|HE|shufwrite
+2|EH|shufwrite
+2|HE|shufwrite
+3|EH|shufwrite
+3|HE|shufwrite

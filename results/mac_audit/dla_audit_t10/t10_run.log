@@ -1,0 +1,277 @@
+number of parameters: 6.59M
+seed 2 direct task1 wiki_general: gain=-0.2390
+number of parameters: 6.59M
+seed 1 nosleep task1 wiki_general: gain=+0.2046
+number of parameters: 6.59M
+seed 1 direct task1 wiki_general: gain=+0.2074
+number of parameters: 6.59M
+seed 1 nocons task1 wiki_general: gain=+0.2063
+seed 2 direct task2 synthetic_qa: gain=+0.0494
+seed 1 nosleep task2 synthetic_qa: gain=-0.2433
+seed 1 direct task2 synthetic_qa: gain=-0.2556
+seed 1 nocons task2 synthetic_qa: gain=-0.2592
+seed 2 direct task3 physics: gain=-0.0247
+seed 1 nosleep task3 physics: gain=-0.0282
+seed 1 direct task3 physics: gain=-0.0315
+seed 1 nocons task3 physics: gain=-0.0423
+seed 2 direct task4 math: gain=+0.0012
+seed 1 direct task4 math: gain=-0.1046
+seed 1 nosleep task4 math: gain=-0.0908
+seed 1 nocons task4 math: gain=-0.1108
+seed 2 direct task5 computer: gain=-0.0507
+seed 1 direct task5 computer: gain=-0.0343
+seed 1 nosleep task5 computer: gain=-0.0289
+seed 1 nocons task5 computer: gain=-0.0448
+seed 1 direct task6 biology: gain=+0.1367
+seed 1 nosleep task6 biology: gain=+0.1322
+seed 2 direct task6 biology: gain=-0.0902
+seed 1 nocons task6 biology: gain=+0.1307
+seed 1 direct task7 economics: gain=-0.1040
+seed 1 nosleep task7 economics: gain=-0.1120
+seed 2 direct task7 economics: gain=+0.1290
+seed 1 nocons task7 economics: gain=-0.1136
+seed 1 nosleep task8 law: gain=-0.1861
+seed 1 direct task8 law: gain=-0.1913
+seed 2 direct task8 law: gain=-0.0572
+seed 1 nocons task8 law: gain=-0.1997
+seed 1 nosleep task9 history: gain=-0.1793
+seed 2 direct task9 history: gain=+0.0544
+seed 1 direct task9 history: gain=-0.1803
+seed 1 nocons task9 history: gain=-0.1884
+seed 1 nosleep task10 literature: gain=+0.0544
+seed 2 direct task10 literature: gain=-0.1926
+seed 1 direct task10 literature: gain=+0.0445
+seed 1 nocons task10 literature: gain=+0.0452
+saved t10_seed1_nosleep.json
+saved t10_seed2_direct.json
+saved t10_seed1_direct.json
+saved t10_seed1_nocons.json
+number of parameters: 6.59M
+seed 3 direct task1 wiki_general: gain=+0.0904
+number of parameters: 6.59M
+seed 2 nosleep task1 wiki_general: gain=-0.2390
+number of parameters: 6.59M
+seed 3 nocons task1 wiki_general: gain=+0.0890
+number of parameters: 6.59M
+seed 2 nocons task1 wiki_general: gain=-0.2404
+seed 2 nosleep task2 synthetic_qa: gain=+0.0521
+seed 3 direct task2 synthetic_qa: gain=-0.1531
+seed 3 nocons task2 synthetic_qa: gain=-0.1564
+seed 2 nocons task2 synthetic_qa: gain=+0.0429
+seed 2 nosleep task3 physics: gain=-0.0183
+seed 3 direct task3 physics: gain=+0.0289
+seed 2 nocons task3 physics: gain=-0.0294
+seed 3 nocons task3 physics: gain=+0.0183
+seed 2 nosleep task4 math: gain=+0.0073
+seed 2 nocons task4 math: gain=-0.0047
+seed 3 direct task4 math: gain=-0.1973
+seed 3 nocons task4 math: gain=-0.2080
+seed 2 nosleep task5 computer: gain=-0.0455
+seed 2 nocons task5 computer: gain=-0.0695
+seed 3 direct task5 computer: gain=-0.2549
+seed 3 nocons task5 computer: gain=-0.2679
+seed 2 nosleep task6 biology: gain=-0.0784
+seed 2 nocons task6 biology: gain=-0.0997
+seed 3 direct task6 biology: gain=+0.0697
+seed 3 nocons task6 biology: gain=+0.0611
+seed 2 nosleep task7 economics: gain=+0.1344
+seed 2 nocons task7 economics: gain=+0.1159
+seed 3 direct task7 economics: gain=-0.3298
+seed 3 nocons task7 economics: gain=-0.3395
+seed 2 nosleep task8 law: gain=-0.0495
+seed 2 nocons task8 law: gain=-0.0668
+seed 3 direct task8 law: gain=-0.0303
+seed 3 nocons task8 law: gain=-0.0413
+seed 2 nocons task9 history: gain=+0.0431
+seed 2 nosleep task9 history: gain=+0.0629
+seed 3 direct task9 history: gain=-0.0239
+seed 3 nocons task9 history: gain=-0.0355
+seed 2 nosleep task10 literature: gain=-0.1845
+seed 2 nocons task10 literature: gain=-0.2097
+seed 3 nocons task10 literature: gain=+0.0049
+seed 3 direct task10 literature: gain=+0.0103
+saved t10_seed2_nocons.json
+saved t10_seed2_nosleep.json
+saved t10_seed3_direct.json
+saved t10_seed3_nocons.json
+number of parameters: 6.59M
+seed 4 nocons task1 wiki_general: gain=-0.3842
+number of parameters: 6.59M
+seed 3 nosleep task1 wiki_general: gain=+0.0888
+number of parameters: 6.59M
+seed 4 nosleep task1 wiki_general: gain=-0.3821
+number of parameters: 6.59M
+seed 4 direct task1 wiki_general: gain=-0.3806
+seed 4 nocons task2 synthetic_qa: gain=+0.0207
+seed 3 nosleep task2 synthetic_qa: gain=-0.1391
+seed 4 direct task2 synthetic_qa: gain=+0.0225
+seed 4 nosleep task2 synthetic_qa: gain=+0.0242
+seed 3 nosleep task3 physics: gain=+0.0372
+seed 4 nocons task3 physics: gain=-0.2024
+seed 4 direct task3 physics: gain=-0.1892
+seed 4 nosleep task3 physics: gain=-0.1810
+seed 3 nosleep task4 math: gain=-0.1896
+seed 4 nocons task4 math: gain=+0.1867
+seed 4 direct task4 math: gain=+0.1931
+seed 4 nosleep task4 math: gain=+0.2061
+seed 3 nosleep task5 computer: gain=-0.2480
+seed 4 nocons task5 computer: gain=+0.0798
+seed 4 direct task5 computer: gain=+0.0885
+seed 4 nosleep task5 computer: gain=+0.0922
+seed 3 nosleep task6 biology: gain=+0.0802
+seed 4 nocons task6 biology: gain=-0.0274
+seed 4 direct task6 biology: gain=-0.0185
+seed 4 nosleep task6 biology: gain=-0.0040
+seed 3 nosleep task7 economics: gain=-0.3127
+seed 4 nocons task7 economics: gain=+0.1181
+seed 4 nosleep task7 economics: gain=+0.1352
+seed 4 direct task7 economics: gain=+0.1303
+seed 4 nocons task8 law: gain=-0.1242
+seed 3 nosleep task8 law: gain=-0.0251
+seed 4 nosleep task8 law: gain=-0.1099
+seed 4 direct task8 law: gain=-0.1131
+seed 4 nocons task9 history: gain=-0.2326
+seed 3 nosleep task9 history: gain=-0.0153
+seed 4 direct task9 history: gain=-0.2218
+seed 4 nosleep task9 history: gain=-0.2133
+seed 4 nocons task10 literature: gain=+0.1785
+seed 3 nosleep task10 literature: gain=+0.0209
+seed 4 direct task10 literature: gain=+0.1875
+seed 4 nosleep task10 literature: gain=+0.1902
+saved t10_seed4_nocons.json
+saved t10_seed3_nosleep.json
+saved t10_seed4_direct.json
+saved t10_seed4_nosleep.json
+number of parameters: 6.59M
+seed 5 nosleep task1 wiki_general: gain=+0.0688
+number of parameters: 6.59M
+seed 6 direct task1 wiki_general: gain=+0.1057
+number of parameters: 6.59M
+seed 5 direct task1 wiki_general: gain=+0.0698
+number of parameters: 6.59M
+seed 5 nocons task1 wiki_general: gain=+0.0701
+seed 5 nosleep task2 synthetic_qa: gain=-0.0308
+seed 6 direct task2 synthetic_qa: gain=-0.0533
+seed 5 nocons task2 synthetic_qa: gain=-0.0315
+seed 5 direct task2 synthetic_qa: gain=-0.0334
+seed 6 direct task3 physics: gain=+0.1026
+seed 5 nosleep task3 physics: gain=-0.0029
+seed 5 direct task3 physics: gain=-0.0075
+seed 5 nocons task3 physics: gain=-0.0166
+seed 5 nosleep task4 math: gain=-0.0543
+seed 6 direct task4 math: gain=+0.0199
+seed 5 direct task4 math: gain=-0.0663
+seed 5 nocons task4 math: gain=-0.0712
+seed 6 direct task5 computer: gain=-0.1444
+seed 5 nosleep task5 computer: gain=-0.0072
+seed 5 nocons task5 computer: gain=-0.0226
+seed 5 direct task5 computer: gain=-0.0137
+seed 5 nosleep task6 biology: gain=-0.0472
+seed 6 direct task6 biology: gain=-0.0223
+seed 5 nocons task6 biology: gain=-0.0673
+seed 5 direct task6 biology: gain=-0.0573
+seed 5 nosleep task7 economics: gain=+0.2351
+seed 6 direct task7 economics: gain=+0.0550
+seed 5 direct task7 economics: gain=+0.2284
+seed 5 nocons task7 economics: gain=+0.2166
+seed 5 nosleep task8 law: gain=+0.0234
+seed 6 direct task8 law: gain=+0.0077
+seed 5 direct task8 law: gain=+0.0183
+seed 5 nocons task8 law: gain=+0.0124
+seed 5 nosleep task9 history: gain=+0.0835
+seed 6 direct task9 history: gain=-0.0038
+seed 5 nocons task9 history: gain=+0.0671
+seed 5 direct task9 history: gain=+0.0791
+seed 5 nosleep task10 literature: gain=-0.0497
+seed 6 direct task10 literature: gain=+0.0672
+seed 5 direct task10 literature: gain=-0.0583
+seed 5 nocons task10 literature: gain=-0.0578
+saved t10_seed5_nosleep.json
+saved t10_seed6_direct.json
+saved t10_seed5_nocons.json
+saved t10_seed5_direct.json
+number of parameters: 6.59M
+seed 6 nocons task1 wiki_general: gain=+0.1058
+number of parameters: 6.59M
+seed 7 direct task1 wiki_general: gain=-0.0243
+number of parameters: 6.59M
+seed 6 nosleep task1 wiki_general: gain=+0.1067
+number of parameters: 6.59M
+seed 7 nocons task1 wiki_general: gain=-0.0269
+seed 7 direct task2 synthetic_qa: gain=+0.0144
+seed 6 nocons task2 synthetic_qa: gain=-0.0526
+seed 6 nosleep task2 synthetic_qa: gain=-0.0615
+seed 7 nocons task2 synthetic_qa: gain=+0.0209
+seed 7 direct task3 physics: gain=+0.1215
+seed 6 nosleep task3 physics: gain=+0.1067
+seed 6 nocons task3 physics: gain=+0.0981
+seed 7 nocons task3 physics: gain=+0.1130
+seed 6 nosleep task4 math: gain=+0.0302
+seed 7 direct task4 math: gain=+0.1315
+seed 6 nocons task4 math: gain=+0.0078
+seed 7 nocons task4 math: gain=+0.1186
+seed 7 direct task5 computer: gain=-0.0096
+seed 6 nosleep task5 computer: gain=-0.1324
+seed 6 nocons task5 computer: gain=-0.1539
+seed 7 nocons task5 computer: gain=-0.0093
+seed 6 nosleep task6 biology: gain=-0.0205
+seed 7 direct task6 biology: gain=-0.0353
+seed 6 nocons task6 biology: gain=-0.0329
+seed 7 nocons task6 biology: gain=-0.0347
+seed 6 nosleep task7 economics: gain=+0.0592
+seed 6 nocons task7 economics: gain=+0.0479
+seed 7 direct task7 economics: gain=-0.2629
+seed 7 nocons task7 economics: gain=-0.2732
+seed 6 nosleep task8 law: gain=+0.0163
+seed 6 nocons task8 law: gain=+0.0070
+seed 7 direct task8 law: gain=-0.0354
+seed 7 nocons task8 law: gain=-0.0539
+seed 6 nosleep task9 history: gain=+0.0006
+seed 6 nocons task9 history: gain=-0.0202
+seed 7 direct task9 history: gain=-0.4363
+seed 7 nocons task9 history: gain=-0.4570
+seed 6 nosleep task10 literature: gain=+0.0730
+seed 7 direct task10 literature: gain=-0.0820
+seed 6 nocons task10 literature: gain=+0.0617
+seed 7 nocons task10 literature: gain=-0.0895
+saved t10_seed6_nosleep.json
+saved t10_seed7_direct.json
+saved t10_seed6_nocons.json
+saved t10_seed7_nocons.json
+number of parameters: 6.59M
+seed 0 nocons task1 wiki_general: gain=-0.0415
+number of parameters: 6.59M
+seed 7 nosleep task1 wiki_general: gain=-0.0238
+number of parameters: 6.59M
+seed 0 nosleep task1 wiki_general: gain=-0.0418
+seed 0 nocons task2 synthetic_qa: gain=-0.0079
+seed 7 nosleep task2 synthetic_qa: gain=+0.0034
+seed 0 nosleep task2 synthetic_qa: gain=+0.0028
+seed 0 nocons task3 physics: gain=+0.1355
+seed 0 nosleep task3 physics: gain=+0.1550
+seed 7 nosleep task3 physics: gain=+0.1336
+seed 0 nocons task4 math: gain=-0.0509
+seed 7 nosleep task4 math: gain=+0.1389
+seed 0 nosleep task4 math: gain=-0.0477
+seed 0 nocons task5 computer: gain=-0.0559
+seed 7 nosleep task5 computer: gain=+0.0008
+seed 0 nosleep task5 computer: gain=-0.0436
+seed 0 nocons task6 biology: gain=+0.0099
+seed 7 nosleep task6 biology: gain=-0.0239
+seed 0 nosleep task6 biology: gain=+0.0202
+seed 0 nocons task7 economics: gain=-0.0584
+seed 7 nosleep task7 economics: gain=-0.2548
+seed 0 nosleep task7 economics: gain=-0.0483
+seed 0 nocons task8 law: gain=-0.1078
+seed 7 nosleep task8 law: gain=-0.0294
+seed 0 nosleep task8 law: gain=-0.0966
+seed 0 nocons task9 history: gain=-0.0473
+seed 7 nosleep task9 history: gain=-0.4262
+seed 0 nosleep task9 history: gain=-0.0483
+seed 0 nocons task10 literature: gain=+0.0619
+seed 7 nosleep task10 literature: gain=-0.0774
+seed 0 nosleep task10 literature: gain=+0.0683
+saved t10_seed0_nocons.json
+saved t10_seed7_nosleep.json
+saved t10_seed0_nosleep.json
+T10_DONE

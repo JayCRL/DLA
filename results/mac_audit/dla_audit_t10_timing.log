@@ -1,0 +1,12 @@
+number of parameters: 6.59M
+seed 0 direct task1 wiki_general: gain=-0.0401
+seed 0 direct task2 synthetic_qa: gain=-0.0005
+seed 0 direct task3 physics: gain=+0.1440
+seed 0 direct task4 math: gain=-0.0512
+seed 0 direct task5 computer: gain=-0.0606
+seed 0 direct task6 biology: gain=+0.0198
+seed 0 direct task7 economics: gain=-0.0461
+seed 0 direct task8 law: gain=-0.1076
+seed 0 direct task9 history: gain=-0.0492
+seed 0 direct task10 literature: gain=+0.0719
+saved t10_seed0_direct.json

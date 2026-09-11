@@ -1,0 +1,32 @@
+{
+ "seed": 3,
+ "order": "EH",
+ "variant": "qonly",
+ "pre": 41.04824754112567,
+ "post_ppl": 40.999900550888526,
+ "gain40": 0.0011778088745129577,
+ "LE_D": 0.14969066742755174,
+ "T80_D": 22,
+ "Q_norm": 0.002263819347560056,
+ "Wfast_norm": 3.8456849983644457,
+ "Wslow_norm": 120.06867414621712,
+ "cons_write_Q_total": 0.005970903194323043,
+ "cons_write_direct_total": 0.0,
+ "cons_per_sleep": [
+  {
+   "stage": 0,
+   "Q_write": 0.0010927879189810896,
+   "direct_write": 0.0
+  },
+  {
+   "stage": 1,
+   "Q_write": 0.0016444110756400443,
+   "direct_write": 0.0
+  },
+  {
+   "stage": 2,
+   "Q_write": 0.0032337041997019095,
+   "direct_write": 0.0
+  }
+ ]
+}

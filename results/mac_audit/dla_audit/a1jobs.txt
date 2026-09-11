@@ -1,0 +1,12 @@
+0|HE|direct|0.05
+0|HE|direct|0.5
+0|HE|shufwrite|0.05
+0|HE|shufwrite|0.5
+1|HE|direct|0.05
+1|HE|direct|0.5
+1|HE|shufwrite|0.05
+1|HE|shufwrite|0.5
+2|HE|direct|0.05
+2|HE|direct|0.5
+2|HE|shufwrite|0.05
+2|HE|shufwrite|0.5
