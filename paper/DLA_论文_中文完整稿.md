@@ -327,6 +327,47 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 > **4. 溯源性缺口**：`fixed` 这组的启动命令没有版本化（`queue/` 里只有 v2 的），且 JSON 不记录 `chunk`，
 > 所以"用哪个 chunk 跑的"目前无法从仓库考证。写进论文前建议补齐。
 
+### 3.10 多算法抗遗忘对比（10 任务基准，$n{=}10$）`【因果】`
+
+在 10 任务持续学习基准上（GPT-2 124M，60 steps/task），把 DLA 与 **9 个基线配置**同协议对比
+（`results/cloud/dla_cl/gpt2/`，10 seeds；完整报告见 `analysis/wfast_geom/report_output/cl_baselines_10task.md`）：
+
+| method | forward ↑ | retention ↑ | forgetting ↓ |
+|---|---|---|---|
+| si@λ1e4 | +0.0840 ± 0.0056 | **1.0435 ± 0.007** | −0.0382 |
+| si@λ1e6 | +0.0407 ± 0.0057 | 0.9937 ± 0.003 | +0.0073 |
+| ewc@λ1e6 | +0.1588 ± 0.0119 | 0.9866 ± 0.035 | +0.0199 |
+| adamw@lr3e-5 | +0.1616 ± 0.0065 | 0.9362 ± 0.006 | +0.0716 |
+| adamw@lr1e-4 | +0.1967 ± 0.0131 | 0.9089 ± 0.022 | +0.1070 |
+| ewc@λ1e4 | +0.1976 ± 0.0150 | 0.9045 ± 0.017 | +0.1115 |
+| ewc@λ1e5 | +0.1860 ± 0.0125 | 0.8971 ± 0.023 | +0.1199 |
+| **dla** | **+0.1768 ± 0.0109** | **0.8966 ± 0.019** | **+0.1219** |
+| adamw@lr3e-4 | +0.1830 ± 0.0210 | 0.8632 ± 0.038 | +0.1756 |
+| replay | +0.2257 ± 0.0188 | 0.8193 ± 0.077 | +0.2513 |
+
+**有效性**：EWC/SI 的惩罚项经硬性检查确认生效（penalty/loss 最大值 3.1e-2 ~ 3.1e+1，远高于惰性阈值），
+即这批是 `ad97334` 修复**之后**的数据——修前的 EWC/SI 结果因惩罚项脱离计算图而全部作废。
+
+**读法一：这是一条 stability–plasticity 前沿，不是排行榜。** SI@λ1e4 拿到最高 retention（1.0435）
+却是最差的 forward（+0.0840，几乎不学）；replay 拿到最高 forward（+0.2257）却是最差 retention（0.8193）。
+**DLA 落在前沿中部**（retention 第 8、forward 第 5），与 `ewc@λ1e4` 最接近（forward 与 retention 各略低）。
+显式惩罚/回放方法的抗遗忘点是**由超参选出来的**，所以单点比较没有意义——这正是"看前沿"的理由。
+
+> ⚠️ **交接注（这一节有三个前提必须同时写明，否则会被读成性能对标）**
+>
+> **1. DLA 冻结骨干，基线是全量微调——非同预算。** `cl_baselines.py` 明确规定：dla 臂
+> "must NOT step the backbone itself"（只更新 `W_fast`/`P`），而 adamw/ewc/si/replay 臂
+> 用 AdamW 更新**整个骨干**。因此**不能**把"DLA retention 排第 8"读成"DLA 作为 CL 算法弱于这些方法"；
+> 它们是不同的方法类别（参数高效式 vs 全量微调）。要作性能对标必须先做**容量匹配**对照。
+>
+> **2. DLA 在此表是单一默认配置，基线是扫过的。** 基线有 3 个 lr、3 个 EWC λ、2 个 SI λ；
+> DLA 只有 1 个点。DLA 自身旋钮的扫描存在但**只有 $n{=}2$**（`results/cloud/dla_cl_gain/`，初步）：
+> `dla@g1.1` forward +0.1946 / retention 0.9035，`dla@g1.2` +0.2007 / 0.8836——
+> 即在 forward 匹配到 `ewc@λ1e4` 的位置，DLA 的 retention 与它持平（0.9035 vs 0.9045）。
+> **$n{=}2$ 不能作为结论**，只说明对比不对称；要画 DLA 自己的前沿需扩到 $n\ge10$。
+>
+> **3. 不可与 EH/HE 协议的数字混列**（见红线 A）。
+
 ---
 
 ## 4 讨论
@@ -417,7 +458,8 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 本文**不是**提出高性能持续学习算法，而是**上下文校准实验**，用于剖析一种涌现式可塑性机制。性能只作为"现象存在"的佐证。
 
 - 不写"DLA 优于/低于 EWC、replay 等 SOTA"这类整体判断。
-- 可正面写：在**修复后**的同协议对比里（`results/cloud/dla_cl/gpt2/`，$n{=}10$），DLA 落在 stability–plasticity **前沿内部**而非落后一个身位；但贡献不在这里。
+- 可正面写：在**修复后**的同协议多算法对比里（§3.10，$n{=}10$），DLA 落在 stability–plasticity **前沿内部**而非落后一个身位；但贡献不在这里。
+- ⚠️ 必须同时写明：该表中 **DLA 冻结骨干、基线是全量微调**（非同预算），且 **DLA 是单一默认配置、基线已扫过超参**。
 - ⚠️ 该表（10 任务 CL 基准）与主线 EH/HE 的 $\mathrm{LE}_D$ 协议**不是同一协议**，不可混列。
 
 ---
@@ -435,8 +477,9 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 | 7 | 十任务持续学习 | 因果 | $t$ 从 $-2.65$ 到 $-13.6$（vs nosleep） | 同上 |
 | 8 | 第二骨干复现 | 因果 | $\Delta{=}-0.0673$（$t{=}-7.13$），$n{=}9$ | `results/mac_audit/dla_audit_second/`、`a5_second_backbone.md` |
 | 9 | **跨规模载体复现（GPT-2）** | 因果 | 124M −0.0390（$t{=}-5.64$）/ 355M −0.0437（$t{=}-4.48$）/ **774M −0.0331（$t{=}-2.75$）**，各 $n{=}12$ | `results/cloud/dla_scale/fixed/`、`docs/scale_results_fixed.md` |
-| 10 | 阴性组 | 阴性 | EH 臂 ≈0；$p{=}0.17/0.82$；PC1≈20% | `docs/experiments.md`、`report_output/interim_report.md` |
-| 11 | `full` 基线 | 因果 | `full` $+0.0143$（$n{=}12$，`HE/HE` 条件） | `results/server_archive/results/stage55e/seeds/` |
+| 10 | **多算法抗遗忘对比（10 任务基准）** | 因果 | DLA forward +0.1768 / retention 0.8966；si@λ1e4 retention 1.0435 但 forward +0.0840；replay forward +0.2257 / retention 0.8193（各 $n{=}10$） | `results/cloud/dla_cl/gpt2/`、`report_output/cl_baselines_10task.md` |
+| 11 | 阴性组 | 阴性 | EH 臂 ≈0；$p{=}0.17/0.82$；PC1≈20% | `docs/experiments.md`、`report_output/interim_report.md` |
+| 12 | `full` 基线 | 因果 | `full` $+0.0143$（$n{=}12$，`HE/HE` 条件） | `results/server_archive/results/stage55e/seeds/` |
 
 ---
 
@@ -449,6 +492,8 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 | **方向性干预**（正交投影） | 未做 | 不做则 2c 永远停留在相关 |
 | **1.5B（gpt2-xl）修后重跑** | 目录为空，从未产出 | 可主张的规模上界先写 **774M**；重跑要点见 `docs/scale_results.md` §Engineering notes |
 | `fixed` 规模组的**启动命令与 chunk** | 未版本化、JSON 不记录 | 写进论文前补齐，或在下次运行时把协议字段写进 JSON |
+| **DLA 自身旋钮在 CL 基准上的前沿** | 只有 $n{=}2$（`results/cloud/dla_cl_gain/`） | 要画 DLA 自己的前沿需扩到 $n\ge10$；否则只能写"单一默认点 vs 基线扫描" |
+| **CL 基准的容量匹配对照** | 未做 | DLA 冻结骨干 vs 基线全量微调，**非同预算**；要作性能对标必须先做等参数量对照 |
 | 历史**特异性** | A5 上仅 **7.1%** | 必须写进 limits（这是"对齐"叙事最脆弱处） |
 | 1.5B 规模 | 显存不足未完成 | 写进 limits |
 | 记忆时间尺度 → 选择性 | 采集中断 | 写进 limits |
