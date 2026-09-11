@@ -141,6 +141,8 @@ python3 paper/md2pdf.py paper/DLA_paper_draft.md paper/DLA_paper_draft.pdf
 - 审计证据链：上述 `report_output/` 各报告；**逐 seed 数据在 `results/mac_audit/`**（Mac 侧审计原始 JSON，路径镜像报告引用的 `~/llm-lab/dla_audit*`；臂→报告对应表见该目录 README），脚本在 `analysis/wfast_geom/` 与其 `queue/` 驱动，commit 为运行窗口 `a365bcf`→`828c49c`
 - 服务器期（CPU）逐 seed 数据在 `results/server_archive/`，**论文 `full` 基线即 `results/stage55e/seeds/` 的 `HE/HE` 条件**（n=12，均值 +0.0143，与 `selectivity_test_n12.md` 所引数字一致；Mac parity 重放为 +0.0138）。排除项：3.9 GB `*.pt` 权重
 - 写入强度扫描中默认臂 seed 0–2 为**重跑**：重算 direct(n=12)=+0.0143 vs 扫描前 unified 的 +0.0140（Δ=0.0003，≈单 sd 的 2%，源于 harness 非确定性；配对 **gap 两者完全相同 = +0.0115**）
+- **定位（2026-09-11 定）**：本文**不是**提出高性能持续学习算法，而是一套**上下文校准实验**，用于剖析一种涌现式可塑性机制；性能只作为"现象存在"的佐证，不与 SOTA 方法比拼整体效果。论证骨架与证据分级见 `docs/论文思路_中文版.md`（§4.2 为定位与基线口径）。
+- **基线对比口径（重要）**：`paper/validation_audit.md` §8/§9 的 **EWC/SI 数字作废**——早于 `ad97334`（EWC/SI 惩罚项曾脱离计算图）；且其中常被引用的 "DLA 0.517 vs EWC 0.895" 是**跨列比较**（0.517 是 DLA 的 EH 列，0.895 是 EWC 的 HE 列）。同列读法见该文件顶部的 VOID 说明；修后 n=10 参考 `results/cloud/dla_cl/gpt2/`。**在 EH/HE 协议上重跑基线之前，不得引用该表。** `paper/DLA_paper.tex` 是 2026-09-08 的旧产物（已被 md 稿与 ICLR 包取代），其表注已标 VOID。
 - GitHub：https://github.com/JayCRL/DLA
 
 ---

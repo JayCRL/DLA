@@ -120,6 +120,47 @@ is noisier; gain@40 is the primary paper metric and is used here.
 
 ## 8. Fair baselines (preliminary, n=3 seeds)
 
+> ### ⚠️ VOID (annotated 2026-09-11): the EWC and SI rows in §8 and §9 are retracted
+>
+> Both baseline sections below were produced on **2026-09-08**, i.e. *before* `ad97334`
+> (*fix(P2): the EWC/SI penalty was detached from the autograd graph*, 2026-09-11 05:28).
+> `docs/mechanism_audit.md` already voids every pre-fix EWC/SI number, so the EWC and SI
+> columns here **must not be cited, compared against, or carried into the paper**. The
+> numbers are left in place rather than deleted because they are part of the audit trail.
+>
+> Two separate problems with using this table as a SOTA comparison even after a re-run:
+>
+> 1. **It is not like-for-like.** The DLA row is `n=12` while the baselines are `n=3` (§8)
+>    and `n=5` (§9).
+> 2. **The "DLA 0.517 vs EWC 0.895" reading is a cross-column mix.** 0.517 is DLA's **EH**
+>    cell; 0.895 is EWC's **HE** cell. Read down the same column instead: DLA's EH 0.517 is
+>    the **highest** value in the table (baselines 0.292–0.375), while its HE 0.709 sits
+>    between AdamW (0.675) and EWC (0.895) / replay (0.961). The supportable statement is
+>    "DLA is the most robust after a difficult history", not "DLA is far below EWC".
+>
+> Post-fix reference — `results/cloud/dla_cl/gpt2/`, n=10, run **2026-09-11 05:52** (after the
+> fix), **different protocol** (10-task CL benchmark, not the EH/HE `LE_D` protocol used
+> above), so the two tables must never be merged:
+>
+> | method | forward ↑ | retention ↑ |
+> |---|---|---|
+> | si@λ1e4 | +0.0840 | 1.0435 |
+> | si@λ1e6 | +0.0407 | 0.9937 |
+> | ewc@λ1e6 | +0.1588 | 0.9866 |
+> | adamw@lr3e-5 | +0.1616 | 0.9362 |
+> | adamw@lr1e-4 | +0.1967 | 0.9089 |
+> | ewc@λ1e4 | +0.1976 | 0.9045 |
+> | ewc@λ1e5 | +0.1860 | 0.8971 |
+> | **dla** | **+0.1768** | **0.8966** |
+> | adamw@lr3e-4 | +0.1830 | 0.8632 |
+> | replay | +0.2257 | 0.8193 |
+>
+> That run places DLA *inside* the stability–plasticity frontier, not a step behind it. What
+> is still missing is a **post-fix re-run of the EH/HE protocol of §8–§9 itself** before any
+> history-sensitivity claim about AdamW/replay/EWC can be stated. The ICLR submission asserts
+> one qualitatively ("standard continual learners … are also history-sensitive"), and that
+> assertion currently rests on these void numbers.
+
 Same EH/HE curriculum and D protocol as Stage 5.5e, but with standard learners.
 LE_D means:
 
@@ -183,4 +224,5 @@ seeds, direction consistent). Small n, exploratory.
 
 Remaining gaps after this audit:
 - Second-setting n is small (2); increase to 5+ if used in paper.
-- Fair baselines still n=5; enough for workshop/undergrad, more for strong claim.
+- Fair baselines (§8/§9): EWC/SI rows VOID (pre-`ad97334`); the section needs a post-fix
+  re-run on its own protocol before it can support anything. See the VOID block above.
