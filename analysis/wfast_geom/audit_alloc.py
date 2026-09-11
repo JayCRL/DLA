@@ -35,6 +35,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[2]))
 
 import torch  # noqa: E402
+import torch.nn.functional as F  # noqa: E402
 import audit_scale as S  # noqa: E402
 
 VARIANTS = ("direct", "shufwrite", "nocons", "qonly", "uniformwrite", "topwrite",
@@ -52,11 +53,22 @@ def stable_hash(text: str) -> int:
 
 
 def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0,
-                  fast_decay=None):
+                  fast_decay=None, write_gate=False):
     """dla_sleep with the write pathway selected by ``variant``.
 
     Mirrors analysis/wfast_geom/audit_b3.py:variant_sleep, ported to the GPT
     wrapper, with a deterministic permutation seed.
+
+    ``write_gate`` closes the gap between how W_fast is USED and how it is
+    WRITTEN.  The forward pass computes ``W_eff = W_slow + softplus(P) * W_fast``
+    (dla/transformer_dla.py:174), so only the coordinates the gate opens actually
+    influence the output -- but dla_sleep writes the RAW ``w_fast``
+    (dla/transformer_dla.py:347), un-gated.  With ``write_gate=True`` the write
+    becomes ``gamma * softplus(P) * w_fast``, i.e. the same expressed quantity the
+    forward pass uses.  This matters for the lambda sweep: scaling an un-gated
+    write scales the part of W_fast the model is NOT expressing, which is a
+    hypothesis about why amplifying the writeback destroys the causal advantage
+    instead of amplifying it.
     """
     tv = model.tempos.values()
     gam = tv["consolidate_fast_direct"] * gamma_scale
@@ -74,6 +86,10 @@ def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0,
     for key, mod in model.key_modules.items():
         s = state.store[key]
         wf = s["w_fast"]
+        if write_gate:
+            # softplus(s["p"]) is exactly the gate the forward pass multiplies by.
+            # In-place-safe: a fresh tensor, never a view of w_fast.
+            wf = F.softplus(s["p"]) * wf
         if variant == "qonly":
             add = tv["consolidate_beta"] * s["q"]
         elif variant == "direct":

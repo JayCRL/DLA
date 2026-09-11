@@ -229,7 +229,7 @@ def run_cell(model, base_sd, stages, variant, args, device, d_train, d_eval,
                 ]).detach().to(torch.float16).cpu())
         if variant != "nosleep":
             variant_sleep(model, state, variant, perm_seed=args.seed * 1000 + t,
-                          fast_decay=lam)
+                          fast_decay=lam, write_gate=args.write_gate)
         wf = {k: s["w_fast"].detach().float().cpu().clone()
               for k, s in state.store.items()}
         stage_wf.append(wf)
@@ -276,6 +276,13 @@ def main():
     ap.add_argument("--fast-decays", default="0.02")
     ap.add_argument("--lambdas", default="1.0")
     ap.add_argument("--variants", default="direct,shufwrite,nocons")
+    ap.add_argument("--write-gate", action="store_true",
+                    help="write softplus(P)*W_fast into W_slow instead of the raw "
+                         "W_fast that dla_sleep uses. The forward pass gates W_fast "
+                         "by softplus(P) but the sleep write does not, so scaling an "
+                         "un-gated write scales the part of W_fast the model is not "
+                         "expressing. This flag tests whether closing that gap makes "
+                         "lambda AMPLIFY the selective writeback instead of destroying it.")
     ap.add_argument("--gamma-scale", type=float, default=1.0,
                     help="multiplies the writeback energy gamma; kept at 1.0 so "
                          "only fast_decay and lambda move")
@@ -324,9 +331,12 @@ def main():
     probe_seed = 800000 + a.seed
     out = {"seed": a.seed, "model": a.model, "params": n_par,
            "stages": a.stages, "chunk": a.chunk,
-           "gamma_scale": a.gamma_scale, "cells": {}}
+           "gamma_scale": a.gamma_scale,
+           "write_gate": bool(a.write_gate),
+           "history_steps": a.history_steps, "probe_steps": a.probe_steps,
+           "cells": {}}
 
-    partial_path = os.path.join(a.out, f"leakgain_{a.model}_s{a.seed}.json")
+    partial_path = os.path.join(a.out, f"leakgain{'_gate' if a.write_gate else ''}_{a.model}_s{a.seed}.json")
 
     def flush():
         """Write the JSON after every cell.
@@ -374,7 +384,7 @@ def main():
             out["cells"][f"fd{fd:g}|lam{lam:g}"] = cell
             flush()
 
-    p = os.path.join(a.out, f"leakgain_{a.model}_s{a.seed}.json")
+    p = os.path.join(a.out, f"leakgain{'_gate' if a.write_gate else ''}_{a.model}_s{a.seed}.json")
     with open(p, "w") as f:
         json.dump(out, f, indent=1)
     print(f"[lg] wrote {p}", flush=True)
