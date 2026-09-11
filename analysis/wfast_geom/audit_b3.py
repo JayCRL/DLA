@@ -6,6 +6,16 @@ changes, no tuning). Rebuilds an EH/HE meta-history body with one of:
   variant = nocons : sleep writes nothing (both OFF; decays & moment resets kept)
   variant = full   : exact original sleep (parity check against saved bodies)
 
+Allocation contrasts (energy-matched to `direct`, only the placement differs):
+  shufwrite    : same increments, coordinates permuted within each matrix
+  uniformwrite : same per-key energy, |wf|-independent placement
+  topwrite     : same total energy on the top-20% |wf| coordinates, magnitude replaced
+                 by a constant -- SIGN DROPPED, an implementation defect documented in
+                 docs/mechanism_audit.md 3.2; kept only as the flawed ancestor
+  topk_signed  : top-k |wf| coordinates with the sign KEPT, energy-matched to `direct`
+                 (--topk-frac sets k as a fraction of coordinates; frac=1.0 reduces to
+                 `direct` exactly, which is the implementation's self-check)
+
 then probes the body on the unseen domain D with the identical Stage 5.5e
 protocol (40 steps, eval every 2, rng 800000+seed) and saves probe outcome.
 
@@ -57,13 +67,21 @@ class Args:
 
 
 @torch.no_grad()
-def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0, sleep_decay=None):
+def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0, sleep_decay=None,
+                  topk_frac=0.2):
     """Copy of dla_sleep with the write pathway selected by `variant`.
 
     shufwrite : direct (gamma*W_fast) energy, coordinates randomly permuted.
     uniformwrite : same per-key energy, spread uniformly over coordinates
                    (|wf|-independent placement).
     topwrite : same total energy, concentrated on the top-20% |wf| coordinates.
+               Drops the sign (constant magnitude on the kept coordinates), so it
+               cannot distinguish "concentration" from "concentration in the
+               aligned coordinates" -- superseded by topk_signed.
+    topk_signed : top-k |wf| coordinates, signs kept, rescaled so the write carries
+               the same total energy as `direct` (gamma*||wf||). Isolates placement
+               alone: identical rule, identical energy, only the coordinate subset
+               differs.
     nosleep is handled by the caller (sleep not invoked at all).
     """
     tv = model.tempos.values()
@@ -95,6 +113,20 @@ def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0, sleep_dec
             c = gam * wf.norm() / math.sqrt(keep) if keep > 0 else 0.0
             add = torch.where(mask, torch.full_like(wf, c), torch.zeros_like(wf))
             del flat_abs
+        elif variant == "topk_signed":
+            n = wf.numel()
+            n_keep = max(1, int(round(topk_frac * n)))
+            flat = wf.reshape(-1)
+            idx = flat.abs().topk(n_keep, largest=True).indices
+            keep_mask = torch.zeros_like(flat)
+            keep_mask[idx] = 1.0
+            masked = flat * keep_mask
+            nrm = masked.norm()
+            # Rescale so ||add|| == gam*||wf|| exactly: the same total write energy
+            # as `direct`, so any difference is placement and nothing else.
+            scale = (gam * flat.norm() / nrm) if nrm > 0 else 0.0
+            add = (masked * scale).reshape(wf.shape)
+            del flat, masked, keep_mask
         elif variant == "nocons":
             add = None
         else:  # full == original
@@ -136,14 +168,16 @@ def run_history_variant(seed, order_name, phases, eb, d_train, args, device,
         if variant in ("full", "qonly"):
             qmag = math.sqrt(sum(float((tv["consolidate_beta"] * s_["q"]).pow(2).sum())
                                  for s_ in state.store.values()))
-        if variant in ("full", "direct", "shufwrite", "uniformwrite", "topwrite"):
+        if variant in ("full", "direct", "shufwrite", "uniformwrite", "topwrite",
+                       "topk_signed"):
             gs = getattr(args, "gamma_scale", 1.0)
             wmag = math.sqrt(sum(float((tv["consolidate_fast_direct"] * gs * s_["w_fast"]).pow(2).sum())
                                  for s_ in state.store.values()))
         if variant != "nosleep":
             variant_sleep(model, state, variant, perm_seed=seed * 1000 + t_idx,
                           gamma_scale=getattr(args, "gamma_scale", 1.0),
-                          sleep_decay=getattr(args, "sleep_decay", None))
+                          sleep_decay=getattr(args, "sleep_decay", None),
+                          topk_frac=getattr(args, "topk_frac", 0.2))
         cons_q_total += qmag
         cons_w_total += wmag
         per_sleep.append({"stage": t_idx, "Q_write": qmag, "direct_write": wmag})
@@ -159,11 +193,14 @@ def main():
     ap.add_argument("--order", type=str, choices=("EH", "HE"), required=True)
     ap.add_argument("--variant", type=str,
                     choices=("qonly", "direct", "shufwrite", "uniformwrite", "topwrite",
-                             "nocons", "nosleep", "full"), required=True)
+                             "topk_signed", "nocons", "nosleep", "full"), required=True)
     ap.add_argument("--out", default="results/audit")
     ap.add_argument("--keep-body", action="store_true")
     ap.add_argument("--gamma", type=float, default=1.0)
     ap.add_argument("--sleep-decay", type=float, default=None)
+    ap.add_argument("--topk-frac", type=float, default=0.2,
+                    help="topk_signed only: fraction of |W_fast| coordinates kept "
+                         "(1.0 reduces to `direct`, the self-check)")
     args = ap.parse_args()
     order = "easy_hard" if args.order == "EH" else "hard_easy"
     seed = args.seed
@@ -171,6 +208,7 @@ def main():
     a.max_steps = a.d_steps  # probe protocol (mirror stage55e probe_trajectory)
     a.gamma_scale = args.gamma
     a.sleep_decay = args.sleep_decay
+    a.topk_frac = args.topk_frac
     device = "cpu"
     import os as _os
     torch.set_num_threads(int(_os.environ.get("TORCH_THREADS", "4")))
@@ -217,6 +255,11 @@ def main():
            "Q_norm": qn, "Wfast_norm": wn, "Wslow_norm": sn,
            "cons_write_Q_total": cons_q, "cons_write_direct_total": cons_w,
            "cons_per_sleep": per_sleep}
+    if args.variant == "topk_signed":
+        # The arm's defining parameter, recorded so the JSON stays self-describing even
+        # if the file is moved out of its topk<frac>/ directory or the tag is renamed.
+        rec["topk_frac"] = args.topk_frac
+        rec["gamma_scale"] = args.gamma
     rec_dir = os.path.join(args.out, args.variant)
     os.makedirs(rec_dir, exist_ok=True)
     with open(os.path.join(rec_dir, f"probe_seed{seed}_{args.order}.json"), "w") as f:
