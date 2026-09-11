@@ -109,10 +109,41 @@ def eval_ppl(model, state, ids, block, batch, nb, seed, device):
     return math.exp(tot / max(cnt, 1))
 
 
+def dla_sleep_lam(model, state, gain):
+    """dla_sleep with the W_fast retention/gain factor made explicit.
+
+    Mirrors TransformerDLA.dla_sleep exactly (both the beta*Q trace channel and
+    the gamma*W_fast direct channel) but takes ``gain`` as an argument, so the
+    sweep can express lambda > 1.  The built-in rule reads the tempo
+    ``consolidate_fast_decay``, which is sigmoid-parameterised and therefore
+    cannot exceed 1 -- amplification is a legitimate part of the lambda sweep and
+    must not be silently clipped.
+    """
+    cfg = model.dla_cfg
+    tv = model.tempos.values()
+    with torch.no_grad():
+        for key, mod in model.key_modules.items():
+            s = state.store[key]
+            mod.weight.add_(tv["consolidate_beta"] * s["q"]
+                            + tv["consolidate_fast_direct"] * s["w_fast"])
+            s["w_fast"].mul_(gain)
+            s["q"].mul_(tv["consolidate_q_decay"])
+            if cfg.consolidate_p_decay > 0:
+                s["p"].add_((cfg.p0 - s["p"]) * cfg.consolidate_p_decay)
+    state.reset_moments()
+    return state
+
+
+def set_fast_decay_tempo(model, fd):
+    """Set the wake leak (per-step W_fast decay) exactly, via its logit."""
+    model.tempos.logit_fast_decay.data.fill_(math.log(fd / (1.0 - fd)))
+
+
 class Trainer:
     """One method's training loop over a task sequence."""
 
-    def __init__(self, model, method, args, device, lam=None, lr=None):
+    def __init__(self, model, method, args, device, lam=None, lr=None,
+                 dla_gain=None, fd=None):
         self.model, self.method, self.args, self.device = model, method, args, device
         # lam is the penalty strength for ewc/si.  It MUST be calibrated: the penalty
         # is sum(F * (theta-theta*)^2), which at 124M with an unnormalised Fisher and
@@ -121,6 +152,11 @@ class Trainer:
         # is below fp32 resolution (1.2e-7) -- so EWC and SI were bit-identical to
         # plain AdamW.  That is not a weak baseline, it is a baseline that never ran.
         self.lam = lam
+        # DLA-only knobs of the leak/gain sweep.  dla_gain is the sleep scaling of
+        # W_fast (lambda, amplification allowed); fd is the wake leak (fast_decay).
+        self.dla_gain = 1.0 if dla_gain is None else float(dla_gain)
+        if method == "dla" and fd is not None:
+            set_fast_decay_tempo(model, float(fd))
         # Fine-tuning baselines need their own lr sweep: their Pareto point is set by
         # lr, and comparing DLA's single operating point against one arbitrary lr
         # would be an unfair baseline.  The comparison that matters is FRONTS.
@@ -174,7 +210,10 @@ class Trainer:
     def end_task(self, tr_ids, rng):
         """Bookkeeping a method needs after finishing a task."""
         if self.method == "dla":
-            self.model.dla_sleep(self.state)
+            if self.dla_gain == 1.0:
+                self.model.dla_sleep(self.state)
+            else:
+                dla_sleep_lam(self.model, self.state, self.dla_gain)
         elif self.method in ("ewc", "si"):
             new = self.snapshot()
             if self.anchor is None:
@@ -258,37 +297,68 @@ def main():
     out = {"seed": a.seed, "model": a.model, "steps_per_task": a.steps,
            "note": "EWC/SI use online (single running anchor) variants", "methods": {}}
 
-    # `ewc@1e5` runs EWC at lambda=1e5; a bare `ewc` uses --ewc-lambda.
-    # `ewc@1e5` (or `ewc@lam=1e5`) sets lambda; `adamw@lr=3e-4` sets the learning rate.
+    # `ewc@1e5` / `ewc@lam=1e5` sets the EWC penalty; `adamw@lr=3e-4` the LR.
+    # `dla@fd=0.005,lam=1.1` sets the two leak/gain knobs of the DLA rule: fd is the
+    # wake leak (fast_decay), lam is the sleep scaling of W_fast (amplification > 1
+    # allowed).  For DLA `lam` means the writeback gain, for ewc/si the penalty --
+    # the method name disambiguates, and `gain=` is accepted as an explicit alias.
+    # A spec can carry several `k=v` pairs, so the naive comma split of --methods
+    # must not tear `dla@fd=0.005,lam=1.1` apart: a comma fragment without '@' is a
+    # continuation of the previous spec.
+    raw = [x.strip() for x in a.methods.split(",") if x.strip()]
+    merged = []
+    for frag in raw:
+        if merged and "=" in frag and "@" not in frag:
+            merged[-1] += "," + frag
+        else:
+            merged.append(frag)
+
     specs = []
-    for m in [x.strip() for x in a.methods.split(",") if x.strip()]:
-        base, lam, lr = m, None, None
+    for m in merged:
+        base, lam, lr, dla_gain, fd = m, None, None, None, None
         if "@" in m:
             base, suf = m.split("@", 1)
             if "=" in suf:
-                k, v = suf.split("=", 1)
-                if k in ("lr", "learning_rate"):
-                    lr = float(v)
-                elif k in ("lam", "lambda"):
-                    lam = float(v)
-                else:
-                    raise SystemExit(f"unknown spec key {k!r} in {m!r}")
+                for part in suf.split(","):
+                    if "=" not in part:
+                        raise SystemExit(f"malformed spec part {part!r} in {m!r}")
+                    k, v = part.split("=", 1)
+                    if k in ("lr", "learning_rate"):
+                        lr = float(v)
+                    elif k in ("lam", "lambda"):
+                        lam = float(v)
+                    elif k == "gain":
+                        dla_gain = float(v)
+                    elif k == "fd":
+                        fd = float(v)
+                    else:
+                        raise SystemExit(f"unknown spec key {k!r} in {m!r}")
             else:
                 lam = float(suf)
-        if lam is None and lr is None:
+        if base == "dla":
+            # for DLA the lambda axis is the sleep writeback gain
+            dla_gain = dla_gain if dla_gain is not None else lam
+            lam = None
+        elif lam is None and lr is None:
             lam = a.ewc_lambda if base == "ewc" else (a.si_lambda if base == "si" else None)
         tag = []
         if lam is not None:
             tag.append(f"lam{lam:g}")
+        if dla_gain is not None:
+            tag.append(f"g{dla_gain:g}")
+        if fd is not None:
+            tag.append(f"fd{fd:g}")
         if lr is not None:
             tag.append(f"lr{lr:g}")
-        specs.append((base, lam, lr, base + ("@" + ",".join(tag) if tag else "")))
+        specs.append((base, lam, lr, dla_gain, fd,
+                      base + ("@" + ",".join(tag) if tag else "")))
 
-    for method, lam, lr, label in specs:
+    for method, lam, lr, dla_gain, fd, label in specs:
         model.load_state_dict(base_sd, strict=False)
         model.set_dla_state(None)
         torch.cuda.empty_cache()
-        tr = Trainer(model, method, a, a.device, lam=lam, lr=lr)
+        tr = Trainer(model, method, a, a.device, lam=lam, lr=lr,
+                     dla_gain=dla_gain, fd=fd)
 
         after, forward, ratios = [], [], []
         for t, (name, tr_ids, ev_ids) in enumerate(tasks):
