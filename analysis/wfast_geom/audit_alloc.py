@@ -39,7 +39,9 @@ import torch.nn.functional as F  # noqa: E402
 import audit_scale as S  # noqa: E402
 
 VARIANTS = ("direct", "shufwrite", "nocons", "qonly", "uniformwrite", "topwrite",
-            "nosleep", "full")
+            "nosleep", "full",
+            # W_fast as a sleep-time SELECTOR over the eligibility trace Q
+            "selwrite", "unifq", "shufsel")
 
 
 def stable_hash(text: str) -> int:
@@ -116,6 +118,39 @@ def variant_sleep(model, state, variant, perm_seed=0, gamma_scale=1.0,
             c = gam * wf.norm() / math.sqrt(keep) if keep > 0 else 0.0
             add = torch.where(mask, torch.full_like(wf, c), torch.zeros_like(wf))
             del flat_abs
+        elif variant in ("selwrite", "shufsel", "unifq"):
+            # W_fast as a SLEEP-TIME SELECTOR rather than as content.
+            #
+            # The intended mechanism is: the leak lets records accumulate in
+            # W_fast, and at writeback those records decide WHICH coordinates get
+            # consolidated.  dla_sleep does not do that at all -- it writes
+            # ``beta * Q`` with no coordinate selection, and ``gamma * W_fast`` as
+            # content.  So the selector had to be written here.
+            #
+            # The selector is |W_fast| normalised to mean 1, which makes the
+            # written energy directly comparable to the unselected write: any
+            # difference is caused by the ALLOCATION, not by how much was written.
+            sel = wf.abs()
+            m = sel.mean()
+            sel = sel / m if m > 0 else torch.ones_like(sel)
+            if variant == "shufsel":
+                flat_s = sel.reshape(-1)
+                gen_s = torch.Generator().manual_seed(
+                    perm_seed * 6271 + stable_hash(key) % 999983)
+                perm_s = torch.randperm(flat_s.numel(), generator=gen_s).to(flat_s.device)
+                sel = flat_s[perm_s].reshape(sel.shape)
+            if variant == "unifq":
+                sel = torch.ones_like(sel)
+            raw = sel * s["q"]
+            # Energy-match the three variants exactly.  Without this, selwrite and
+            # shufsel differ whenever |W_fast| correlates with |Q|, and the contrast
+            # would confound ALLOCATION with AMOUNT -- which is the one thing the P1
+            # design exists to hold fixed.  Rescaling to the unselected write's norm
+            # makes any remaining difference attributable to WHERE the mass landed.
+            ref = s["q"].norm()
+            rn = raw.norm()
+            raw = raw * (ref / rn) if rn > 0 else raw
+            add = gam * raw
         elif variant in ("nocons", "nosleep"):
             add = None
         else:  # full
