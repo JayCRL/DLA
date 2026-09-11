@@ -2,8 +2,14 @@ __pycache__/
 *.pyc
 *.pyo
 .DS_Store
-results/
 logs/
 *.egg-info/
 .venv/
 venv/
+
+# Large local corpora (288 MB; re-downloadable, not part of the scientific record)
+data/domains/
+
+# NOTE: results/ is deliberately NOT ignored. The raw JSON of every archived run
+# is the scientific record this project reasons from, it is small (~2 MB), and an
+# earlier .gitignore rule silently kept all of it out of the repository.

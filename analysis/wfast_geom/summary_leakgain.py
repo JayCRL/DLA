@@ -246,11 +246,33 @@ def main():
         print(f"  {fd:>7g} {dn:>10.4f} {dc:>10.5f} "
               f"{corr(nrm, cvs):>14.3f} {corr(nrm, gis):>15.3f}")
     fit = [(direct[k]["w_fast_norm"], direct[k]["cv"]) for k in direct]
-    print(f"\n  pooled across all {len(fit)} cells: corr(||W_fast||, cv) = "
-          f"{corr([x for x, _ in fit], [y for _, y in fit]):+.3f}")
-    print("  Near 0 => lambda moves magnitude without moving the normalized")
-    print("  distribution: it controls the STRENGTH of a selective writeback,")
-    print("  not the EMERGENCE of selectivity.")
+    r_mag_cv = corr([x for x, _ in fit], [y for _, y in fit])
+    print(f"\n  pooled across all {len(fit)} cells: corr(||W_fast||, cv) = {r_mag_cv:+.3f}")
+    # The verdict has to follow the data, not a preset story.  What actually
+    # separates "lambda is pure gain" from "lambda also reshapes the store" is the
+    # RATIO of the two relative changes, not the sign of the correlation: a pure
+    # scaling knob gives a large relative change in ||W_fast|| and ~0 in cv.
+    rel = []
+    for fd in fds:
+        ks = [(fd, l) for l in lams if (fd, l) in direct]
+        if len(ks) < 2:
+            continue
+        nrm = [direct[k]["w_fast_norm"] for k in ks]
+        cvs = [direct[k]["cv"] for k in ks]
+        if min(nrm) > 0 and min(cvs) > 0:
+            rel.append(((max(nrm) - min(nrm)) / min(nrm), (max(cvs) - min(cvs)) / min(cvs)))
+    for dn, dc in rel:
+        ratio = dn / dc if dc > 0 else float("inf")
+        print(f"  relative change across lambda: ||W_fast|| {dn*100:+.1f}%  vs  cv {dc*100:+.2f}%"
+              f"   -> magnitude moves {ratio:.1f}x more than the normalized distribution")
+        if ratio > 10:
+            print("  => lambda is predominantly a GAIN on an existing structure: it sets the")
+            print("     STRENGTH of the selective writeback far more than the EMERGENCE of")
+            print("     selectivity.  Report both families separately and never quote the")
+            print("     normalized metrics as if lambda had produced them.")
+        else:
+            print("  => lambda reshapes the store, not just its scale; the normalized metrics")
+            print("     must not be dismissed as pure gain.")
 
     block("Q1  does fast_decay control the memory horizon?")
     print(f"  {'fd':>7s} {'lag-1e horizon (steps)':>24s} {'censored':>9s} "

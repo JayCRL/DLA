@@ -326,6 +326,20 @@ def main():
            "stages": a.stages, "chunk": a.chunk,
            "gamma_scale": a.gamma_scale, "cells": {}}
 
+    partial_path = os.path.join(a.out, f"leakgain_{a.model}_s{a.seed}.json")
+
+    def flush():
+        """Write the JSON after every cell.
+
+        Without this a long grid leaves no trace until the very end, so a run
+        that is merely slow looks identical to one that is stuck -- and the
+        queue log is additionally block-buffered by the grep in its pipeline,
+        which is exactly how a healthy run first looked like a silent failure.
+        Flushing per cell makes progress observable from the file itself.
+        """
+        with open(partial_path, "w") as f:
+            json.dump(out, f, indent=1)
+
     for fd in fds:
         for lam in lams:
             cell = {}
@@ -358,6 +372,7 @@ def main():
                           f"{cell[f'B_{tag}']:+.4f} (final_ppl, >0 => direct better)",
                           flush=True)
             out["cells"][f"fd{fd:g}|lam{lam:g}"] = cell
+            flush()
 
     p = os.path.join(a.out, f"leakgain_{a.model}_s{a.seed}.json")
     with open(p, "w") as f:
