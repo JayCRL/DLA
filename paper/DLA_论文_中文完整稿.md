@@ -293,6 +293,40 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 
 **载体方向因此在不同的骨干与语料上复现**（仅方向性复现；仍是小型 char 模型）。
 
+### 3.9 跨规模检验（GPT-2 124M / 355M / 774M）`【因果】`
+
+同一历史对照（EH vs HE）搬到冻结的预训练 GPT-2 上（英文 Shakespeare BPE 语料，DLA 挂在每个 Linear 上，
+状态 bf16；对比量 `delta = gain40(EH) − gain40(HE)`，**负 = HE 适应更好**）：
+
+| backbone | 参数 | $n$ | Δ(EH−HE) | 负号 | $t$ | Δwfast | $t$ |
+|---|---|---|---|---|---|---|---|
+| gpt2 | 124M | 12 | **−0.0390 ± 0.0240** | 12/12 | −5.64 | −0.0437 | −5.94 |
+| gpt2-medium | 355M | 12 | **−0.0437 ± 0.0338** | 11/12 | −4.48 | −0.0466 | −4.64 |
+| gpt2-large | **774M** | 12 | **−0.0331 ± 0.0417** | 9/12 | −2.75 | −0.0371 | −2.64 |
+
+**读法**：方向在三个规模上都复现（每个 $n{=}12$、各自显著）；幅值在 **6.2 倍参数范围内没有系统性趋势**；
+反号少数派随规模增多（0/12 → 1/12 → 3/12），即效应真实但 774M 上更噪。逐 seed 数据在
+`results/cloud/dla_scale/fixed/`，完整报告见 `docs/scale_results_fixed.md`。
+
+> ⚠️ **交接注（这一节有坑，必须按此写）**
+>
+> **1. 仓库里另有一组"更好看"的规模数字，但它们全部作废。** `docs/scale_results.md` 与
+> `results/scale_cloud/capmatch/` 的那张表（124M −0.1411、355M −0.1182、**774M −0.1662、1.5B −0.1155**）
+> 出自一个**输出头损坏**的 build：`vocab_size` 被补零到 50304，导致模型在每个位置都预测补零 token。
+> 该表顶部已有 INVALID 横幅，**引用它会把跨规模效应夸大 3–5 倍**。
+>
+> **2. 1.5B（gpt2-xl）没有修后数据。** `results/cloud/dla_scale/fixed/gpt2-xl/` 目录存在但**是空的**——
+> 修后的 1.5B 运行没有产出。仓库里唯一的 1.5B 数字（$n{=}3$）来自上述作废运行，**不可引用**。
+> 因此**当前可主张的规模上界是 774M**。若要用 1.5B，必须重跑（峰值显存处理要点见
+> `docs/scale_results.md` §Engineering notes）。
+>
+> **3. 另有一套修后但设计不同的探测**（`results/cloud/dla_scale_v2/`，臂 `ABD`/`BAD`、
+> `common-final-chunk` 布局），其 `delta_gain` 为 +0.0081 / +0.0029 / +0.0162（$t{=}+1.84 / +0.70 / +2.04$）。
+> 这是**另一个对比**，**不可**与上表并入同一趋势比较。
+>
+> **4. 溯源性缺口**：`fixed` 这组的启动命令没有版本化（`queue/` 里只有 v2 的），且 JSON 不记录 `chunk`，
+> 所以"用哪个 chunk 跑的"目前无法从仓库考证。写进论文前建议补齐。
+
 ---
 
 ## 4 讨论
@@ -317,7 +351,7 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 - `qonly` 仅 $n{=}4$。
 - 写入强度扫描只动了 direct 写入系数；**睡眠衰减轴仅 $n{=}6$**（指示性，不构成结果）。
 - 第二骨干复现为 $n{=}9$ 且有打乱注入臂，但它仍是小型 char 模型、3-chunk 历史；**选择性与留存消融只在中文骨干上做过**。
-- **规模尚未检验**：所有结果都在 $\leq$11M 参数。
+- **规模检验的现状（重要）**：主线的**机制消融**（分配 shuffle、Q 惰性、留存/边界）仍只在 6.59M 中文 char-GPT 与 10.65M Shakespeare 上做过；但**载体方向已在 GPT-2 124M/355M/774M 上以 $n{=}12$ 复现**（§3.9）。**1.5B 没有修后数据**（唯一数字来自作废运行，不可引用），可主张的规模上界是 **774M**。细节见 `docs/scale_results_fixed.md`。
 - ⚠️ **新增（交接必读）**：与标准持续学习基线的对比目前**不可用**（旧数字作废 + 协议不同），见附录 A。这是"定位"而非"缺陷"，但正文不得出现性能对标。
 
 ### 4.4 机制链的证据等级与可证伪点
@@ -365,6 +399,8 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 | `paper/DLA_paper.tex` 全文 | 2026-09-08 旧产物，已被 md 稿与 ICLR 包取代；表注已标 VOID |
 | `paper/figures/fig_baselines.png` | 仓库内**无生成脚本**、两篇稿均未引用——来源待核，疑似出自上述作废运行 |
 | 把 T10 **聚合** retention 当作"写入改善抗遗忘"的证据 | 聚合上 `direct` −0.96% ≈ `nocons` −0.88%（$n{=}8$），逐任务异质性主导 |
+| **`results/scale_cloud/capmatch/` 与 `docs/scale_results.md` 的规模表** | 出自**输出头损坏**的 build（词表补零）；会把效应夸大 3–5 倍。修后数字见 §3.9 与 `docs/scale_results_fixed.md` |
+| **1.5B（gpt2-xl）的任何数字** | 仅有作废运行的 $n{=}3$；修后目录为空，从未产出 |
 | "能量集中无法复现效应"（以 `topwrite` 为依据） | `topwrite` 丢符号（实现缺陷），不能用于该结论；`topk_signed` 未跑 |
 
 ### A.2 措辞分级（因果 vs 相关，不得混用）
@@ -398,8 +434,9 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 | 6 | 边界保护旧任务 | 因果 | `nosleep` $t{=}+10.26$；T10 最早任务 $t{=}-10.27$ | `results/mac_audit/dla_audit_t10/`、`t10_forgetting/` |
 | 7 | 十任务持续学习 | 因果 | $t$ 从 $-2.65$ 到 $-13.6$（vs nosleep） | 同上 |
 | 8 | 第二骨干复现 | 因果 | $\Delta{=}-0.0673$（$t{=}-7.13$），$n{=}9$ | `results/mac_audit/dla_audit_second/`、`a5_second_backbone.md` |
-| 9 | 阴性组 | 阴性 | EH 臂 ≈0；$p{=}0.17/0.82$；PC1≈20% | `docs/experiments.md`、`report_output/interim_report.md` |
-| 10 | `full` 基线 | 因果 | `full` $+0.0143$（$n{=}12$，`HE/HE` 条件） | `results/server_archive/results/stage55e/seeds/` |
+| 9 | **跨规模载体复现（GPT-2）** | 因果 | 124M −0.0390（$t{=}-5.64$）/ 355M −0.0437（$t{=}-4.48$）/ **774M −0.0331（$t{=}-2.75$）**，各 $n{=}12$ | `results/cloud/dla_scale/fixed/`、`docs/scale_results_fixed.md` |
+| 10 | 阴性组 | 阴性 | EH 臂 ≈0；$p{=}0.17/0.82$；PC1≈20% | `docs/experiments.md`、`report_output/interim_report.md` |
+| 11 | `full` 基线 | 因果 | `full` $+0.0143$（$n{=}12$，`HE/HE` 条件） | `results/server_archive/results/stage55e/seeds/` |
 
 ---
 
@@ -410,6 +447,8 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 | **`topk_signed`（稀疏 vs 分布式对齐选择）** | 算子已实现+自检通过；扫描**未跑** | 只能写"**未检验**"；跑完按预定规则填：≈direct→稀疏对齐选择，≈shufwrite→分布式对齐选择，介于→报剂量-反应 |
 | EH/HE 协议的**修复后**基线 | 旧数字作废 | 若不重跑，删除"标准 CL 也历史敏感"这句 |
 | **方向性干预**（正交投影） | 未做 | 不做则 2c 永远停留在相关 |
+| **1.5B（gpt2-xl）修后重跑** | 目录为空，从未产出 | 可主张的规模上界先写 **774M**；重跑要点见 `docs/scale_results.md` §Engineering notes |
+| `fixed` 规模组的**启动命令与 chunk** | 未版本化、JSON 不记录 | 写进论文前补齐，或在下次运行时把协议字段写进 JSON |
 | 历史**特异性** | A5 上仅 **7.1%** | 必须写进 limits（这是"对齐"叙事最脆弱处） |
 | 1.5B 规模 | 显存不足未完成 | 写进 limits |
 | 记忆时间尺度 → 选择性 | 采集中断 | 写进 limits |
@@ -420,8 +459,10 @@ gap 单调上升，且相邻两步各自显著（$\text{gap}(1.0)-\text{gap}(0.5
 
 ```bash
 # 逐 seed 数据（无需重跑即可复算本文全部数字）
-results/mac_audit/        # Mac 侧审计：消融 / shuffle / γ·δ 扫描 / 第二骨干 / T10
-results/server_archive/   # 服务器期：stage1-8、validation、几何审计、论文 full 基线
+results/mac_audit/            # Mac 侧审计：消融 / shuffle / γ·δ 扫描 / 第二骨干 / T10
+results/server_archive/       # 服务器期：stage1-8、validation、几何审计、论文 full 基线
+results/cloud/dla_scale/fixed/   # 跨规模（124M/355M/774M，各 n=12）— 见 docs/scale_results_fixed.md
+results/cloud/dla_alloc/、results/alloc_cloud/   # P1 分配实验（124M）
 
 # 权威聚合与复算入口
 analysis/wfast_geom/{unified_summary,a1_final,summary_topk}.py
