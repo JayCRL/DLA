@@ -73,12 +73,18 @@ def _write(frac, shape=(6, 4), seed=0):
 
 
 def test_energy_matches_direct_at_every_frac():
-    """The write must carry exactly direct's energy: placement is the only variable."""
+    """The write must carry exactly direct's energy: placement is the only variable.
+
+    Tolerance is float32, not float64: the operator's `gam` is a float32 tensor
+    (consolidate_fast_direct * gamma_scale), so its rescale accumulates float32 rounding.
+    Comparing against a float64 target gives ~1e-7 relative disagreement that is arithmetic,
+    not a logic error -- an exact-equality assertion here would be testing the wrong thing.
+    """
     for frac in (0.05, 0.2, 0.5, 0.95, 1.0):
         wf, add = _write(frac)
         target = GAMMA * float(wf.norm())
         got = float(add.norm())
-        assert abs(got - target) <= 1e-12 * max(1.0, target), (
+        assert abs(got - target) <= 1e-6 * max(1.0, target), (
             f"frac={frac}: ||add||={got!r} != gamma*||wf||={target!r}")
 
 
